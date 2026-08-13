@@ -230,3 +230,13 @@ export const moderateEntry = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+/** Admin-only: probe approved endpoints now and persist the results. */
+export const runHealthChecksNow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { runHealthChecks } = await import("@/lib/health.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    return await runHealthChecks(supabaseAdmin as never, 50);
+  });
