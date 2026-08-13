@@ -25,17 +25,17 @@ export type Entry = {
   updated_at: string;
 };
 
-const ENTRY_COLUMNS =
+export const ENTRY_COLUMNS =
   "id, slug, name, category, summary, description, auth_mode, endpoint, docs_url, tags, status, submitted_by, review_note, health_ok, health_status_code, health_latency_ms, health_checked_at, created_at, updated_at";
 
 
-const listInput = z.object({
+export const listInput = z.object({
   search: z.string().trim().max(120).optional().default(""),
   category: z.enum(["all", ...CATEGORIES]).optional().default("all"),
 });
 
 
-const submitInput = z.object({
+export const submitInput = z.object({
   name: z.string().trim().min(1).max(80),
   category: z.enum(CATEGORIES),
   summary: z.string().trim().min(10).max(300),
@@ -53,7 +53,7 @@ const submitInput = z.object({
   tags: z.array(z.string().trim().min(1).max(24)).max(8).optional().default([]),
 });
 
-function slugify(value: string) {
+export function slugify(value: string) {
   return value
     .toLowerCase()
     .normalize("NFD")
@@ -64,7 +64,7 @@ function slugify(value: string) {
 }
 
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
+export async function assertAdmin(context: { supabase: any; userId: string }) {
   const { data: isAdmin, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
