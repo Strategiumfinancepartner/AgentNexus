@@ -17,17 +17,28 @@ export type Database = {
       entries: {
         Row: {
           auth_mode: string
+          auth_params: Json
+          avg_latency_ms: number | null
+          capabilities: string[]
           category: Database["public"]["Enums"]["entry_category"]
+          checks_ok: number
+          checks_total: number
           created_at: string
           description: string
           docs_url: string | null
           endpoint: string
+          featured: boolean
           health_checked_at: string | null
           health_latency_ms: number | null
           health_ok: boolean | null
           health_status_code: number | null
           id: string
+          input_format: string
+          invocation_example: string
           name: string
+          output_format: string
+          pricing: string
+          rate_limit: string
           review_note: string | null
           reviewed_at: string | null
           reviewed_by: string | null
@@ -37,20 +48,34 @@ export type Database = {
           summary: string
           tags: string[]
           updated_at: string
+          verified: boolean
+          verified_at: string | null
+          verified_by: string | null
         }
         Insert: {
           auth_mode?: string
+          auth_params?: Json
+          avg_latency_ms?: number | null
+          capabilities?: string[]
           category: Database["public"]["Enums"]["entry_category"]
+          checks_ok?: number
+          checks_total?: number
           created_at?: string
           description?: string
           docs_url?: string | null
           endpoint: string
+          featured?: boolean
           health_checked_at?: string | null
           health_latency_ms?: number | null
           health_ok?: boolean | null
           health_status_code?: number | null
           id?: string
+          input_format?: string
+          invocation_example?: string
           name: string
+          output_format?: string
+          pricing?: string
+          rate_limit?: string
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -60,20 +85,34 @@ export type Database = {
           summary: string
           tags?: string[]
           updated_at?: string
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Update: {
           auth_mode?: string
+          auth_params?: Json
+          avg_latency_ms?: number | null
+          capabilities?: string[]
           category?: Database["public"]["Enums"]["entry_category"]
+          checks_ok?: number
+          checks_total?: number
           created_at?: string
           description?: string
           docs_url?: string | null
           endpoint?: string
+          featured?: boolean
           health_checked_at?: string | null
           health_latency_ms?: number | null
           health_ok?: boolean | null
           health_status_code?: number | null
           id?: string
+          input_format?: string
+          invocation_example?: string
           name?: string
+          output_format?: string
+          pricing?: string
+          rate_limit?: string
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -83,6 +122,9 @@ export type Database = {
           summary?: string
           tags?: string[]
           updated_at?: string
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
         }
         Relationships: []
       }

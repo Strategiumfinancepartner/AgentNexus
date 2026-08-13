@@ -61,4 +61,14 @@ export function supabaseAnon() {
 }
 
 export const PUBLIC_COLUMNS =
-  "slug, name, category, summary, description, auth_mode, endpoint, docs_url, tags, health_ok, health_checked_at, health_latency_ms";
+  "slug, name, category, summary, description, auth_mode, endpoint, docs_url, tags, capabilities, auth_params, input_format, output_format, rate_limit, pricing, invocation_example, verified, verified_at, featured, checks_total, checks_ok, avg_latency_ms, health_ok, health_status_code, health_checked_at, health_latency_ms";
+
+/** Forwards the verified OAuth token so RLS runs as the signed-in Nexus member. */
+export function supabaseForUser(ctx: { getToken: () => string | null | undefined }) {
+  const token = ctx.getToken();
+  if (!token) throw new Error("This tool requires an authenticated Agent Nexus session");
+  return createClient(supabaseProjectUrl(), supabasePublishableKey(), {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
