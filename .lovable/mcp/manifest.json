@@ -97,7 +97,7 @@
       {
         "name": "get_entry",
         "title": "Get registry entry",
-        "description": "Fetch one Agent Nexus registry entry by slug, including its endpoint and auth method.",
+        "description": "Fetch one approved Agent Nexus registry entry by slug, including its endpoint, auth method and last health probe.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -110,6 +110,7 @@
             "slug": {
               "type": "string",
               "minLength": 1,
+              "maxLength": 80,
               "description": "Entry slug, e.g. 'stripe-api'."
             }
           },
