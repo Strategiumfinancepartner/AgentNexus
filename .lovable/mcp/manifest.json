@@ -43,7 +43,7 @@
       {
         "name": "search_registry",
         "title": "Search registry",
-        "description": "Search the Agent Nexus registry of APIs, MCP servers and CLIs by keyword and optional category.",
+        "description": "Search the Agent Nexus registry of approved APIs, MCP servers and CLIs by keyword and optional category.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -55,8 +55,9 @@
           "properties": {
             "query": {
               "default": "",
-              "description": "Keyword to match against name, summary or tags.",
-              "type": "string"
+              "description": "Keyword matched against name, summary, endpoint or slug.",
+              "type": "string",
+              "maxLength": 120
             },
             "category": {
               "description": "Restrict results to one interface category.",
