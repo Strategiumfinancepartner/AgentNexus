@@ -21,6 +21,7 @@ import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
+import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,6 +85,11 @@ const ApiPublicRegistryRoute = ApiPublicRegistryRouteImport.update({
   path: '/api/public/registry',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ApiPublicRegistryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,7 +102,8 @@ export interface FileRoutesByFullPath {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
-  '/api/public/registry': typeof ApiPublicRegistryRoute
+  '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,7 +116,8 @@ export interface FileRoutesByTo {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
-  '/api/public/registry': typeof ApiPublicRegistryRoute
+  '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,7 +132,8 @@ export interface FileRoutesById {
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
-  '/api/public/registry': typeof ApiPublicRegistryRoute
+  '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
     | '/api/public/registry'
+    | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
     | '/api/public/registry'
+    | '/api/public/registry/$slug'
   id:
     | '__root__'
     | '/'
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/entry/$slug'
     | '/api/public/registry'
+    | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -177,7 +189,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
-  ApiPublicRegistryRoute: typeof ApiPublicRegistryRoute
+  ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -266,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRegistryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/registry/$slug': {
+      id: '/api/public/registry/$slug'
+      path: '/$slug'
+      fullPath: '/api/public/registry/$slug'
+      preLoaderRoute: typeof ApiPublicRegistrySlugRouteImport
+      parentRoute: typeof ApiPublicRegistryRoute
+    }
   }
 }
 
@@ -286,6 +305,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ApiPublicRegistryRouteChildren {
+  ApiPublicRegistrySlugRoute: typeof ApiPublicRegistrySlugRoute
+}
+
+const ApiPublicRegistryRouteChildren: ApiPublicRegistryRouteChildren = {
+  ApiPublicRegistrySlugRoute: ApiPublicRegistrySlugRoute,
+}
+
+const ApiPublicRegistryRouteWithChildren =
+  ApiPublicRegistryRoute._addFileChildren(ApiPublicRegistryRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -295,7 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
-  ApiPublicRegistryRoute: ApiPublicRegistryRoute,
+  ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
