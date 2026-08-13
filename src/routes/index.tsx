@@ -46,6 +46,18 @@ function Index() {
             Agent Nexus
           </span>
           <div className="flex items-center gap-4">
+            <Link
+              to="/explore"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Explore
+            </Link>
+            <a
+              href="/llms.txt"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              /llms.txt
+            </a>
             <a
               href="/mcp"
               className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -76,7 +88,7 @@ function Index() {
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                to="/registry"
+                to="/explore"
                 className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
               >
                 Browse the registry
