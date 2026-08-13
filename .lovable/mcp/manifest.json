@@ -15,7 +15,7 @@
       {
         "name": "list_categories",
         "title": "List interface categories",
-        "description": "List the three interface layers Agent Nexus indexes (APIs, MCPs, CLIs) with entry counts.",
+        "description": "List the three interface layers Agent Nexus indexes (APIs, MCPs, CLIs) with the number of approved entries in each.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
