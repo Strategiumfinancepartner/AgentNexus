@@ -26,7 +26,19 @@
           "type": "object",
           "properties": {}
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "categories"
+          ]
+        }
       },
       {
         "name": "search_registry",
@@ -63,7 +75,23 @@
             }
           }
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number"
+            },
+            "results": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "count",
+            "results"
+          ]
+        }
       },
       {
         "name": "get_entry",
@@ -88,7 +116,16 @@
             "slug"
           ]
         },
-        "outputSchema": null
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "entry": {}
+          },
+          "required": [
+            "entry"
+          ]
+        }
       }
     ]
   }

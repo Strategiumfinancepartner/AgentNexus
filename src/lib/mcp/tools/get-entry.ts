@@ -8,6 +8,7 @@ export default defineTool({
   description:
     "Fetch one Agent Nexus registry entry by slug, including its endpoint and auth method.",
   inputSchema: { slug: z.string().trim().min(1).describe("Entry slug, e.g. 'stripe-api'.") },
+  outputSchema: { entry: z.any() },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ slug }) => {
     const entry = registry.find((e) => e.slug === slug);

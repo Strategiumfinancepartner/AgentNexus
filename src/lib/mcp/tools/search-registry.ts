@@ -15,6 +15,10 @@ export default defineTool({
       .describe("Restrict results to one interface category."),
     limit: z.number().int().min(1).max(50).default(10),
   },
+  outputSchema: {
+    count: z.number(),
+    results: z.array(z.any()),
+  },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ query, category, limit }) => {
     const q = query.toLowerCase();
