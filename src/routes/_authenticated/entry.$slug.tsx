@@ -1,0 +1,149 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getEntry, getMyAccess } from "@/lib/registry.functions";
+import { AppShell, HealthBadge } from "@/components/app-shell";
+
+export const Route = createFileRoute("/_authenticated/entry/$slug")({
+  head: () => ({
+    meta: [
+      { title: "Entry — Agent Nexus" },
+      {
+        name: "description",
+        content:
+          "Endpoint, authentication mode, tags and health history for a callable surface in the Agent Nexus registry.",
+      },
+      { property: "og:title", content: "Entry — Agent Nexus" },
+      {
+        property: "og:description",
+        content: "Endpoint, auth mode and health history for this callable surface.",
+      },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: EntryPage,
+});
+
+function EntryPage() {
+  const { slug } = Route.useParams();
+  const fetchEntry = useServerFn(getEntry);
+  const fetchAccess = useServerFn(getMyAccess);
+
+  const access = useQuery({ queryKey: ["access"], queryFn: () => fetchAccess() });
+  const query = useQuery({
+    queryKey: ["entry", slug],
+    queryFn: () => fetchEntry({ data: { slug } }),
+  });
+
+  const entry = query.data?.entry;
+
+  return (
+    <AppShell isAdmin={access.data?.isAdmin ?? false}>
+      <main className="pt-12 pb-20">
+        <Link
+          to="/registry"
+          className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground transition-colors hover:text-foreground"
+        >
+          ← Registry
+        </Link>
+
+        {query.isPending && (
+          <p className="py-10 font-mono text-xs text-muted-foreground">loading entry…</p>
+        )}
+
+        {query.isSuccess && !entry && (
+          <p className="py-10 font-mono text-xs text-muted-foreground">
+            No entry with this identifier is visible to your account.
+          </p>
+        )}
+
+        {entry && (
+          <>
+            <header className="mt-8">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-primary/80">
+                  {entry.category}
+                </span>
+                <HealthBadge ok={entry.health_ok} checkedAt={entry.health_checked_at} />
+              </div>
+              <h1 className="mt-4 text-3xl font-medium tracking-tight">{entry.name}</h1>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                {entry.summary}
+              </p>
+            </header>
+
+            <dl className="mt-10 divide-y divide-border/60 border-y border-border/60">
+              <Row label="Endpoint">
+                <code className="font-mono text-xs break-all text-foreground">
+                  {entry.endpoint}
+                </code>
+              </Row>
+              <Row label="Auth">{entry.auth_mode}</Row>
+              <Row label="Tags">{entry.tags.length ? entry.tags.join(" · ") : "—"}</Row>
+              <Row label="Docs">
+                {entry.docs_url ? (
+                  <a
+                    href={entry.docs_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-primary underline-offset-4 hover:underline"
+                  >
+                    {entry.docs_url}
+                  </a>
+                ) : (
+                  "—"
+                )}
+              </Row>
+              <Row label="Latency">
+                {entry.health_latency_ms ? `${entry.health_latency_ms} ms` : "—"}
+              </Row>
+            </dl>
+
+            {entry.description && (
+              <p className="mt-8 text-sm leading-relaxed whitespace-pre-line text-muted-foreground">
+                {entry.description}
+              </p>
+            )}
+
+            <section className="mt-12">
+              <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+                Health history
+              </h2>
+              {query.data?.history.length ? (
+                <ul className="mt-4 space-y-1 font-mono text-[11px]">
+                  {query.data.history.map((h, i) => (
+                    <li key={i} className="flex items-center justify-between gap-4 py-1">
+                      <span className="text-muted-foreground/70">
+                        {new Date(h.checked_at as string).toISOString().replace("T", " ").slice(0, 16)}
+                      </span>
+                      <span className={h.ok ? "text-primary" : "text-destructive"}>
+                        {h.ok ? "up" : "down"} · {h.status_code ?? "—"} ·{" "}
+                        {h.latency_ms ?? "—"} ms
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 font-mono text-[11px] text-muted-foreground/70">
+                  no probe recorded yet
+                </p>
+              )}
+            </section>
+          </>
+        )}
+      </main>
+    </AppShell>
+  );
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap gap-2 py-3.5">
+      <dt className="w-24 shrink-0 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="min-w-0 flex-1 text-sm text-muted-foreground">{children}</dd>
+    </div>
+  );
+}

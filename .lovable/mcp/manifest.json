@@ -15,7 +15,7 @@
       {
         "name": "list_categories",
         "title": "List interface categories",
-        "description": "List the three interface layers Agent Nexus indexes (APIs, MCPs, CLIs) with entry counts.",
+        "description": "List the three interface layers Agent Nexus indexes (APIs, MCPs, CLIs) with the number of approved entries in each.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -43,7 +43,7 @@
       {
         "name": "search_registry",
         "title": "Search registry",
-        "description": "Search the Agent Nexus registry of APIs, MCP servers and CLIs by keyword and optional category.",
+        "description": "Search the Agent Nexus registry of approved APIs, MCP servers and CLIs by keyword and optional category.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -55,8 +55,9 @@
           "properties": {
             "query": {
               "default": "",
-              "description": "Keyword to match against name, summary or tags.",
-              "type": "string"
+              "description": "Keyword matched against name, summary, endpoint or slug.",
+              "type": "string",
+              "maxLength": 120
             },
             "category": {
               "description": "Restrict results to one interface category.",
@@ -96,7 +97,7 @@
       {
         "name": "get_entry",
         "title": "Get registry entry",
-        "description": "Fetch one Agent Nexus registry entry by slug, including its endpoint and auth method.",
+        "description": "Fetch one approved Agent Nexus registry entry by slug, including its endpoint, auth method and last health probe.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -109,6 +110,7 @@
             "slug": {
               "type": "string",
               "minLength": 1,
+              "maxLength": 80,
               "description": "Entry slug, e.g. 'stripe-api'."
             }
           },
