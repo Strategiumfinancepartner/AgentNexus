@@ -31,7 +31,7 @@ export const Route = createFileRoute("/api/public/health-check")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const summary = await runHealthChecks(supabaseAdmin as never, 50);
-        return new Response(JSON.stringify({ ok: true, ...summary }), {
+        return new Response(JSON.stringify({ success: true, ...summary }), {
           headers: { "Content-Type": "application/json" },
         });
       },
