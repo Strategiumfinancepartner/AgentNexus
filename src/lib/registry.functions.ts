@@ -4,6 +4,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   ENTRY_COLUMNS,
   assertAdmin,
+  assertReviewer,
   listInput,
   slugify,
   submitInput,
@@ -113,30 +114,91 @@ export const submitEntry = createServerFn({ method: "POST" })
     throw new Error("Could not allocate a unique slug for this entry.");
   });
 
-/** Whether the signed-in user is an admin (checked server-side, via RLS-safe RPC). */
+/** Roles, profile and community reputation for the signed-in user. */
 export const getMyAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data: isAdmin } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    const { data: profile } = await context.supabase
-      .from("profiles")
-      .select("display_name")
-      .eq("id", context.userId)
-      .maybeSingle();
+    const [{ data: isAdmin }, { data: isModerator }, { data: profile }, { data: reputation }] =
+      await Promise.all([
+        context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
+        context.supabase.rpc("has_role", { _user_id: context.userId, _role: "moderator" }),
+        context.supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", context.userId)
+          .maybeSingle(),
+        context.supabase.rpc("get_reputation", { _user_id: context.userId }),
+      ]);
+
+    const rep = (Array.isArray(reputation) ? reputation[0] : reputation) as
+      | { approved_entries: number; votes_received: number }
+      | null;
+
     return {
       userId: context.userId,
       isAdmin: Boolean(isAdmin),
+      isModerator: Boolean(isModerator),
+      isReviewer: Boolean(isAdmin) || Boolean(isModerator),
       displayName: (profile as { display_name?: string } | null)?.display_name ?? "",
+      reputation: {
+        approvedEntries: rep?.approved_entries ?? 0,
+        votesReceived: rep?.votes_received ?? 0,
+      },
     };
+  });
+
+/** Vote counts for approved entries plus the entries the caller voted on. */
+export const listVotes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const [{ data: counts }, { data: mine }] = await Promise.all([
+      context.supabase.from("entry_vote_counts").select("entry_id, slug, votes"),
+      context.supabase.from("entry_votes").select("entry_id").eq("user_id", context.userId),
+    ]);
+    const votes: Record<string, number> = {};
+    for (const row of (counts ?? []) as { entry_id: string; votes: number }[]) {
+      votes[row.entry_id] = row.votes;
+    }
+    return {
+      votes,
+      mine: ((mine ?? []) as { entry_id: string }[]).map((r) => r.entry_id),
+    };
+  });
+
+/** Add or remove the caller's vote on an approved entry. */
+export const toggleVote = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ entryId: z.string().uuid() }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: existing } = await context.supabase
+      .from("entry_votes")
+      .select("id")
+      .eq("entry_id", data.entryId)
+      .eq("user_id", context.userId)
+      .maybeSingle();
+
+    if (existing) {
+      const { error } = await context.supabase
+        .from("entry_votes")
+        .delete()
+        .eq("id", (existing as { id: string }).id);
+      if (error) throw new Error(error.message);
+      return { voted: false as const };
+    }
+
+    const { error } = await context.supabase
+      .from("entry_votes")
+      .insert({ entry_id: data.entryId, user_id: context.userId });
+    if (error) throw new Error(error.message);
+    return { voted: true as const };
   });
 
 export const listModerationQueue = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    await assertReviewer(context);
     const { data, error } = await context.supabase
       .from("entries")
       .select(ENTRY_COLUMNS)
@@ -158,7 +220,7 @@ export const moderateEntry = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertReviewer(context);
     const { error } = await context.supabase
       .from("entries")
       .update({

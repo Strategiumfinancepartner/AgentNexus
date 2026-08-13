@@ -45,7 +45,7 @@ function AdminPage() {
   const pending = useQuery({
     queryKey: ["pending"],
     queryFn: () => fetchPending(),
-    enabled: access.data?.isAdmin === true,
+    enabled: access.data?.isReviewer === true,
   });
 
   const mutation = useMutation({
@@ -80,21 +80,22 @@ function AdminPage() {
   });
 
   return (
-    <AppShell isAdmin={access.data?.isAdmin ?? false}>
+    <AppShell isAdmin={access.data?.isReviewer ?? false}>
       <main className="pt-14 pb-20">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
           Trust layer
         </p>
         <h1 className="mt-4 text-3xl font-medium tracking-tight">Moderation queue</h1>
 
-        {access.isSuccess && !access.data.isAdmin && (
+        {access.isSuccess && !access.data.isReviewer && (
           <p className="mt-8 font-mono text-xs text-muted-foreground">
             Your account does not have review permissions.
           </p>
         )}
 
-        {access.data?.isAdmin && (
+        {access.data?.isReviewer && (
           <>
+            {access.data?.isAdmin && (
             <div className="mt-8 flex flex-wrap items-center gap-3 rounded-xl border border-border p-5">
               <div className="mr-auto">
                 <p className="text-sm font-medium">Endpoint health</p>
@@ -110,6 +111,7 @@ function AdminPage() {
                 {healthMutation.isPending ? "Running…" : "Run health checks"}
               </button>
             </div>
+            )}
 
             {pending.isPending && (
               <p className="mt-8 font-mono text-xs text-muted-foreground">loading queue…</p>

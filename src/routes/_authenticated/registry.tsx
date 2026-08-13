@@ -1,8 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { listEntries, getMyAccess, CATEGORIES, type Category } from "@/lib/registry.functions";
+import {
+  listEntries,
+  getMyAccess,
+  listVotes,
+  toggleVote,
+  CATEGORIES,
+  type Category,
+} from "@/lib/registry.functions";
+import { VoteButton } from "@/components/vote-button";
 import { AppShell, HealthBadge } from "@/components/app-shell";
 
 export const Route = createFileRoute("/_authenticated/registry")({
@@ -33,6 +41,9 @@ function RegistryPage() {
   const [category, setCategory] = useState<"all" | Category>("all");
   const fetchEntries = useServerFn(listEntries);
   const fetchAccess = useServerFn(getMyAccess);
+  const fetchVotes = useServerFn(listVotes);
+  const vote = useServerFn(toggleVote);
+  const queryClient = useQueryClient();
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => fetchAccess() });
   const entries = useQuery({
@@ -40,8 +51,17 @@ function RegistryPage() {
     queryFn: () => fetchEntries({ data: { search, category } }),
   });
 
+  const votes = useQuery({ queryKey: ["votes"], queryFn: () => fetchVotes() });
+  const voteMutation = useMutation({
+    mutationFn: (entryId: string) => vote({ data: { entryId } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["votes"] });
+      queryClient.invalidateQueries({ queryKey: ["access"] });
+    },
+  });
+
   return (
-    <AppShell isAdmin={access.data?.isAdmin ?? false}>
+    <AppShell isAdmin={access.data?.isReviewer ?? false}>
       <main className="pb-20">
         <section className="pt-14 pb-8">
           <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
@@ -51,6 +71,11 @@ function RegistryPage() {
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
             Every entry is reviewed before it lands here and its endpoint is probed
             regularly. Freshness is the product.
+          </p>
+          <p className="mt-5 font-mono text-[11px] tracking-widest uppercase text-muted-foreground/70">
+            your reputation · {access.data?.reputation.approvedEntries ?? 0} approved ·{" "}
+            {access.data?.reputation.votesReceived ?? 0} votes received
+            {access.data?.isModerator && !access.data?.isAdmin ? " · moderator" : ""}
           </p>
         </section>
 
@@ -99,11 +124,17 @@ function RegistryPage() {
 
           <ul className="space-y-2">
             {entries.data?.map((e) => (
-              <li key={e.id}>
+              <li key={e.id} className="flex items-start gap-2">
+                <VoteButton
+                  count={votes.data?.votes[e.id] ?? 0}
+                  voted={votes.data?.mine.includes(e.id) ?? false}
+                  disabled={voteMutation.isPending}
+                  onClick={() => voteMutation.mutate(e.id)}
+                />
                 <Link
                   to="/entry/$slug"
                   params={{ slug: e.slug }}
-                  className="group block rounded-xl border border-transparent px-4 py-5 transition-colors hover:border-border hover:bg-card/60"
+                  className="group block min-w-0 flex-1 rounded-xl border border-transparent px-4 py-5 transition-colors hover:border-border hover:bg-card/60"
                 >
                   <div className="flex items-baseline gap-4">
                     <span className="w-9 shrink-0 font-mono text-[10px] uppercase tracking-widest text-primary/80">

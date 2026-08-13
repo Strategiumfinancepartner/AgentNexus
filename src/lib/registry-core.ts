@@ -73,3 +73,14 @@ export async function assertAdmin(context: { supabase: any; userId: string }) {
   if (!isAdmin) throw new Error("Forbidden");
 }
 
+
+/** Admins and moderators may review submissions. */
+export async function assertReviewer(context: { supabase: any; userId: string }) {
+  const [admin, moderator] = await Promise.all([
+    context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
+    context.supabase.rpc("has_role", { _user_id: context.userId, _role: "moderator" }),
+  ]);
+  if (admin.error) throw new Error(admin.error.message);
+  if (moderator.error) throw new Error(moderator.error.message);
+  if (!admin.data && !moderator.data) throw new Error("Forbidden");
+}
