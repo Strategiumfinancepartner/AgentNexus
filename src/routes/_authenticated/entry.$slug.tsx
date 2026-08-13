@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getEntry, getMyAccess } from "@/lib/registry.functions";
+import { getEntry, getMyAccess, listVotes, toggleVote } from "@/lib/registry.functions";
+import { VoteButton } from "@/components/vote-button";
 import { AppShell, HealthBadge } from "@/components/app-shell";
 
 export const Route = createFileRoute("/_authenticated/entry/$slug")({
@@ -29,6 +30,9 @@ function EntryPage() {
   const { slug } = Route.useParams();
   const fetchEntry = useServerFn(getEntry);
   const fetchAccess = useServerFn(getMyAccess);
+  const fetchVotes = useServerFn(listVotes);
+  const vote = useServerFn(toggleVote);
+  const queryClient = useQueryClient();
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => fetchAccess() });
   const query = useQuery({
@@ -37,9 +41,17 @@ function EntryPage() {
   });
 
   const entry = query.data?.entry;
+  const votes = useQuery({ queryKey: ["votes"], queryFn: () => fetchVotes() });
+  const voteMutation = useMutation({
+    mutationFn: (entryId: string) => vote({ data: { entryId } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["votes"] });
+      queryClient.invalidateQueries({ queryKey: ["access"] });
+    },
+  });
 
   return (
-    <AppShell isAdmin={access.data?.isAdmin ?? false}>
+    <AppShell isAdmin={access.data?.isReviewer ?? false}>
       <main className="pt-12 pb-20">
         <Link
           to="/registry"
@@ -67,7 +79,15 @@ function EntryPage() {
                 </span>
                 <HealthBadge ok={entry.health_ok} checkedAt={entry.health_checked_at} />
               </div>
-              <h1 className="mt-4 text-3xl font-medium tracking-tight">{entry.name}</h1>
+              <div className="mt-4 flex items-center gap-3">
+                <VoteButton
+                  count={votes.data?.votes[entry.id] ?? 0}
+                  voted={votes.data?.mine.includes(entry.id) ?? false}
+                  disabled={voteMutation.isPending || entry.status !== "approved"}
+                  onClick={() => voteMutation.mutate(entry.id)}
+                />
+                <h1 className="text-3xl font-medium tracking-tight">{entry.name}</h1>
+              </div>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
                 {entry.summary}
               </p>
