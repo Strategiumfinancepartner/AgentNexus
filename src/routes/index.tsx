@@ -46,6 +46,18 @@ function Index() {
             Agent Nexus
           </span>
           <div className="flex items-center gap-4">
+            <Link
+              to="/explore"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Explore
+            </Link>
+            <a
+              href="/llms.txt"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              /llms.txt
+            </a>
             <a
               href="/mcp"
               className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -76,7 +88,7 @@ function Index() {
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                to="/registry"
+                to="/explore"
                 className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
               >
                 Browse the registry
@@ -136,6 +148,51 @@ function Index() {
                   </div>
                 </li>
               ))}
+            </ul>
+          </section>
+
+          <section className="border-t border-border/60 py-14">
+            <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+              For agents
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              No scraping required. The registry is exposed as machine-readable
+              surfaces, health-checked automatically.
+            </p>
+            <ul className="mt-6 space-y-2 font-mono text-[12px]">
+              <li>
+                <a href="/llms.txt" className="text-muted-foreground hover:text-foreground">
+                  GET /llms.txt
+                </a>
+                <span className="text-muted-foreground/50"> — full catalog, plain text</span>
+              </li>
+              <li>
+                <a
+                  href="/api/public/registry"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  GET /api/public/registry?q=&amp;category=api|mcp|cli
+                </a>
+                <span className="text-muted-foreground/50"> — JSON search</span>
+              </li>
+              <li>
+                <a
+                  href="/api/public/registry/stripe-api"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  GET /api/public/registry/{"{slug}"}
+                </a>
+                <span className="text-muted-foreground/50"> — single entry</span>
+              </li>
+              <li>
+                <a href="/mcp" className="text-muted-foreground hover:text-foreground">
+                  POST /mcp
+                </a>
+                <span className="text-muted-foreground/50">
+                  {" "}
+                  — MCP: search_registry, get_entry, list_categories
+                </span>
+              </li>
             </ul>
           </section>
         </main>

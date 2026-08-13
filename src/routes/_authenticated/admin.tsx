@@ -3,7 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
-import { listModerationQueue, moderateEntry, getMyAccess } from "@/lib/registry.functions";
+import {
+  listModerationQueue,
+  moderateEntry,
+  getMyAccess,
+  runHealthChecksNow,
+} from "@/lib/registry.functions";
 import type { Entry } from "@/lib/registry.functions";
 import { AppShell } from "@/components/app-shell";
 
@@ -33,6 +38,7 @@ function AdminPage() {
   const fetchAccess = useServerFn(getMyAccess);
   const fetchPending = useServerFn(listModerationQueue);
   const moderate = useServerFn(moderateEntry);
+  const runChecks = useServerFn(runHealthChecksNow);
   const [notes, setNotes] = useState<Record<string, string>>({});
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => fetchAccess() });
@@ -60,6 +66,19 @@ function AdminPage() {
       toast.error(error instanceof Error ? error.message : "Moderation failed"),
   });
 
+  const healthMutation = useMutation({
+    mutationFn: () => runChecks(),
+    onSuccess: (result) => {
+      toast.success(
+        `Health checks done — ${result.ok} up, ${result.failed} down, ${result.skipped} skipped`,
+      );
+      queryClient.invalidateQueries({ queryKey: ["entries"] });
+      queryClient.invalidateQueries({ queryKey: ["entry"] });
+    },
+    onError: (error) =>
+      toast.error(error instanceof Error ? error.message : "Health checks failed"),
+  });
+
   return (
     <AppShell isAdmin={access.data?.isAdmin ?? false}>
       <main className="pt-14 pb-20">
@@ -76,6 +95,22 @@ function AdminPage() {
 
         {access.data?.isAdmin && (
           <>
+            <div className="mt-8 flex flex-wrap items-center gap-3 rounded-xl border border-border p-5">
+              <div className="mr-auto">
+                <p className="text-sm font-medium">Endpoint health</p>
+                <p className="mt-1 font-mono text-[11px] text-muted-foreground/70">
+                  Probes approved HTTP endpoints and stores latency + status.
+                </p>
+              </div>
+              <button
+                disabled={healthMutation.isPending}
+                onClick={() => healthMutation.mutate()}
+                className="h-9 rounded-full border border-border px-5 text-xs font-medium transition-colors hover:text-foreground disabled:opacity-50"
+              >
+                {healthMutation.isPending ? "Running…" : "Run health checks"}
+              </button>
+            </div>
+
             {pending.isPending && (
               <p className="mt-8 font-mono text-xs text-muted-foreground">loading queue…</p>
             )}

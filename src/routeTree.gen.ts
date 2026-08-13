@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -20,6 +22,9 @@ import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
+import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
+import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
+import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,6 +38,16 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
+  id: '/llms.txt',
+  path: '/llms.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -78,10 +93,27 @@ const AuthenticatedEntrySlugRoute = AuthenticatedEntrySlugRouteImport.update({
   path: '/entry/$slug',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHealthCheckRoute = ApiPublicHealthCheckRouteImport.update({
+  id: '/api/public/health-check',
+  path: '/api/public/health-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRegistryRoute = ApiPublicRegistryRouteImport.update({
+  id: '/api/public/registry',
+  path: '/api/public/registry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ApiPublicRegistryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/explore': typeof ExploreRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -90,10 +122,15 @@ export interface FileRoutesByFullPath {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
+  '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/explore': typeof ExploreRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -102,12 +139,17 @@ export interface FileRoutesByTo {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
+  '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/explore': typeof ExploreRoute
+  '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -116,12 +158,17 @@ export interface FileRoutesById {
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
+  '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/explore'
+    | '/llms.txt'
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -130,10 +177,15 @@ export interface FileRouteTypes {
     | '/submit'
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
+    | '/api/public/health-check'
+    | '/api/public/registry'
+    | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/explore'
+    | '/llms.txt'
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -142,11 +194,16 @@ export interface FileRouteTypes {
     | '/submit'
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
+    | '/api/public/health-check'
+    | '/api/public/registry'
+    | '/api/public/registry/$slug'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/explore'
+    | '/llms.txt'
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
@@ -155,16 +212,23 @@ export interface FileRouteTypes {
     | '/_authenticated/submit'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/entry/$slug'
+    | '/api/public/health-check'
+    | '/api/public/registry'
+    | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ExploreRoute: typeof ExploreRoute
+  LlmsDottxtRoute: typeof LlmsDottxtRoute
   McpRoute: typeof McpRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
+  ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -188,6 +252,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/llms.txt': {
+      id: '/llms.txt'
+      path: '/llms.txt'
+      fullPath: '/llms.txt'
+      preLoaderRoute: typeof LlmsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -246,6 +324,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEntrySlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/health-check': {
+      id: '/api/public/health-check'
+      path: '/api/public/health-check'
+      fullPath: '/api/public/health-check'
+      preLoaderRoute: typeof ApiPublicHealthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/registry': {
+      id: '/api/public/registry'
+      path: '/api/public/registry'
+      fullPath: '/api/public/registry'
+      preLoaderRoute: typeof ApiPublicRegistryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/registry/$slug': {
+      id: '/api/public/registry/$slug'
+      path: '/$slug'
+      fullPath: '/api/public/registry/$slug'
+      preLoaderRoute: typeof ApiPublicRegistrySlugRouteImport
+      parentRoute: typeof ApiPublicRegistryRoute
+    }
   }
 }
 
@@ -266,15 +365,30 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface ApiPublicRegistryRouteChildren {
+  ApiPublicRegistrySlugRoute: typeof ApiPublicRegistrySlugRoute
+}
+
+const ApiPublicRegistryRouteChildren: ApiPublicRegistryRouteChildren = {
+  ApiPublicRegistrySlugRoute: ApiPublicRegistrySlugRoute,
+}
+
+const ApiPublicRegistryRouteWithChildren =
+  ApiPublicRegistryRoute._addFileChildren(ApiPublicRegistryRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ExploreRoute: ExploreRoute,
+  LlmsDottxtRoute: LlmsDottxtRoute,
   McpRoute: McpRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
+  ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
