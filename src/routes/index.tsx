@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { registry, type Entry } from "@/lib/registry";
 
@@ -45,12 +45,20 @@ function Index() {
             <span className="inline-block size-1.5 rounded-full bg-primary" />
             Agent Nexus
           </span>
-          <a
-            href="/mcp"
-            className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
-          >
-            /mcp
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="/mcp"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              /mcp
+            </a>
+            <Link
+              to="/auth"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Sign in
+            </Link>
+          </div>
         </header>
 
         <main>
@@ -67,12 +75,12 @@ function Index() {
               call. Agent Nexus catalogs that layer: APIs, MCP servers and CLIs.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <a
-                href="#registry"
+              <Link
+                to="/registry"
                 className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
               >
                 Browse the registry
-              </a>
+              </Link>
               <code className="inline-flex h-10 items-center rounded-full border border-border px-4 font-mono text-xs text-muted-foreground">
                 GET /mcp
               </code>
