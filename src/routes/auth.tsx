@@ -5,6 +5,11 @@ import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>): { next?: string } => {
+    const next = typeof s['next'] === "string" ? s['next'] : "";
+    // only same-origin relative paths may be resumed after sign-in
+    return /^\/(?!\/)/.test(next) ? { next } : {};
+  },
   head: () => ({
     meta: [
       { title: "Sign in — Agent Nexus" },
@@ -27,6 +32,14 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const afterAuth = () => {
+    if (next) {
+      window.location.href = next;
+      return;
+    }
+    navigate({ to: "/registry", replace: true });
+  };
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,9 +49,10 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/registry", replace: true });
+      if (data.session) afterAuth();
     });
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, next]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -49,7 +63,9 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: next
+              ? `${window.location.origin}${next}`
+              : window.location.origin,
             data: { display_name: displayName || email.split("@")[0] },
           },
         });
@@ -58,11 +74,11 @@ function AuthPage() {
           setSent(true);
           return;
         }
-        navigate({ to: "/registry", replace: true });
+        afterAuth();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/registry", replace: true });
+        afterAuth();
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Authentication failed");
@@ -74,7 +90,9 @@ function AuthPage() {
   async function handleGoogle() {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: next
+        ? `${window.location.origin}${next}`
+        : window.location.origin,
     });
     if (result.error) {
       setBusy(false);
@@ -82,7 +100,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/registry", replace: true });
+    afterAuth();
   }
 
   return (

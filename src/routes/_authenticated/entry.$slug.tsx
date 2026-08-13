@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getEntry, getMyAccess, listVotes, toggleVote } from "@/lib/registry.functions";
 import { VoteButton } from "@/components/vote-button";
 import { AppShell, HealthBadge } from "@/components/app-shell";
+import { reliability } from "@/lib/registry-core";
 
 export const Route = createFileRoute("/_authenticated/entry/$slug")({
   head: () => ({
@@ -78,6 +79,16 @@ function EntryPage() {
                   {entry.category}
                 </span>
                 <HealthBadge ok={entry.health_ok} checkedAt={entry.health_checked_at} />
+                {entry.verified && (
+                  <span className="rounded-full border border-primary/40 bg-primary/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-primary">
+                    verified
+                  </span>
+                )}
+                {entry.featured && (
+                  <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                    featured
+                  </span>
+                )}
               </div>
               <div className="mt-4 flex items-center gap-3">
                 <VoteButton
@@ -118,7 +129,42 @@ function EntryPage() {
               <Row label="Latency">
                 {entry.health_latency_ms ? `${entry.health_latency_ms} ms` : "—"}
               </Row>
+              <Row label="Capabilities">
+                {entry.capabilities?.length ? (
+                  <span className="font-mono text-xs">{entry.capabilities.join(" · ")}</span>
+                ) : (
+                  "—"
+                )}
+              </Row>
+              <Row label="Auth params">
+                {entry.auth_params?.length
+                  ? entry.auth_params
+                      .map((p) => `${p.name} (${p.location}${p.required ? "" : ", optional"})`)
+                      .join(" · ")
+                  : "—"}
+              </Row>
+              <Row label="Formats">
+                {entry.input_format || entry.output_format
+                  ? `${entry.input_format || "—"} → ${entry.output_format || "—"}`
+                  : "—"}
+              </Row>
+              <Row label="Rate limit">{entry.rate_limit || "—"}</Row>
+              <Row label="Pricing">{entry.pricing || "—"}</Row>
+              <Row label="Reliability">
+                {(() => {
+                  const r = reliability(entry);
+                  return r.score === null
+                    ? "unproven — no probe yet"
+                    : `${r.score}/100 · ${r.grade} · uptime ${Math.round((r.uptime ?? 0) * 100)}% over ${r.samples} probes${r.avgLatencyMs ? ` · ~${r.avgLatencyMs} ms` : ""}`;
+                })()}
+              </Row>
             </dl>
+
+            {entry.invocation_example && (
+              <pre className="mt-8 overflow-x-auto rounded-xl border border-border bg-card/50 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
+                {entry.invocation_example}
+              </pre>
+            )}
 
             {entry.description && (
               <p className="mt-8 text-sm leading-relaxed whitespace-pre-line text-muted-foreground">

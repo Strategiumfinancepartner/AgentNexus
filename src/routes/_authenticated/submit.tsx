@@ -55,6 +55,13 @@ function SubmitPage() {
     endpoint: "",
     docs_url: "",
     tags: "",
+    capabilities: "",
+    auth_params: "",
+    input_format: "",
+    output_format: "",
+    rate_limit: "",
+    pricing: "",
+    invocation_example: "",
   });
 
   const mutation = useMutation({
@@ -73,6 +80,27 @@ function SubmitPage() {
             .map((t) => t.trim())
             .filter(Boolean)
             .slice(0, 8),
+          capabilities: form.capabilities
+            .split(",")
+            .map((t) => t.trim().toLowerCase())
+            .filter((t) => t.length >= 2)
+            .slice(0, 12),
+          // "name:location" pairs, e.g. "Authorization:header, api_key:query"
+          auth_params: form.auth_params
+            .split(",")
+            .map((p) => p.trim())
+            .filter(Boolean)
+            .slice(0, 10)
+            .map((p) => {
+              const [name, location] = p.split(":").map((v) => v.trim());
+              return { name: name ?? p, location: location || "header", required: true };
+            })
+            .filter((p) => p.name.length > 0),
+          input_format: form.input_format,
+          output_format: form.output_format,
+          rate_limit: form.rate_limit,
+          pricing: form.pricing,
+          invocation_example: form.invocation_example,
         },
       }),
     onSuccess: () => {
@@ -86,6 +114,13 @@ function SubmitPage() {
         endpoint: "",
         docs_url: "",
         tags: "",
+        capabilities: "",
+        auth_params: "",
+        input_format: "",
+        output_format: "",
+        rate_limit: "",
+        pricing: "",
+        invocation_example: "",
       });
       queryClient.invalidateQueries({ queryKey: ["my-submissions"] });
     },
@@ -175,6 +210,66 @@ function SubmitPage() {
             placeholder="Tags, comma separated (max 8)"
             value={form.tags}
             onChange={(e) => setForm({ ...form, tags: e.target.value })}
+          />
+          <div className="pt-4">
+            <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+              Machine-actionable contract
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground/80">
+              The more of this an agent gets, the less it needs a human to call the
+              interface.
+            </p>
+          </div>
+          <input
+            className={field}
+            maxLength={400}
+            placeholder="Capabilities, comma separated (send-email, transcribe-audio…)"
+            value={form.capabilities}
+            onChange={(e) => setForm({ ...form, capabilities: e.target.value })}
+          />
+          <input
+            className={field}
+            maxLength={300}
+            placeholder="Auth params: name:location pairs (Authorization:header, key:query)"
+            value={form.auth_params}
+            onChange={(e) => setForm({ ...form, auth_params: e.target.value })}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
+            <input
+              className={field}
+              maxLength={120}
+              placeholder="Input format (application/json…)"
+              value={form.input_format}
+              onChange={(e) => setForm({ ...form, input_format: e.target.value })}
+            />
+            <input
+              className={field}
+              maxLength={120}
+              placeholder="Output format (application/json…)"
+              value={form.output_format}
+              onChange={(e) => setForm({ ...form, output_format: e.target.value })}
+            />
+            <input
+              className={field}
+              maxLength={120}
+              placeholder="Rate limit (100 req/s)"
+              value={form.rate_limit}
+              onChange={(e) => setForm({ ...form, rate_limit: e.target.value })}
+            />
+            <input
+              className={field}
+              maxLength={120}
+              placeholder="Pricing (free, $0.001/call…)"
+              value={form.pricing}
+              onChange={(e) => setForm({ ...form, pricing: e.target.value })}
+            />
+          </div>
+          <textarea
+            className="min-h-20 w-full rounded-lg border border-border bg-card/50 p-3 font-mono text-xs outline-hidden placeholder:text-muted-foreground/60 focus:border-primary"
+            maxLength={1000}
+            placeholder={'Invocation example, e.g. curl -X POST https://api.example.com/v1/send -H "Authorization: Bearer $KEY"'}
+            value={form.invocation_example}
+            onChange={(e) => setForm({ ...form, invocation_example: e.target.value })}
           />
           <textarea
             className="min-h-28 w-full rounded-lg border border-border bg-card/50 p-3 text-sm outline-hidden placeholder:text-muted-foreground/60 focus:border-primary"

@@ -99,6 +99,13 @@ export const submitEntry = createServerFn({ method: "POST" })
           endpoint: data.endpoint,
           docs_url: data.docs_url,
           tags: data.tags ?? [],
+          capabilities: data.capabilities ?? [],
+          auth_params: data.auth_params ?? [],
+          input_format: data.input_format ?? "",
+          output_format: data.output_format ?? "",
+          rate_limit: data.rate_limit ?? "",
+          pricing: data.pricing ?? "",
+          invocation_example: data.invocation_example ?? "",
           submitted_by: context.userId,
         })
         .select("slug, status")
@@ -230,6 +237,39 @@ export const moderateEntry = createServerFn({ method: "POST" })
         reviewed_at: new Date().toISOString(),
       })
       .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+/** Reviewer-only: verified badge and sponsored placement. */
+export const setEntryFlags = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        verified: z.boolean().optional(),
+        featured: z.boolean().optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertReviewer(context);
+    const patch: {
+      verified?: boolean;
+      verified_at?: string | null;
+      verified_by?: string | null;
+      featured?: boolean;
+    } = {};
+    if (typeof data.verified === "boolean") {
+      patch.verified = data.verified;
+      patch.verified_at = data.verified ? new Date().toISOString() : null;
+      patch.verified_by = data.verified ? context.userId : null;
+    }
+    if (typeof data.featured === "boolean") patch.featured = data.featured;
+    if (Object.keys(patch).length === 0) return { ok: true as const };
+
+    const { error } = await context.supabase.from("entries").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });

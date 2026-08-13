@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAnon } from "@/lib/mcp/supabase";
+import { PUBLIC_COLUMNS, supabaseAnon } from "@/lib/mcp/supabase";
+import { reliability } from "@/lib/registry-core";
 
 type Row = {
   slug: string;
@@ -12,6 +13,18 @@ type Row = {
   tags: string[];
   health_ok: boolean | null;
   health_checked_at: string | null;
+  capabilities: string[] | null;
+  auth_params: { name: string; location: string; required: boolean }[] | null;
+  input_format: string | null;
+  output_format: string | null;
+  rate_limit: string | null;
+  pricing: string | null;
+  invocation_example: string | null;
+  verified: boolean | null;
+  featured: boolean | null;
+  checks_total: number;
+  checks_ok: number;
+  avg_latency_ms: number | null;
 };
 
 export const Route = createFileRoute("/llms.txt")({
@@ -21,9 +34,7 @@ export const Route = createFileRoute("/llms.txt")({
         const origin = new URL(request.url).origin;
         const { data, error } = await supabaseAnon()
           .from("entries")
-          .select(
-            "slug, name, category, summary, auth_mode, endpoint, docs_url, tags, health_ok, health_checked_at",
-          )
+          .select(PUBLIC_COLUMNS)
           .eq("status", "approved")
           .order("category", { ascending: true })
           .order("name", { ascending: true })
@@ -43,12 +54,34 @@ export const Route = createFileRoute("/llms.txt")({
                 : r.health_ok
                   ? `up${r.health_checked_at ? ` (${r.health_checked_at})` : ""}`
                   : "down";
+            const rel = reliability({
+              checks_total: r.checks_total ?? 0,
+              checks_ok: r.checks_ok ?? 0,
+              avg_latency_ms: r.avg_latency_ms,
+              health_ok: r.health_ok,
+              verified: Boolean(r.verified),
+            });
             return [
               `- [${r.name}](${origin}/api/public/registry/${r.slug}): ${r.summary}`,
               `  endpoint: ${r.endpoint}`,
               `  auth: ${r.auth_mode}`,
+              (r.auth_params ?? []).length
+                ? `  auth_params: ${(r.auth_params ?? []).map((p) => `${p.name} in ${p.location}`).join(", ")}`
+                : "",
+              (r.capabilities ?? []).length
+                ? `  capabilities: ${(r.capabilities ?? []).join(", ")}`
+                : "",
+              r.input_format || r.output_format
+                ? `  formats: ${r.input_format || "-"} -> ${r.output_format || "-"}`
+                : "",
+              r.rate_limit ? `  rate_limit: ${r.rate_limit}` : "",
+              r.pricing ? `  pricing: ${r.pricing}` : "",
               `  tags: ${(r.tags ?? []).join(", ") || "-"}`,
               `  health: ${health}`,
+              `  reliability: ${rel.score === null ? "unproven" : `${rel.score}/100 (${rel.grade}, ${rel.samples} probes)`}${r.verified ? ", verified" : ""}`,
+              r.invocation_example
+                ? `  example: ${r.invocation_example.replace(/\s+/g, " ").slice(0, 200)}`
+                : "",
               r.docs_url ? `  docs: ${r.docs_url}` : "",
             ]
               .filter(Boolean)
@@ -65,7 +98,9 @@ export const Route = createFileRoute("/llms.txt")({
 ## Machine interfaces
 
 - MCP server (Streamable HTTP): ${origin}/mcp
-  tools: search_registry, get_entry, list_categories
+  tools: discover_capabilities, search_registry, get_entry, list_categories, submit_entry, vote_entry, list_my_submissions
+  auth: OAuth 2.1 with dynamic client registration
+- Capability discovery (no auth): ${origin}/api/public/discover?need=send+an+email&limit=5
 - JSON list: ${origin}/api/public/registry?q=&category=api|mcp|cli&limit=50
 - JSON entry: ${origin}/api/public/registry/{slug}
 - This file: ${origin}/llms.txt
@@ -74,6 +109,8 @@ ${section("api", "APIs")}${section("mcp", "MCP servers")}${section("cli", "CLIs"
 
 - Only approved entries are exposed publicly.
 - health: result of the latest automated endpoint probe (${rows.length} entries listed).
+- reliability: 0-100 score from uptime, latency and human verification.
+- verified: a reviewer called the interface and confirmed it behaves as described.
 `;
 
         return new Response(body, {

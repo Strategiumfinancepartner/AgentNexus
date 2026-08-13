@@ -7,6 +7,8 @@ import {
   listModerationQueue,
   moderateEntry,
   getMyAccess,
+  listEntries,
+  setEntryFlags,
   runHealthChecksNow,
 } from "@/lib/registry.functions";
 import type { Entry } from "@/lib/registry.functions";
@@ -39,6 +41,8 @@ function AdminPage() {
   const fetchPending = useServerFn(listModerationQueue);
   const moderate = useServerFn(moderateEntry);
   const runChecks = useServerFn(runHealthChecksNow);
+  const fetchApproved = useServerFn(listEntries);
+  const setFlags = useServerFn(setEntryFlags);
   const [notes, setNotes] = useState<Record<string, string>>({});
 
   const access = useQuery({ queryKey: ["access"], queryFn: () => fetchAccess() });
@@ -46,6 +50,23 @@ function AdminPage() {
     queryKey: ["pending"],
     queryFn: () => fetchPending(),
     enabled: access.data?.isReviewer === true,
+  });
+
+  const approved = useQuery({
+    queryKey: ["entries", "approved"],
+    queryFn: () => fetchApproved({ data: {} }),
+    enabled: access.data?.isReviewer === true,
+  });
+
+  const flagMutation = useMutation({
+    mutationFn: (vars: { id: string; verified?: boolean; featured?: boolean }) =>
+      setFlags({ data: vars }),
+    onSuccess: () => {
+      toast.success("Curation updated");
+      queryClient.invalidateQueries({ queryKey: ["entries"] });
+    },
+    onError: (error) =>
+      toast.error(error instanceof Error ? error.message : "Update failed"),
   });
 
   const mutation = useMutation({
@@ -163,8 +184,57 @@ function AdminPage() {
                 </li>
               ))}
             </ul>
+
+            <section className="mt-16">
+              <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+                Curation
+              </h2>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                A verified interface has been called by a reviewer and behaves as
+                described. Featured entries are surfaced first to agents.
+              </p>
+              {approved.data?.length === 0 && (
+                <p className="mt-6 font-mono text-xs text-muted-foreground">
+                  no approved entry yet
+                </p>
+              )}
+              <ul className="mt-6 divide-y divide-border/60 border-y border-border/60">
+                {approved.data?.map((e: Entry) => (
+                  <li key={e.id} className="flex flex-wrap items-center gap-3 py-3">
+                    <span className="min-w-0 flex-1 truncate text-sm">{e.name}</span>
+                    <button
+                      disabled={flagMutation.isPending}
+                      onClick={() =>
+                        flagMutation.mutate({ id: e.id, verified: !e.verified })
+                      }
+                      className={`h-7 rounded-full border px-3 font-mono text-[10px] uppercase tracking-widest transition-colors disabled:opacity-50 ${
+                        e.verified
+                          ? "border-primary/40 bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      verified
+                    </button>
+                    <button
+                      disabled={flagMutation.isPending}
+                      onClick={() =>
+                        flagMutation.mutate({ id: e.id, featured: !e.featured })
+                      }
+                      className={`h-7 rounded-full border px-3 font-mono text-[10px] uppercase tracking-widest transition-colors disabled:opacity-50 ${
+                        e.featured
+                          ? "border-foreground/30 bg-foreground/10 text-foreground"
+                          : "border-border text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      featured
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </>
         )}
+
       </main>
     </AppShell>
   );

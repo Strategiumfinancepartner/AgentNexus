@@ -185,12 +185,25 @@ function Index() {
                 <span className="text-muted-foreground/50"> — single entry</span>
               </li>
               <li>
+                <a
+                  href="/api/public/discover?need=send%20an%20email"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  GET /api/public/discover?need=…
+                </a>
+                <span className="text-muted-foreground/50">
+                  {" "}
+                  — need → callable interfaces
+                </span>
+              </li>
+              <li>
                 <a href="/mcp" className="text-muted-foreground hover:text-foreground">
                   POST /mcp
                 </a>
                 <span className="text-muted-foreground/50">
                   {" "}
-                  — MCP: search_registry, get_entry, list_categories
+                  — MCP: discover_capabilities, search_registry, get_entry, submit_entry,
+                  vote_entry
                 </span>
               </li>
             </ul>
@@ -199,8 +212,11 @@ function Index() {
 
         <footer className="flex items-center justify-between border-t border-border/60 py-8 font-mono text-[11px] text-muted-foreground">
           <span>{registry.length} callable surfaces indexed</span>
-          <span className="text-muted-foreground/60">machine-readable by design</span>
+          <Link to="/pricing" className="transition-colors hover:text-foreground">
+            pricing
+          </Link>
         </footer>
+
       </div>
     </div>
   );
