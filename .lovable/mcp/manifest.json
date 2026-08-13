@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "agent-nexus",
+      "version": "0.1.0",
+      "title": "Agent Nexus"
+    },
+    "tools": [
+      {
+        "name": "list_categories",
+        "title": "List interface categories",
+        "description": "List the three interface layers Agent Nexus indexes (APIs, MCPs, CLIs) with entry counts.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "categories": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "categories"
+          ]
+        }
+      },
+      {
+        "name": "search_registry",
+        "title": "Search registry",
+        "description": "Search the Agent Nexus registry of APIs, MCP servers and CLIs by keyword and optional category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "query": {
+              "default": "",
+              "description": "Keyword to match against name, summary or tags.",
+              "type": "string"
+            },
+            "category": {
+              "description": "Restrict results to one interface category.",
+              "type": "string",
+              "enum": [
+                "api",
+                "mcp",
+                "cli"
+              ]
+            },
+            "limit": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          }
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "number"
+            },
+            "results": {
+              "type": "array",
+              "items": {}
+            }
+          },
+          "required": [
+            "count",
+            "results"
+          ]
+        }
+      },
+      {
+        "name": "get_entry",
+        "title": "Get registry entry",
+        "description": "Fetch one Agent Nexus registry entry by slug, including its endpoint and auth method.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Entry slug, e.g. 'stripe-api'."
+            }
+          },
+          "required": [
+            "slug"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "entry": {}
+          },
+          "required": [
+            "entry"
+          ]
+        }
+      }
+    ]
+  }
+}
