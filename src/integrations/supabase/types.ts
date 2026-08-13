@@ -86,6 +86,42 @@ export type Database = {
         }
         Relationships: []
       }
+      entry_votes: {
+        Row: {
+          created_at: string
+          entry_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entry_votes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entry_votes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
+      }
       health_checks: {
         Row: {
           checked_at: string
@@ -121,6 +157,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "entries"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "health_checks_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
           },
         ]
       }
@@ -168,9 +211,23 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      entry_vote_counts: {
+        Row: {
+          entry_id: string | null
+          slug: string | null
+          votes: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_reputation: {
+        Args: { _user_id: string }
+        Returns: {
+          approved_entries: number
+          votes_received: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
