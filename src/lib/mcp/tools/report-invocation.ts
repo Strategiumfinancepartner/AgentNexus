@@ -17,7 +17,7 @@ export default defineTool({
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
   handler: async ({ slug, outcome, status_code, error, latency_ms }, ctx) => {
     const { consumeRateLimit, recordInvocationReport } = await import("@/lib/telemetry.server");
-    const userId = ctx.isAuthenticated() ? ctx.getUserId() : null;
+    const userId = (ctx.isAuthenticated() ? ctx.getUserId() : null) ?? null;
     const allowed = await consumeRateLimit("mcp_report", userId ?? "mcp:anonymous", 120, 3600);
     if (!allowed) {
       return {
