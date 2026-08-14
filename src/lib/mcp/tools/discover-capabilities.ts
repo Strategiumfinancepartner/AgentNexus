@@ -79,9 +79,20 @@ export default defineTool({
         },
       }));
 
+    const { recordNeedSignal } = await import("@/lib/telemetry.server");
+    await recordNeedSignal({
+      need,
+      tokens,
+      category: category ?? null,
+      matchedCount: matches.length,
+      topSlug: matches[0]?.slug ?? null,
+      source: "mcp",
+    });
+
     return {
       content: [{ type: "text", text: JSON.stringify(matches, null, 2) }],
       structuredContent: { need, count: matches.length, matches },
     };
+
   },
 });

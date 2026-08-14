@@ -20,13 +20,16 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
+import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
 import { Route as ApiPublicDiscoverRouteImport } from './routes/api/public/discover'
 import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
+import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
+import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -85,6 +88,11 @@ const AuthenticatedRegistryRoute = AuthenticatedRegistryRouteImport.update({
   path: '/registry',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSignalsRoute = AuthenticatedSignalsRouteImport.update({
+  id: '/signals',
+  path: '/signals',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSubmitRoute = AuthenticatedSubmitRouteImport.update({
   id: '/submit',
   path: '/submit',
@@ -116,9 +124,19 @@ const ApiPublicHealthCheckRoute = ApiPublicHealthCheckRouteImport.update({
   path: '/api/public/health-check',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
+  id: '/api/public/ingest',
+  path: '/api/public/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicRegistryRoute = ApiPublicRegistryRouteImport.update({
   id: '/api/public/registry',
   path: '/api/public/registry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicReportRoute = ApiPublicReportRouteImport.update({
+  id: '/api/public/report',
+  path: '/api/public/report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
@@ -138,13 +156,16 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/registry': typeof AuthenticatedRegistryRoute
+  '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesByTo {
@@ -158,13 +179,16 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/registry': typeof AuthenticatedRegistryRoute
+  '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesById {
@@ -180,13 +204,16 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
+  '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRouteTypes {
@@ -202,13 +229,16 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/registry'
+    | '/signals'
     | '/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
+    | '/api/public/ingest'
     | '/api/public/registry'
+    | '/api/public/report'
     | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -222,13 +252,16 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/registry'
+    | '/signals'
     | '/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
+    | '/api/public/ingest'
     | '/api/public/registry'
+    | '/api/public/report'
     | '/api/public/registry/$slug'
   id:
     | '__root__'
@@ -243,13 +276,16 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/registry'
+    | '/_authenticated/signals'
     | '/_authenticated/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
+    | '/api/public/ingest'
     | '/api/public/registry'
+    | '/api/public/report'
     | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -267,7 +303,9 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicDiscoverRoute: typeof ApiPublicDiscoverRoute
   ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
+  ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
+  ApiPublicReportRoute: typeof ApiPublicReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -349,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRegistryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/signals': {
+      id: '/_authenticated/signals'
+      path: '/signals'
+      fullPath: '/signals'
+      preLoaderRoute: typeof AuthenticatedSignalsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/submit': {
       id: '/_authenticated/submit'
       path: '/submit'
@@ -391,11 +436,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ingest': {
+      id: '/api/public/ingest'
+      path: '/api/public/ingest'
+      fullPath: '/api/public/ingest'
+      preLoaderRoute: typeof ApiPublicIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/registry': {
       id: '/api/public/registry'
       path: '/api/public/registry'
       fullPath: '/api/public/registry'
       preLoaderRoute: typeof ApiPublicRegistryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/report': {
+      id: '/api/public/report'
+      path: '/api/public/report'
+      fullPath: '/api/public/report'
+      preLoaderRoute: typeof ApiPublicReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/registry/$slug': {
@@ -411,6 +470,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedRegistryRoute: typeof AuthenticatedRegistryRoute
+  AuthenticatedSignalsRoute: typeof AuthenticatedSignalsRoute
   AuthenticatedSubmitRoute: typeof AuthenticatedSubmitRoute
   AuthenticatedEntrySlugRoute: typeof AuthenticatedEntrySlugRoute
 }
@@ -418,6 +478,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedRegistryRoute: AuthenticatedRegistryRoute,
+  AuthenticatedSignalsRoute: AuthenticatedSignalsRoute,
   AuthenticatedSubmitRoute: AuthenticatedSubmitRoute,
   AuthenticatedEntrySlugRoute: AuthenticatedEntrySlugRoute,
 }
@@ -451,7 +512,9 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicDiscoverRoute: ApiPublicDiscoverRoute,
   ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
+  ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
+  ApiPublicReportRoute: ApiPublicReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,4 +1,7 @@
-/** Server-only health probing for registry endpoints. */
+/** Server-only health + capability probing for registry entries. */
+
+import { probeCapabilities } from "@/lib/capability-probe.server";
+
 
 export type ProbeResult = {
   ok: boolean;
@@ -61,18 +64,29 @@ export async function probeEndpoint(endpoint: string): Promise<ProbeResult> {
   }
 }
 
-type EntryRow = { id: string; slug: string; endpoint: string };
+type EntryRow = { id: string; slug: string; endpoint: string; category: string };
 
-/** Probes approved entries and persists results. Requires a service-role client. */
+/**
+ * Probes approved entries and persists results. Requires a service-role client.
+ * Two layers per entry: liveness (is the host answering?) and capability
+ * (does the interface expose the contract it claims?).
+ */
 export async function runHealthChecks(
   supabaseAdmin: {
     from: (table: string) => any;
   },
   limit = 50,
-): Promise<{ checked: number; ok: number; failed: number; skipped: number }> {
+): Promise<{
+  checked: number;
+  ok: number;
+  failed: number;
+  skipped: number;
+  capability_probed: number;
+  capability_ok: number;
+}> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, endpoint")
+    .select("id, slug, endpoint, category")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -82,6 +96,8 @@ export async function runHealthChecks(
   let ok = 0;
   let failed = 0;
   let skipped = 0;
+  let capabilityProbed = 0;
+  let capabilityOk = 0;
 
   for (const row of rows) {
     if (!isProbeable(row.endpoint)) {
@@ -91,6 +107,12 @@ export async function runHealthChecks(
     const result = await probeEndpoint(row.endpoint);
     result.ok ? ok++ : failed++;
 
+    const capability = await probeCapabilities(row);
+    if (capability.probeable) {
+      capabilityProbed++;
+      if (capability.ok) capabilityOk++;
+    }
+
     const checkedAt = new Date().toISOString();
     await supabaseAdmin.from("health_checks").insert({
       entry_id: row.id,
@@ -99,17 +121,31 @@ export async function runHealthChecks(
       latency_ms: result.latency_ms,
       error: result.error,
       checked_at: checkedAt,
+      probe_kind: row.category === "mcp" ? "mcp" : "http",
     });
-    await supabaseAdmin
-      .from("entries")
-      .update({
-        health_ok: result.ok,
-        health_status_code: result.status_code,
-        health_latency_ms: result.latency_ms,
-        health_checked_at: checkedAt,
-      })
-      .eq("id", row.id);
+
+    const update: Record<string, unknown> = {
+      health_ok: result.ok,
+      health_status_code: result.status_code,
+      health_latency_ms: result.latency_ms,
+      health_checked_at: checkedAt,
+    };
+    if (capability.probeable) {
+      update['capability_ok'] = capability.ok;
+      update['capability_detail'] = capability.detail;
+      update['capability_checked_at'] = checkedAt;
+      if (capability.tools.length > 0) update['discovered_tools'] = capability.tools;
+    }
+    await supabaseAdmin.from("entries").update(update).eq("id", row.id);
   }
 
-  return { checked: ok + failed, ok, failed, skipped };
+  return {
+    checked: ok + failed,
+    ok,
+    failed,
+    skipped,
+    capability_probed: capabilityProbed,
+    capability_ok: capabilityOk,
+  };
+
 }

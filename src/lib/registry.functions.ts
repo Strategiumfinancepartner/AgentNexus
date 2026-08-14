@@ -83,8 +83,13 @@ export const submitEntry = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => submitInput.parse(input))
   .handler(async ({ data, context }) => {
+    const { consumeRateLimit } = await import("@/lib/telemetry.server");
+    const allowed = await consumeRateLimit("submit_entry", context.userId, 20, 3600);
+    if (!allowed) throw new Error("Rate limit exceeded: 20 submissions per hour.");
+
     const base = slugify(`${data.name}-${data.category}`) || `entry-${Date.now()}`;
     let slug = base;
+
 
     for (let attempt = 0; attempt < 5; attempt++) {
       const { data: row, error } = await context.supabase

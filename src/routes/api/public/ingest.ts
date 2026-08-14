@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { runHealthChecks } from "@/lib/health.server";
+import { runIngest } from "@/lib/ingest.server";
 import { authorizeOpsRequest, jsonHeaders } from "@/lib/cron-auth.server";
 
 /**
- * Scheduled probe run. Called every 6 hours by the database scheduler, and
- * callable manually with `Authorization: Bearer $CRON_SECRET`.
+ * Bulk ingest of the curated bootstrap catalog.
+ * `Authorization: Bearer $CRON_SECRET`; `?dry_run=1` to preview.
  */
-export const Route = createFileRoute("/api/public/health-check")({
+export const Route = createFileRoute("/api/public/ingest")({
   server: {
     handlers: {
       POST: async ({ request }) => {
@@ -16,10 +16,10 @@ export const Route = createFileRoute("/api/public/health-check")({
             headers: jsonHeaders,
           });
         }
-
+        const dryRun = new URL(request.url).searchParams.get("dry_run") === "1";
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const summary = await runHealthChecks(supabaseAdmin as never, 40);
-        return new Response(JSON.stringify({ success: true, ...summary }), {
+        const summary = await runIngest(supabaseAdmin as never, { dryRun });
+        return new Response(JSON.stringify({ success: true, dry_run: dryRun, ...summary }), {
           headers: jsonHeaders,
         });
       },
