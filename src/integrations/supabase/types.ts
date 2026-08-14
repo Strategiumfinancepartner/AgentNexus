@@ -20,11 +20,15 @@ export type Database = {
           auth_params: Json
           avg_latency_ms: number | null
           capabilities: string[]
+          capability_checked_at: string | null
+          capability_detail: string
+          capability_ok: boolean | null
           category: Database["public"]["Enums"]["entry_category"]
           checks_ok: number
           checks_total: number
           created_at: string
           description: string
+          discovered_tools: string[]
           docs_url: string | null
           endpoint: string
           featured: boolean
@@ -43,6 +47,7 @@ export type Database = {
           reviewed_at: string | null
           reviewed_by: string | null
           slug: string
+          source: string
           status: Database["public"]["Enums"]["entry_status"]
           submitted_by: string | null
           summary: string
@@ -57,11 +62,15 @@ export type Database = {
           auth_params?: Json
           avg_latency_ms?: number | null
           capabilities?: string[]
+          capability_checked_at?: string | null
+          capability_detail?: string
+          capability_ok?: boolean | null
           category: Database["public"]["Enums"]["entry_category"]
           checks_ok?: number
           checks_total?: number
           created_at?: string
           description?: string
+          discovered_tools?: string[]
           docs_url?: string | null
           endpoint: string
           featured?: boolean
@@ -80,6 +89,7 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           slug: string
+          source?: string
           status?: Database["public"]["Enums"]["entry_status"]
           submitted_by?: string | null
           summary: string
@@ -94,11 +104,15 @@ export type Database = {
           auth_params?: Json
           avg_latency_ms?: number | null
           capabilities?: string[]
+          capability_checked_at?: string | null
+          capability_detail?: string
+          capability_ok?: boolean | null
           category?: Database["public"]["Enums"]["entry_category"]
           checks_ok?: number
           checks_total?: number
           created_at?: string
           description?: string
+          discovered_tools?: string[]
           docs_url?: string | null
           endpoint?: string
           featured?: boolean
@@ -117,6 +131,7 @@ export type Database = {
           reviewed_at?: string | null
           reviewed_by?: string | null
           slug?: string
+          source?: string
           status?: Database["public"]["Enums"]["entry_status"]
           submitted_by?: string | null
           summary?: string
@@ -172,6 +187,7 @@ export type Database = {
           id: string
           latency_ms: number | null
           ok: boolean
+          probe_kind: string
           status_code: number | null
         }
         Insert: {
@@ -181,6 +197,7 @@ export type Database = {
           id?: string
           latency_ms?: number | null
           ok: boolean
+          probe_kind?: string
           status_code?: number | null
         }
         Update: {
@@ -190,6 +207,7 @@ export type Database = {
           id?: string
           latency_ms?: number | null
           ok?: boolean
+          probe_kind?: string
           status_code?: number | null
         }
         Relationships: [
@@ -209,6 +227,111 @@ export type Database = {
           },
         ]
       }
+      invocation_reports: {
+        Row: {
+          created_at: string
+          entry_id: string | null
+          error: string | null
+          id: string
+          latency_ms: number | null
+          outcome: string
+          reported_by: string | null
+          slug: string
+          source: string
+          status_code: number | null
+        }
+        Insert: {
+          created_at?: string
+          entry_id?: string | null
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          outcome: string
+          reported_by?: string | null
+          slug: string
+          source?: string
+          status_code?: number | null
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string | null
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          outcome?: string
+          reported_by?: string | null
+          slug?: string
+          source?: string
+          status_code?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invocation_reports_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invocation_reports_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
+      }
+      need_signals: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          matched_count: number
+          need: string
+          source: string
+          tokens: string[]
+          top_slug: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          matched_count?: number
+          need: string
+          source?: string
+          tokens?: string[]
+          top_slug?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          matched_count?: number
+          need?: string
+          source?: string
+          tokens?: string[]
+          top_slug?: string | null
+        }
+        Relationships: []
+      }
+      ops_config: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -227,6 +350,27 @@ export type Database = {
           display_name?: string
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      rate_limit_events: {
+        Row: {
+          actor: string
+          bucket: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          actor: string
+          bucket: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          actor?: string
+          bucket?: string
+          created_at?: string
+          id?: string
         }
         Relationships: []
       }
@@ -263,6 +407,15 @@ export type Database = {
       }
     }
     Functions: {
+      consume_rate_limit: {
+        Args: {
+          _actor: string
+          _bucket: string
+          _limit: number
+          _window_seconds: number
+        }
+        Returns: boolean
+      }
       get_reputation: {
         Args: { _user_id: string }
         Returns: {
@@ -277,6 +430,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      trigger_health_check_run: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
