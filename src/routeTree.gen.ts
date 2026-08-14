@@ -26,6 +26,7 @@ import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
 import { Route as ApiPublicDiscoverRouteImport } from './routes/api/public/discover'
 import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
+import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
@@ -116,6 +117,11 @@ const ApiPublicHealthCheckRoute = ApiPublicHealthCheckRouteImport.update({
   path: '/api/public/health-check',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
+  id: '/api/public/ingest',
+  path: '/api/public/ingest',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicRegistryRoute = ApiPublicRegistryRouteImport.update({
   id: '/api/public/registry',
   path: '/api/public/registry',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
+  '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
+    | '/api/public/ingest'
     | '/api/public/registry'
     | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
+    | '/api/public/ingest'
     | '/api/public/registry'
     | '/api/public/registry/$slug'
   id:
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
+    | '/api/public/ingest'
     | '/api/public/registry'
     | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
@@ -267,6 +279,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicDiscoverRoute: typeof ApiPublicDiscoverRoute
   ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
+  ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
 }
 
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHealthCheckRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ingest': {
+      id: '/api/public/ingest'
+      path: '/api/public/ingest'
+      fullPath: '/api/public/ingest'
+      preLoaderRoute: typeof ApiPublicIngestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/registry': {
       id: '/api/public/registry'
       path: '/api/public/registry'
@@ -451,6 +471,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicDiscoverRoute: ApiPublicDiscoverRoute,
   ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
+  ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
 }
 export const routeTree = rootRouteImport
