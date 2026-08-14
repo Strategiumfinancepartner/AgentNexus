@@ -21,18 +21,12 @@ const querySchema = z.object({
 });
 
 /** Capability discovery: match a natural-language need to callable interfaces. */
-export const Route = createFileRoute("/api/public/discover")({
-  server: {
-    handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
-      GET: async ({ request }) => {
-        const url = new URL(request.url);
-        const parsed = querySchema.safeParse({
-          need: url.searchParams.get("need") ?? "",
-          category: url.searchParams.get("category") ?? undefined,
-          min_reliability: url.searchParams.get("min_reliability") ?? undefined,
-          limit: url.searchParams.get("limit") ?? undefined,
-        });
+async function discover(input: unknown, source: "api" | "api-post") {
+  {
+    {
+      {
+        const parsed = querySchema.safeParse(input);
+
         if (!parsed.success) {
           return new Response(
             JSON.stringify({
