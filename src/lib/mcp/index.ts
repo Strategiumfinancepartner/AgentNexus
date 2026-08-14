@@ -6,6 +6,8 @@ import discoverCapabilitiesTool from "./tools/discover-capabilities";
 import submitEntryTool from "./tools/submit-entry";
 import voteEntryTool from "./tools/vote-entry";
 import listMySubmissionsTool from "./tools/list-my-submissions";
+import reportInvocationTool from "./tools/report-invocation";
+
 
 // The OAuth issuer must be the direct Supabase host; the project ref is the only
 // value that survives publish unchanged.
