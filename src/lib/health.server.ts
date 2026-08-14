@@ -1,4 +1,7 @@
-/** Server-only health probing for registry endpoints. */
+/** Server-only health + capability probing for registry entries. */
+
+import { probeCapabilities } from "@/lib/capability-probe.server";
+
 
 export type ProbeResult = {
   ok: boolean;
