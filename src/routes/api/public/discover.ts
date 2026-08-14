@@ -21,7 +21,7 @@ const querySchema = z.object({
 });
 
 /** Capability discovery: match a natural-language need to callable interfaces. */
-async function discover(input: unknown, source: "api" | "api-post") {
+async function discover(input: unknown, source: "api" | "mcp" | "web") {
   {
     {
       {
@@ -132,7 +132,7 @@ export const Route = createFileRoute("/api/public/discover")({
             headers: cors,
           });
         }
-        return discover(body, "api-post");
+        return discover(body, "api");
       },
     },
   },
