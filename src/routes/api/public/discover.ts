@@ -92,10 +92,20 @@ export const Route = createFileRoute("/api/public/discover")({
             },
           }));
 
+        await recordNeedSignal({
+          need,
+          tokens,
+          category: category ?? null,
+          matchedCount: matches.length,
+          topSlug: matches[0]?.slug ?? null,
+          source: "api",
+        });
+
         return new Response(
           JSON.stringify({ need, count: matches.length, matches }, null, 2),
           { headers: cors },
         );
+
       },
     },
   },
