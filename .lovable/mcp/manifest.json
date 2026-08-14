@@ -429,6 +429,74 @@
             "submissions"
           ]
         }
+      },
+      {
+        "name": "report_invocation",
+        "title": "Report what happened when calling an interface",
+        "description": "Close the loop after actually invoking an indexed interface: report success or failure with the status code, error and latency you observed. These reports feed the reliability signal other agents rely on, and surface interfaces whose documented contract no longer matches reality.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 80,
+              "description": "Entry slug that was invoked."
+            },
+            "outcome": {
+              "type": "string",
+              "enum": [
+                "success",
+                "failure"
+              ],
+              "description": "Result of the invocation."
+            },
+            "status_code": {
+              "description": "HTTP status observed.",
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 599
+            },
+            "error": {
+              "description": "Error message or failure reason.",
+              "type": "string",
+              "maxLength": 500
+            },
+            "latency_ms": {
+              "description": "Observed latency.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 600000
+            }
+          },
+          "required": [
+            "slug",
+            "outcome"
+          ]
+        },
+        "outputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string"
+            },
+            "recorded": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "slug",
+            "recorded"
+          ]
+        }
       }
     ]
   }

@@ -31,5 +31,7 @@ export default defineMcp({
     submitEntryTool,
     voteEntryTool,
     listMySubmissionsTool,
+    reportInvocationTool,
+
   ],
 });
