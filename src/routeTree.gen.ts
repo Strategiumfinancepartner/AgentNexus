@@ -28,6 +28,7 @@ import { Route as ApiPublicDiscoverRouteImport } from './routes/api/public/disco
 import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
+import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -127,6 +128,11 @@ const ApiPublicRegistryRoute = ApiPublicRegistryRouteImport.update({
   path: '/api/public/registry',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicReportRoute = ApiPublicReportRouteImport.update({
+  id: '/api/public/report',
+  path: '/api/public/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesByTo {
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesById {
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
+  '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRouteTypes {
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/api/public/health-check'
     | '/api/public/ingest'
     | '/api/public/registry'
+    | '/api/public/report'
     | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -240,6 +250,7 @@ export interface FileRouteTypes {
     | '/api/public/health-check'
     | '/api/public/ingest'
     | '/api/public/registry'
+    | '/api/public/report'
     | '/api/public/registry/$slug'
   id:
     | '__root__'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/api/public/health-check'
     | '/api/public/ingest'
     | '/api/public/registry'
+    | '/api/public/report'
     | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -281,6 +293,7 @@ export interface RootRouteChildren {
   ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
+  ApiPublicReportRoute: typeof ApiPublicReportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -418,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRegistryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/report': {
+      id: '/api/public/report'
+      path: '/api/public/report'
+      fullPath: '/api/public/report'
+      preLoaderRoute: typeof ApiPublicReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/registry/$slug': {
       id: '/api/public/registry/$slug'
       path: '/$slug'
@@ -473,6 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
+  ApiPublicReportRoute: ApiPublicReportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
