@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "@/lib/mcp/supabase";
 import { matchScore, needTokens, reliability } from "@/lib/registry-core";
+import { recordNeedSignal } from "@/lib/telemetry.server";
+
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
