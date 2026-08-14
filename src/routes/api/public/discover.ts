@@ -94,15 +94,48 @@ async function discover(input: unknown, source: "api" | "api-post") {
           category: category ?? null,
           matchedCount: matches.length,
           topSlug: matches[0]?.slug ?? null,
-          source: "api",
+          source,
         });
 
         return new Response(
           JSON.stringify({ need, count: matches.length, matches }, null, 2),
           { headers: cors },
         );
+      }
+    }
+  }
+}
 
+export const Route = createFileRoute("/api/public/discover")({
+  server: {
+    handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
+      GET: async ({ request }) => {
+        const url = new URL(request.url);
+        return discover(
+          {
+            need: url.searchParams.get("need") ?? "",
+            category: url.searchParams.get("category") ?? undefined,
+            min_reliability: url.searchParams.get("min_reliability") ?? undefined,
+            limit: url.searchParams.get("limit") ?? undefined,
+          },
+          "api",
+        );
+      },
+      POST: async ({ request }) => {
+        let body: unknown;
+        try {
+          body = await request.json();
+        } catch {
+          return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+            status: 400,
+            headers: cors,
+          });
+        }
+        return discover(body, "api-post");
       },
     },
   },
+});
+
 });
