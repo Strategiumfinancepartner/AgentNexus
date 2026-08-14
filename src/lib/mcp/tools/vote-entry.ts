@@ -16,8 +16,17 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       throw new ToolError("Sign in to Agent Nexus to vote.");
     }
+    const { consumeRateLimit } = await import("@/lib/telemetry.server");
+    const allowed = await consumeRateLimit("vote_entry", ctx.getUserId() ?? "unknown", 60, 3600);
+    if (!allowed) {
+      return {
+        content: [{ type: "text", text: "Rate limit exceeded: 60 votes per hour." }],
+        isError: true,
+      };
+    }
     const supabase = supabaseForUser(ctx);
     const userId = ctx.getUserId();
+
 
     const { data: entry } = await supabase
       .from("entries")
