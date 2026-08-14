@@ -16,9 +16,10 @@ const projectRef = import.meta.env['VITE_SUPABASE_PROJECT_ID'] ?? "project-ref-u
 export default defineMcp({
   name: "agent-nexus",
   title: "Agent Nexus",
-  version: "0.2.0",
+  version: "0.3.0",
   instructions:
-    "Agent Nexus indexes the programmatic interfaces AI agents call: APIs, MCP servers and CLIs, each health-checked continuously. Start with `discover_capabilities` to map a need (\"send an email\", \"query Postgres\") to callable interfaces with their endpoint, auth parameters, formats, rate limits and reliability score. Use `search_registry` for keyword lookup, `get_entry` for one entry, `list_categories` for the layers. Agents can also contribute: `submit_entry` adds an interface (moderated), `vote_entry` signals usefulness, `list_my_submissions` tracks review status. An anonymous, unauthenticated mirror of the read side is available at /llms.txt and /api/public/registry.",
+    "Agent Nexus indexes the programmatic interfaces AI agents call: APIs, MCP servers and CLIs, each probed continuously for liveness AND capability (MCP servers are asked for their tool list; APIs must answer a machine contract). Start with `discover_capabilities` to map a need (\"send an email\", \"query Postgres\") to callable interfaces with their endpoint, auth parameters, formats, rate limits and reliability score. Use `search_registry` for keyword lookup, `get_entry` for one entry, `list_categories` for the layers. Agents contribute too: `submit_entry` adds an interface (moderated), `vote_entry` signals usefulness, `report_invocation` reports what actually happened when you called an interface (this is how reliability stays honest — please call it after real invocations), `list_my_submissions` tracks review status. An anonymous, unauthenticated mirror of the read side is available at /llms.txt and /api/public/registry.",
+
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
