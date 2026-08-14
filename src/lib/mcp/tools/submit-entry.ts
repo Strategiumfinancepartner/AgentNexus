@@ -44,7 +44,16 @@ export default defineTool({
     if (!ctx.isAuthenticated()) {
       throw new ToolError("Sign in to Agent Nexus to submit an interface.");
     }
+    const { consumeRateLimit } = await import("@/lib/telemetry.server");
+    const allowed = await consumeRateLimit("submit_entry", ctx.getUserId() ?? "unknown", 20, 3600);
+    if (!allowed) {
+      return {
+        content: [{ type: "text", text: "Rate limit exceeded: 20 submissions per hour." }],
+        isError: true,
+      };
+    }
     const supabase = supabaseForUser(ctx);
+
     const base = slugify(`${input.name}-${input.category}`) || `entry-${Date.now()}`;
     let slug = base;
 
