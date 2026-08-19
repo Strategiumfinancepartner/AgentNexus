@@ -118,7 +118,13 @@ function Index() {
             </div>
           </section>
 
+          <section id="registry" className="scroll-mt-24 border-t border-border/60 py-14">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+                Registry
+              </h2>
               <div className="flex gap-1 rounded-full border border-border p-1">
+
                 {FILTERS.map((f) => (
                   <button
                     key={f}
