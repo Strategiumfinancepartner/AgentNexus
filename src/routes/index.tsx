@@ -52,6 +52,13 @@ function Index() {
             >
               Explore
             </Link>
+            <Link
+              to="/connect"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Connect
+            </Link>
+
             <a
               href="/llms.txt"
               className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
@@ -84,18 +91,30 @@ function Index() {
             </h1>
             <p className="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground">
               Agents don't need landing pages — they need interfaces they can
-              call. Agent Nexus catalogs that layer: APIs, MCP servers and CLIs.
+              call. Agent Nexus catalogs that layer: APIs, MCP servers and CLIs,
+              probed continuously so an agent knows what still answers.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                to="/explore"
+                to="/connect"
                 className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Connect an agent
+              </Link>
+              <Link
+                to="/explore"
+                className="inline-flex h-10 items-center rounded-full border border-border px-5 text-sm font-medium transition-colors hover:bg-accent"
               >
                 Browse the registry
               </Link>
-              <code className="inline-flex h-10 items-center rounded-full border border-border px-4 font-mono text-xs text-muted-foreground">
-                GET /mcp
-              </code>
+            </div>
+            <div className="mt-8 overflow-x-auto rounded-xl border border-border/60 bg-card/40 p-4 backdrop-blur-sm">
+              <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-muted-foreground">
+                No account needed
+              </p>
+              <pre className="mt-2 font-mono text-xs leading-relaxed text-foreground/90">
+                <code>{'curl "/api/public/discover?need=send+a+transactional+email"'}</code>
+              </pre>
             </div>
           </section>
 
@@ -105,6 +124,7 @@ function Index() {
                 Registry
               </h2>
               <div className="flex gap-1 rounded-full border border-border p-1">
+
                 {FILTERS.map((f) => (
                   <button
                     key={f}

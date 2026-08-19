@@ -217,3 +217,129 @@ export async function assertReviewer(context: { supabase: any; userId: string })
   if (moderator.error) throw new Error(moderator.error.message);
   if (!admin.data && !moderator.data) throw new Error("Forbidden");
 }
+
+/* ------------------------------------------------------------------ */
+/* Discovery response builder (shared by /api/public/discover + MCP)   */
+/* ------------------------------------------------------------------ */
+
+export type DiscoveryCoverage = "exact" | "partial" | "none";
+
+export type DiscoveryMatch = {
+  slug: string;
+  name: string;
+  category: string;
+  summary: string;
+  match_score: number;
+  matched_on: "capability" | "fallback";
+  capabilities: string[];
+  call: Record<string, unknown>;
+  trust: Record<string, unknown>;
+};
+
+export type DiscoveryResult = {
+  need: string;
+  coverage: DiscoveryCoverage;
+  count: number;
+  matches: DiscoveryMatch[];
+  uncovered: boolean;
+  note: string;
+  next_steps: string[];
+};
+
+function shape(entry: any, score: number, matched_on: DiscoveryMatch["matched_on"]): DiscoveryMatch {
+  const rel = reliability(entry);
+  return {
+    slug: entry.slug,
+    name: entry.name,
+    category: entry.category,
+    summary: entry.summary,
+    match_score: score,
+    matched_on,
+    capabilities: entry.capabilities ?? [],
+    call: {
+      endpoint: entry.endpoint,
+      auth_mode: entry.auth_mode,
+      auth_params: entry.auth_params ?? [],
+      input_format: entry.input_format || null,
+      output_format: entry.output_format || null,
+      rate_limit: entry.rate_limit || null,
+      pricing: entry.pricing || null,
+      example: entry.invocation_example || null,
+      docs_url: entry.docs_url,
+    },
+    trust: {
+      verified: Boolean(entry.verified),
+      reliability_score: rel.score,
+      uptime: rel.uptime,
+      samples: rel.samples,
+      avg_latency_ms: rel.avgLatencyMs,
+      last_probe_ok: entry.health_ok,
+      last_probe_at: entry.health_checked_at,
+    },
+  };
+}
+
+/**
+ * Builds a discovery answer that is NEVER empty: when nothing matches the need
+ * we degrade to the most reliable interfaces of the requested layer and mark
+ * the need as uncovered, so the calling agent still gets something actionable
+ * and the registry learns where its coverage gaps are.
+ */
+export function buildDiscovery(
+  rows: any[],
+  options: {
+    need: string;
+    tokens: string[];
+    category?: string | null;
+    minReliability?: number;
+    limit?: number;
+  },
+): DiscoveryResult {
+  const { need, tokens } = options;
+  const minReliability = options.minReliability ?? 0;
+  const limit = options.limit ?? 5;
+
+  const scored = rows
+    .map((entry) => ({ entry, score: matchScore(entry, tokens), rel: reliability(entry) }))
+    .filter(({ score, rel }) => score > 0 && (rel.score ?? 0) >= minReliability)
+    .sort((a, b) => b.score - a.score || (b.rel.score ?? 0) - (a.rel.score ?? 0));
+
+  if (scored.length > 0) {
+    const matches = scored.slice(0, limit).map(({ entry, score }) => shape(entry, score, "capability"));
+    const strong = (scored[0]?.score ?? 0) >= 6;
+    return {
+      need,
+      coverage: strong ? "exact" : "partial",
+      count: matches.length,
+      matches,
+      uncovered: false,
+      note: strong
+        ? "Matched on declared capabilities. Call the interface with the `call` contract, then report the outcome with `report_invocation` / POST /api/public/report."
+        : "Weak match: these interfaces mention part of the need but do not declare it as a capability. Verify before calling, and report the outcome so the registry improves.",
+      next_steps: ["report_invocation after calling", "submit_entry if you know a better interface"],
+    };
+  }
+
+  const fallback = rows
+    .map((entry) => ({ entry, rel: reliability(entry) }))
+    .sort(
+      (a, b) =>
+        (b.rel.score ?? -1) - (a.rel.score ?? -1) ||
+        Number(Boolean(b.entry.verified)) - Number(Boolean(a.entry.verified)),
+    )
+    .slice(0, Math.min(limit, 3))
+    .map(({ entry }) => shape(entry, 0, "fallback"));
+
+  return {
+    need,
+    coverage: "none",
+    count: 0,
+    matches: fallback,
+    uncovered: true,
+    note: "No interface in the registry declares this capability yet. The need has been recorded as a coverage gap. The entries below are the most reliable interfaces in this layer, returned as a starting point only — they are NOT a match.",
+    next_steps: [
+      "submit_entry (MCP) or POST /api/public/report to tell Nexus which interface solves this",
+      "retry with a broader need, e.g. drop product names and describe the action",
+    ],
+  };
+}

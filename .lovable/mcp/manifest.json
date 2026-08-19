@@ -19,7 +19,7 @@
       {
         "name": "discover_capabilities",
         "title": "Discover a callable interface for a need",
-        "description": "Match a natural-language need (e.g. 'send a transactional email', 'query Postgres') to the interfaces that can do it, ranked by capability match and verified reliability. Returns everything needed to call them: endpoint, auth mode, auth parameters, formats, rate limit and cost.",
+        "description": "Match a natural-language need (e.g. 'send a transactional email', 'query Postgres') to the interfaces that can do it, ranked by capability match and verified reliability. Returns everything needed to call them: endpoint, auth mode, auth parameters, formats, rate limit and cost. Always returns a payload: when nothing matches, `coverage` is 'none', `uncovered` is true and the entries returned are reliable starting points, not matches.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -69,8 +69,17 @@
             "need": {
               "type": "string"
             },
+            "coverage": {
+              "type": "string"
+            },
             "count": {
               "type": "number"
+            },
+            "uncovered": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
             },
             "matches": {
               "type": "array",
@@ -79,7 +88,10 @@
           },
           "required": [
             "need",
+            "coverage",
             "count",
+            "uncovered",
+            "note",
             "matches"
           ]
         }
