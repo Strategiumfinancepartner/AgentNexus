@@ -27,10 +27,12 @@ export type CatalogEntry = {
   verified?: boolean;
 };
 
+import { EXTRA_CATALOG } from "./catalog-extended";
+
 const bearer = [{ name: "Authorization", location: "header", required: true }];
 const apiKeyHeader = (name: string) => [{ name, location: "header", required: true }];
 
-export const CATALOG: CatalogEntry[] = [
+const BASE_CATALOG: CatalogEntry[] = [
   /* ---------------------------------------------------------------- APIs */
   {
     slug: "resend-api",
@@ -960,3 +962,5 @@ export const CATALOG: CatalogEntry[] = [
     pricing: "Free (Apache-2.0)",
   },
 ];
+
+export const CATALOG: CatalogEntry[] = [...BASE_CATALOG, ...EXTRA_CATALOG];
