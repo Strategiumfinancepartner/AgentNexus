@@ -12,10 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ServerDotjsonRouteImport } from './routes/server[.]json'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -24,6 +27,7 @@ import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as Char91DotwellKnownChar93McpJsonRouteImport } from './routes/[.well-known]/mcp.json'
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
 import { Route as ApiPublicDiscoverRouteImport } from './routes/api/public/discover'
 import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
@@ -46,6 +50,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConnectRoute = ConnectRouteImport.update({
+  id: '/connect',
+  path: '/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
@@ -64,6 +73,16 @@ const McpRoute = McpRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServerDotjsonRoute = ServerDotjsonRouteImport.update({
+  id: '/server.json',
+  path: '/server.json',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93ListToolsRoute =
@@ -109,6 +128,12 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93McpJsonRoute =
+  Char91DotwellKnownChar93McpJsonRouteImport.update({
+    id: '/.well-known/mcp/json',
+    path: '/.well-known/mcp/json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedEntrySlugRoute = AuthenticatedEntrySlugRouteImport.update({
   id: '/entry/$slug',
   path: '/entry/$slug',
@@ -148,10 +173,13 @@ const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/connect': typeof ConnectRoute
   '/explore': typeof ExploreRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
+  '/server.json': typeof ServerDotjsonRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -160,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/.well-known/mcp/json': typeof Char91DotwellKnownChar93McpJsonRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
@@ -171,10 +200,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/connect': typeof ConnectRoute
   '/explore': typeof ExploreRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
+  '/server.json': typeof ServerDotjsonRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -183,6 +215,7 @@ export interface FileRoutesByTo {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/.well-known/mcp/json': typeof Char91DotwellKnownChar93McpJsonRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
@@ -196,10 +229,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/connect': typeof ConnectRoute
   '/explore': typeof ExploreRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/pricing': typeof PricingRoute
+  '/server.json': typeof ServerDotjsonRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -208,6 +244,7 @@ export interface FileRoutesById {
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/.well-known/mcp/json': typeof Char91DotwellKnownChar93McpJsonRoute
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
@@ -221,10 +258,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/connect'
     | '/explore'
     | '/llms.txt'
     | '/mcp'
     | '/pricing'
+    | '/server.json'
+    | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -233,6 +273,7 @@ export interface FileRouteTypes {
     | '/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/.well-known/mcp/json'
     | '/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
@@ -244,10 +285,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/connect'
     | '/explore'
     | '/llms.txt'
     | '/mcp'
     | '/pricing'
+    | '/server.json'
+    | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -256,6 +300,7 @@ export interface FileRouteTypes {
     | '/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/.well-known/mcp/json'
     | '/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
@@ -268,10 +313,13 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/connect'
     | '/explore'
     | '/llms.txt'
     | '/mcp'
     | '/pricing'
+    | '/server.json'
+    | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
@@ -280,6 +328,7 @@ export interface FileRouteTypes {
     | '/_authenticated/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
+    | '/.well-known/mcp/json'
     | '/_authenticated/entry/$slug'
     | '/api/public/discover'
     | '/api/public/health-check'
@@ -293,14 +342,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ConnectRoute: typeof ConnectRoute
   ExploreRoute: typeof ExploreRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   McpRoute: typeof McpRoute
   PricingRoute: typeof PricingRoute
+  ServerDotjsonRoute: typeof ServerDotjsonRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  Char91DotwellKnownChar93McpJsonRoute: typeof Char91DotwellKnownChar93McpJsonRoute
   ApiPublicDiscoverRoute: typeof ApiPublicDiscoverRoute
   ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
@@ -331,6 +384,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/connect': {
+      id: '/connect'
+      path: '/connect'
+      fullPath: '/connect'
+      preLoaderRoute: typeof ConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore': {
       id: '/explore'
       path: '/explore'
@@ -357,6 +417,20 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/server.json': {
+      id: '/server.json'
+      path: '/server.json'
+      fullPath: '/server.json'
+      preLoaderRoute: typeof ServerDotjsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -413,6 +487,13 @@ declare module '@tanstack/react-router' {
       path: '/.mcp/invoke-tool/$tool'
       fullPath: '/.mcp/invoke-tool/$tool'
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/mcp/json': {
+      id: '/.well-known/mcp/json'
+      path: '/.well-known/mcp/json'
+      fullPath: '/.well-known/mcp/json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93McpJsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/entry/$slug': {
@@ -501,15 +582,19 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ConnectRoute: ConnectRoute,
   ExploreRoute: ExploreRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   McpRoute: McpRoute,
   PricingRoute: PricingRoute,
+  ServerDotjsonRoute: ServerDotjsonRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  Char91DotwellKnownChar93McpJsonRoute: Char91DotwellKnownChar93McpJsonRoute,
   ApiPublicDiscoverRoute: ApiPublicDiscoverRoute,
   ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,

@@ -10,5 +10,40 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# AI agents and crawlers are the intended audience here.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 User-agent: *
 Allow: /
+
+# Machine-readable surfaces
+# /llms.txt              full catalog, prompt-ready
+# /server.json           MCP registry manifest
+# /.well-known/mcp.json  MCP endpoint discovery
+# /api/public/discover   need -> callable interface
+Sitemap: /sitemap.xml
