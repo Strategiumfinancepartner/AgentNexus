@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * Endpoint discovery for MCP clients and crawlers that probe well-known paths
  * before attempting a connection.
  */
-export const Route = createFileRoute("/.well-known/mcp/json")({
+export const Route = createFileRoute("/.well-known/mcp.json")({
   server: {
     handlers: {
       GET: async ({ request }) => {
