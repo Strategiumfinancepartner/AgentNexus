@@ -52,6 +52,13 @@ function Index() {
             >
               Explore
             </Link>
+            <Link
+              to="/connect"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Connect
+            </Link>
+
             <a
               href="/llms.txt"
               className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
