@@ -206,6 +206,8 @@ function Connect() {
                 ["/api/public/discover", "capability discovery"],
                 ["/api/public/capabilities", "vocabulary index"],
                 ["/api/public/entries.ndjson", "bulk catalog, one JSON per line"],
+                ["/api/public/status", "30-day uptime + incident history"],
+                ["/status", "public status page"],
                 ["/api/public/report", "invocation feedback"],
                 ["/feed.xml", "new interfaces, pollable RSS"],
                 ["/sitemap.xml", "human + crawler index"],
