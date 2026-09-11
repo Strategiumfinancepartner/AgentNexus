@@ -430,6 +430,26 @@ export type Database = {
         }
         Returns: boolean
       }
+      public_recent_incidents: {
+        Args: { _limit?: number }
+        Returns: {
+          checked_at: string
+          error: string
+          name: string
+          slug: string
+          status_code: number
+        }[]
+      }
+      public_uptime_daily: {
+        Args: { _days?: number }
+        Returns: {
+          avg_latency: number
+          checks: number
+          day: string
+          ok: number
+          slug: string
+        }[]
+      }
       trigger_health_check_run: { Args: never; Returns: undefined }
     }
     Enums: {
