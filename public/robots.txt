@@ -47,3 +47,10 @@ Allow: /
 # /.well-known/mcp.json  MCP endpoint discovery
 # /api/public/discover   need -> callable interface
 Sitemap: /sitemap.xml
+# /agents.txt            short directive file for agents
+# /openapi.json          OpenAPI 3.1 spec
+# /.well-known/ai-plugin.json  plugin manifest
+# /.well-known/agent.json      A2A agent card
+# /api/public/capabilities     vocabulary index
+# /api/public/entries.ndjson   bulk catalog
+# /feed.xml              new interfaces feed
