@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AgentsDottxtRouteImport } from './routes/agents[.]txt'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
@@ -33,7 +35,9 @@ import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
+import { Route as ApiPublicCapabilitiesRouteImport } from './routes/api/public/capabilities'
 import { Route as ApiPublicDiscoverRouteImport } from './routes/api/public/discover'
+import { Route as ApiPublicEntriesDotndjsonRouteImport } from './routes/api/public/entries[.]ndjson'
 import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
@@ -49,6 +53,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgentsDottxtRoute = AgentsDottxtRouteImport.update({
+  id: '/agents.txt',
+  path: '/agents.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -62,6 +71,11 @@ const ConnectRoute = ConnectRouteImport.update({
 const ExploreRoute = ExploreRouteImport.update({
   id: '/explore',
   path: '/explore',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
+  id: '/feed.xml',
+  path: '/feed.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
@@ -166,11 +180,22 @@ const AuthenticatedEntrySlugRoute = AuthenticatedEntrySlugRouteImport.update({
   path: '/entry/$slug',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicCapabilitiesRoute = ApiPublicCapabilitiesRouteImport.update({
+  id: '/api/public/capabilities',
+  path: '/api/public/capabilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDiscoverRoute = ApiPublicDiscoverRouteImport.update({
   id: '/api/public/discover',
   path: '/api/public/discover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEntriesDotndjsonRoute =
+  ApiPublicEntriesDotndjsonRouteImport.update({
+    id: '/api/public/entries.ndjson',
+    path: '/api/public/entries.ndjson',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHealthCheckRoute = ApiPublicHealthCheckRouteImport.update({
   id: '/api/public/health-check',
   path: '/api/public/health-check',
@@ -199,9 +224,11 @@ const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
   '/connect': typeof ConnectRoute
   '/explore': typeof ExploreRoute
+  '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
@@ -221,7 +248,9 @@ export interface FileRoutesByFullPath {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
+  '/api/public/capabilities': typeof ApiPublicCapabilitiesRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
+  '/api/public/entries.ndjson': typeof ApiPublicEntriesDotndjsonRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
@@ -230,9 +259,11 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
   '/connect': typeof ConnectRoute
   '/explore': typeof ExploreRoute
+  '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
@@ -252,7 +283,9 @@ export interface FileRoutesByTo {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
+  '/api/public/capabilities': typeof ApiPublicCapabilitiesRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
+  '/api/public/entries.ndjson': typeof ApiPublicEntriesDotndjsonRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
@@ -263,9 +296,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
   '/connect': typeof ConnectRoute
   '/explore': typeof ExploreRoute
+  '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
@@ -285,7 +320,9 @@ export interface FileRoutesById {
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
+  '/api/public/capabilities': typeof ApiPublicCapabilitiesRoute
   '/api/public/discover': typeof ApiPublicDiscoverRoute
+  '/api/public/entries.ndjson': typeof ApiPublicEntriesDotndjsonRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
@@ -296,9 +333,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/agents.txt'
     | '/auth'
     | '/connect'
     | '/explore'
+    | '/feed.xml'
     | '/llms.txt'
     | '/mcp'
     | '/openapi.json'
@@ -318,7 +357,9 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
+    | '/api/public/capabilities'
     | '/api/public/discover'
+    | '/api/public/entries.ndjson'
     | '/api/public/health-check'
     | '/api/public/ingest'
     | '/api/public/registry'
@@ -327,9 +368,11 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/agents.txt'
     | '/auth'
     | '/connect'
     | '/explore'
+    | '/feed.xml'
     | '/llms.txt'
     | '/mcp'
     | '/openapi.json'
@@ -349,7 +392,9 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/entry/$slug'
+    | '/api/public/capabilities'
     | '/api/public/discover'
+    | '/api/public/entries.ndjson'
     | '/api/public/health-check'
     | '/api/public/ingest'
     | '/api/public/registry'
@@ -359,9 +404,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/agents.txt'
     | '/auth'
     | '/connect'
     | '/explore'
+    | '/feed.xml'
     | '/llms.txt'
     | '/mcp'
     | '/openapi.json'
@@ -381,7 +428,9 @@ export interface FileRouteTypes {
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/entry/$slug'
+    | '/api/public/capabilities'
     | '/api/public/discover'
+    | '/api/public/entries.ndjson'
     | '/api/public/health-check'
     | '/api/public/ingest'
     | '/api/public/registry'
@@ -392,9 +441,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AgentsDottxtRoute: typeof AgentsDottxtRoute
   AuthRoute: typeof AuthRoute
   ConnectRoute: typeof ConnectRoute
   ExploreRoute: typeof ExploreRoute
+  FeedDotxmlRoute: typeof FeedDotxmlRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   McpRoute: typeof McpRoute
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
@@ -409,7 +460,9 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicCapabilitiesRoute: typeof ApiPublicCapabilitiesRoute
   ApiPublicDiscoverRoute: typeof ApiPublicDiscoverRoute
+  ApiPublicEntriesDotndjsonRoute: typeof ApiPublicEntriesDotndjsonRoute
   ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
@@ -432,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agents.txt': {
+      id: '/agents.txt'
+      path: '/agents.txt'
+      fullPath: '/agents.txt'
+      preLoaderRoute: typeof AgentsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -451,6 +511,13 @@ declare module '@tanstack/react-router' {
       path: '/explore'
       fullPath: '/explore'
       preLoaderRoute: typeof ExploreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/feed.xml': {
+      id: '/feed.xml'
+      path: '/feed.xml'
+      fullPath: '/feed.xml'
+      preLoaderRoute: typeof FeedDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/llms.txt': {
@@ -586,11 +653,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEntrySlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/capabilities': {
+      id: '/api/public/capabilities'
+      path: '/api/public/capabilities'
+      fullPath: '/api/public/capabilities'
+      preLoaderRoute: typeof ApiPublicCapabilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/discover': {
       id: '/api/public/discover'
       path: '/api/public/discover'
       fullPath: '/api/public/discover'
       preLoaderRoute: typeof ApiPublicDiscoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/entries.ndjson': {
+      id: '/api/public/entries.ndjson'
+      path: '/api/public/entries.ndjson'
+      fullPath: '/api/public/entries.ndjson'
+      preLoaderRoute: typeof ApiPublicEntriesDotndjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/health-check': {
@@ -664,9 +745,11 @@ const ApiPublicRegistryRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AgentsDottxtRoute: AgentsDottxtRoute,
   AuthRoute: AuthRoute,
   ConnectRoute: ConnectRoute,
   ExploreRoute: ExploreRoute,
+  FeedDotxmlRoute: FeedDotxmlRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   McpRoute: McpRoute,
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,
@@ -686,7 +769,9 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicCapabilitiesRoute: ApiPublicCapabilitiesRoute,
   ApiPublicDiscoverRoute: ApiPublicDiscoverRoute,
+  ApiPublicEntriesDotndjsonRoute: ApiPublicEntriesDotndjsonRoute,
   ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
