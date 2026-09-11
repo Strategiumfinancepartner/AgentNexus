@@ -22,6 +22,7 @@ import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ServerDotjsonRouteImport } from './routes/server[.]json'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StatusRouteImport } from './routes/status'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-card[.]json'
 import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent[.]json'
@@ -42,6 +43,7 @@ import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/he
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
 import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
+import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -106,6 +108,11 @@ const ServerDotjsonRoute = ServerDotjsonRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93ListToolsRoute =
@@ -216,6 +223,11 @@ const ApiPublicReportRoute = ApiPublicReportRouteImport.update({
   path: '/api/public/report',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStatusRoute = ApiPublicStatusRouteImport.update({
+  id: '/api/public/status',
+  path: '/api/public/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -235,6 +247,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/status': typeof StatusRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -255,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
+  '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesByTo {
@@ -270,6 +284,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/status': typeof StatusRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -290,6 +305,7 @@ export interface FileRoutesByTo {
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
+  '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesById {
@@ -307,6 +323,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/status': typeof StatusRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -327,6 +344,7 @@ export interface FileRoutesById {
   '/api/public/ingest': typeof ApiPublicIngestRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
+  '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRouteTypes {
@@ -344,6 +362,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/server.json'
     | '/sitemap.xml'
+    | '/status'
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
@@ -364,6 +383,7 @@ export interface FileRouteTypes {
     | '/api/public/ingest'
     | '/api/public/registry'
     | '/api/public/report'
+    | '/api/public/status'
     | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -379,6 +399,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/server.json'
     | '/sitemap.xml'
+    | '/status'
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
@@ -399,6 +420,7 @@ export interface FileRouteTypes {
     | '/api/public/ingest'
     | '/api/public/registry'
     | '/api/public/report'
+    | '/api/public/status'
     | '/api/public/registry/$slug'
   id:
     | '__root__'
@@ -415,6 +437,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/server.json'
     | '/sitemap.xml'
+    | '/status'
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
@@ -435,6 +458,7 @@ export interface FileRouteTypes {
     | '/api/public/ingest'
     | '/api/public/registry'
     | '/api/public/report'
+    | '/api/public/status'
     | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -452,6 +476,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   ServerDotjsonRoute: typeof ServerDotjsonRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StatusRoute: typeof StatusRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -467,6 +492,7 @@ export interface RootRouteChildren {
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
   ApiPublicReportRoute: typeof ApiPublicReportRoute
+  ApiPublicStatusRoute: typeof ApiPublicStatusRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -560,6 +586,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -702,6 +735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicReportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/status': {
+      id: '/api/public/status'
+      path: '/api/public/status'
+      fullPath: '/api/public/status'
+      preLoaderRoute: typeof ApiPublicStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/registry/$slug': {
       id: '/api/public/registry/$slug'
       path: '/$slug'
@@ -756,6 +796,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   ServerDotjsonRoute: ServerDotjsonRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StatusRoute: StatusRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute,
@@ -776,6 +817,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicIngestRoute: ApiPublicIngestRoute,
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
   ApiPublicReportRoute: ApiPublicReportRoute,
+  ApiPublicStatusRoute: ApiPublicStatusRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
