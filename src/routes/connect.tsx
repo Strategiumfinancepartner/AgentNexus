@@ -195,11 +195,19 @@ function Connect() {
             <ul className="mt-6 space-y-2 font-mono text-[12px]">
               {[
                 ["/llms.txt", "full catalog, plain text, prompt-ready"],
+                ["/agents.txt", "short directive file for autonomous agents"],
+                ["/openapi.json", "OpenAPI 3.1 — GPT Actions, LangChain, n8n"],
+                ["/.well-known/ai-plugin.json", "plugin manifest"],
+                ["/.well-known/agent.json", "A2A agent card"],
+                ["/.well-known/agent-card.json", "A2A agent card (new path)"],
                 ["/server.json", "MCP registry manifest"],
                 ["/.well-known/mcp.json", "endpoint discovery"],
                 ["/api/public/registry", "JSON search"],
                 ["/api/public/discover", "capability discovery"],
+                ["/api/public/capabilities", "vocabulary index"],
+                ["/api/public/entries.ndjson", "bulk catalog, one JSON per line"],
                 ["/api/public/report", "invocation feedback"],
+                ["/feed.xml", "new interfaces, pollable RSS"],
                 ["/sitemap.xml", "human + crawler index"],
               ].map(([path, desc]) => (
                 <li key={path}>

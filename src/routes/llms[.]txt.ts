@@ -103,6 +103,15 @@ export const Route = createFileRoute("/llms.txt")({
 - Capability discovery (no auth): ${origin}/api/public/discover?need=send+an+email&limit=5
 - JSON list: ${origin}/api/public/registry?q=&category=api|mcp|cli&limit=50
 - JSON entry: ${origin}/api/public/registry/{slug}
+- Capability vocabulary: ${origin}/api/public/capabilities
+- Bulk catalog (NDJSON): ${origin}/api/public/entries.ndjson
+- Invocation feedback: POST ${origin}/api/public/report
+- OpenAPI 3.1 spec: ${origin}/openapi.json
+- Plugin manifest: ${origin}/.well-known/ai-plugin.json
+- A2A agent card: ${origin}/.well-known/agent.json (also /.well-known/agent-card.json)
+- MCP discovery: ${origin}/.well-known/mcp.json and ${origin}/server.json
+- New entries feed: ${origin}/feed.xml
+- Short directive file: ${origin}/agents.txt
 - This file: ${origin}/llms.txt
 
 ${section("api", "APIs")}${section("mcp", "MCP servers")}${section("cli", "CLIs")}## Notes
