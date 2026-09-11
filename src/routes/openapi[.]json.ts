@@ -163,6 +163,28 @@ export const Route = createFileRoute("/openapi.json")({
                 },
               },
             },
+            "/api/public/status": {
+              get: {
+                operationId: "getStatus",
+                summary: "30-day uptime, latency and incident history for every approved interface",
+                parameters: [
+                  {
+                    name: "slug",
+                    in: "query",
+                    required: false,
+                    schema: { type: "string" },
+                    description: "Limit the history to a single interface",
+                  },
+                ],
+                responses: {
+                  "200": {
+                    description: "Reliability history",
+                    content: { "application/json": { schema: { type: "object" } } },
+                  },
+                  "404": { description: "Unknown slug" },
+                },
+              },
+            },
             "/api/public/report": {
               post: {
                 operationId: "reportInvocation",

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           .eq("status", "approved")
           .limit(2000);
 
-        const staticPaths = ["/", "/explore", "/connect", "/pricing", "/auth"];
+        const staticPaths = ["/", "/explore", "/status", "/connect", "/pricing", "/auth"];
         const urls = [
           ...staticPaths.map(
             (p) =>

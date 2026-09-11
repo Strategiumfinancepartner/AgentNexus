@@ -105,6 +105,7 @@ export const Route = createFileRoute("/llms.txt")({
 - JSON entry: ${origin}/api/public/registry/{slug}
 - Capability vocabulary: ${origin}/api/public/capabilities
 - Bulk catalog (NDJSON): ${origin}/api/public/entries.ndjson
+- Public uptime history: ${origin}/api/public/status (per interface: ?slug={slug})
 - Invocation feedback: POST ${origin}/api/public/report
 - OpenAPI 3.1 spec: ${origin}/openapi.json
 - Plugin manifest: ${origin}/.well-known/ai-plugin.json
