@@ -20,6 +20,7 @@ Search:        GET  ${origin}/api/public/registry?q=<keyword>&category=api|mcp|c
 Entry:         GET  ${origin}/api/public/registry/{slug}
 Vocabulary:    GET  ${origin}/api/public/capabilities
 Bulk catalog:  GET  ${origin}/api/public/entries.ndjson
+Uptime:        GET  ${origin}/api/public/status  (add ?slug={slug} for one interface)
 Feedback:      POST ${origin}/api/public/report  {"slug":"...","outcome":"success|failure|auth_error|rate_limited|timeout"}
 
 ## Native protocols
