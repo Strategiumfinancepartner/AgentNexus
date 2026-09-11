@@ -59,6 +59,12 @@ function Index() {
               Connect
             </Link>
 
+            <Link
+              to="/status"
+              className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Status
+            </Link>
             <a
               href="/llms.txt"
               className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
