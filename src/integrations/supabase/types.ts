@@ -69,34 +69,40 @@ export type Database = {
       }
       api_keys: {
         Row: {
+          agent_label: string
           created_at: string
           id: string
           key_hash: string
           key_prefix: string
+          kind: string
           last_used_at: string | null
           name: string
           revoked_at: string | null
-          user_id: string
+          user_id: string | null
         }
         Insert: {
+          agent_label?: string
           created_at?: string
           id?: string
           key_hash: string
           key_prefix: string
+          kind?: string
           last_used_at?: string | null
           name?: string
           revoked_at?: string | null
-          user_id: string
+          user_id?: string | null
         }
         Update: {
+          agent_label?: string
           created_at?: string
           id?: string
           key_hash?: string
           key_prefix?: string
+          kind?: string
           last_used_at?: string | null
           name?: string
           revoked_at?: string | null
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
