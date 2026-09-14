@@ -3,13 +3,15 @@ import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "@/lib/mcp/supabase";
 import { buildDiscovery, needTokens } from "@/lib/registry-core";
 import { recordNeedSignal } from "@/lib/telemetry.server";
+import { enforceQuota, quotaExceeded } from "@/lib/quota.server";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
   "Content-Type": "application/json",
-  "Cache-Control": "public, max-age=60",
+  "Cache-Control": "no-store",
 };
 
 const querySchema = z.object({
