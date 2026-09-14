@@ -43,6 +43,7 @@ import { Route as ApiPublicDiscoverRouteImport } from './routes/api/public/disco
 import { Route as ApiPublicEntriesDotndjsonRouteImport } from './routes/api/public/entries[.]ndjson'
 import { Route as ApiPublicHealthCheckRouteImport } from './routes/api/public/health-check'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
+import { Route as ApiPublicKeysRouteImport } from './routes/api/public/keys'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
 import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
@@ -226,6 +227,11 @@ const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
   path: '/api/public/ingest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicKeysRoute = ApiPublicKeysRouteImport.update({
+  id: '/api/public/keys',
+  path: '/api/public/keys',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicRegistryRoute = ApiPublicRegistryRouteImport.update({
   id: '/api/public/registry',
   path: '/api/public/registry',
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/api/public/entries.ndjson': typeof ApiPublicEntriesDotndjsonRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/api/public/keys': typeof ApiPublicKeysRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/api/public/entries.ndjson': typeof ApiPublicEntriesDotndjsonRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/api/public/keys': typeof ApiPublicKeysRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/api/public/entries.ndjson': typeof ApiPublicEntriesDotndjsonRoute
   '/api/public/health-check': typeof ApiPublicHealthCheckRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/api/public/keys': typeof ApiPublicKeysRoute
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
@@ -411,6 +420,7 @@ export interface FileRouteTypes {
     | '/api/public/entries.ndjson'
     | '/api/public/health-check'
     | '/api/public/ingest'
+    | '/api/public/keys'
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
@@ -451,6 +461,7 @@ export interface FileRouteTypes {
     | '/api/public/entries.ndjson'
     | '/api/public/health-check'
     | '/api/public/ingest'
+    | '/api/public/keys'
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
@@ -492,6 +503,7 @@ export interface FileRouteTypes {
     | '/api/public/entries.ndjson'
     | '/api/public/health-check'
     | '/api/public/ingest'
+    | '/api/public/keys'
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
@@ -527,6 +539,7 @@ export interface RootRouteChildren {
   ApiPublicEntriesDotndjsonRoute: typeof ApiPublicEntriesDotndjsonRoute
   ApiPublicHealthCheckRoute: typeof ApiPublicHealthCheckRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
+  ApiPublicKeysRoute: typeof ApiPublicKeysRoute
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
   ApiPublicReportRoute: typeof ApiPublicReportRoute
   ApiPublicStatusRoute: typeof ApiPublicStatusRoute
@@ -773,6 +786,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicIngestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/keys': {
+      id: '/api/public/keys'
+      path: '/api/public/keys'
+      fullPath: '/api/public/keys'
+      preLoaderRoute: typeof ApiPublicKeysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/registry': {
       id: '/api/public/registry'
       path: '/api/public/registry'
@@ -878,6 +898,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicEntriesDotndjsonRoute: ApiPublicEntriesDotndjsonRoute,
   ApiPublicHealthCheckRoute: ApiPublicHealthCheckRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
+  ApiPublicKeysRoute: ApiPublicKeysRoute,
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
   ApiPublicReportRoute: ApiPublicReportRoute,
   ApiPublicStatusRoute: ApiPublicStatusRoute,
