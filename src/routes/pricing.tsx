@@ -68,6 +68,7 @@ const plans = [
 function PricingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PaymentTestModeBanner />
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
           <Link to="/" className="font-mono text-[11px] tracking-[0.28em] uppercase">
@@ -120,12 +121,16 @@ function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                to={plan.cta.to}
-                className="mt-6 inline-block font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70"
-              >
-                {plan.cta.label} →
-              </Link>
+              {"priceId" in plan && plan.priceId ? (
+                <SubscribeButton priceId={plan.priceId} label="Subscribe" />
+              ) : (
+                <Link
+                  to={plan.cta.to}
+                  className="mt-6 inline-block font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70"
+                >
+                  {plan.cta.label} →
+                </Link>
+              )}
             </section>
           ))}
         </div>
