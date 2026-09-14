@@ -126,21 +126,35 @@ export const submitEntry = createServerFn({ method: "POST" })
     throw new Error("Could not allocate a unique slug for this entry.");
   });
 
-/** Roles, profile and community reputation for the signed-in user. */
+/** Roles, profile, subscription status and community reputation for the signed-in user. */
 export const getMyAccess = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const [{ data: isAdmin }, { data: isModerator }, { data: profile }, { data: reputation }] =
-      await Promise.all([
-        context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
-        context.supabase.rpc("has_role", { _user_id: context.userId, _role: "moderator" }),
-        context.supabase
-          .from("profiles")
-          .select("display_name")
-          .eq("id", context.userId)
-          .maybeSingle(),
-        context.supabase.rpc("get_reputation", { _user_id: context.userId }),
-      ]);
+    const [
+      { data: isAdmin },
+      { data: isModerator },
+      { data: profile },
+      { data: reputation },
+      { data: liveSub },
+      { data: sandboxSub },
+    ] = await Promise.all([
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "moderator" }),
+      context.supabase
+        .from("profiles")
+        .select("display_name")
+        .eq("id", context.userId)
+        .maybeSingle(),
+      context.supabase.rpc("get_reputation", { _user_id: context.userId }),
+      context.supabase.rpc("has_active_subscription", {
+        user_uuid: context.userId,
+        check_env: "live",
+      }),
+      context.supabase.rpc("has_active_subscription", {
+        user_uuid: context.userId,
+        check_env: "sandbox",
+      }),
+    ]);
 
     const rep = (Array.isArray(reputation) ? reputation[0] : reputation) as
       | { approved_entries: number; votes_received: number }
@@ -151,6 +165,7 @@ export const getMyAccess = createServerFn({ method: "POST" })
       isAdmin: Boolean(isAdmin),
       isModerator: Boolean(isModerator),
       isReviewer: Boolean(isAdmin) || Boolean(isModerator),
+      hasSubscription: Boolean(liveSub) || Boolean(sandboxSub),
       displayName: (profile as { display_name?: string } | null)?.display_name ?? "",
       reputation: {
         approvedEntries: rep?.approved_entries ?? 0,

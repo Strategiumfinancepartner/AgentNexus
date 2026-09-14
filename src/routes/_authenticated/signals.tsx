@@ -51,7 +51,7 @@ function SignalsPage() {
   const isReviewer = access.data?.isReviewer === true;
 
   return (
-    <AppShell isAdmin={isReviewer}>
+    <AppShell isAdmin={isReviewer} hasSubscription={access.data?.hasSubscription ?? false}>
       <main className="py-10">
         <h1 className="font-mono text-xs uppercase tracking-[0.28em] text-muted-foreground">
           Demand signals

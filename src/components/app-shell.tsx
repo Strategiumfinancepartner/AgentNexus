@@ -6,9 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 export function AppShell({
   children,
   isAdmin = false,
+  hasSubscription = true,
 }: {
   children: ReactNode;
   isAdmin?: boolean;
+  hasSubscription?: boolean;
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -19,6 +21,8 @@ export function AppShell({
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
+
+  const showPricing = hasSubscription === false;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
@@ -34,6 +38,15 @@ export function AppShell({
             Agent Nexus
           </Link>
           <nav className="flex items-center gap-4 font-mono text-[11px] uppercase tracking-widest">
+            {showPricing && (
+              <Link
+                to="/pricing"
+                className="rounded-full bg-primary px-2.5 py-1 text-primary-foreground transition-opacity hover:opacity-90"
+                activeProps={{ className: "bg-primary text-primary-foreground" }}
+              >
+                Pricing
+              </Link>
+            )}
             <Link
               to="/registry"
               className="text-muted-foreground transition-colors hover:text-foreground"
@@ -82,6 +95,16 @@ export function AppShell({
             </button>
           </nav>
         </header>
+        {showPricing && (
+          <div className="-mx-6 border-b border-primary/20 bg-primary/[0.04] px-6 py-2.5">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
+              You are on the Free tier.{" "}
+              <Link to="/pricing" className="underline underline-offset-4 hover:text-primary-foreground">
+                Upgrade →
+              </Link>
+            </p>
+          </div>
+        )}
         {children}
       </div>
     </div>

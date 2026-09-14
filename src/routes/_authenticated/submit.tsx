@@ -129,7 +129,7 @@ function SubmitPage() {
   });
 
   return (
-    <AppShell isAdmin={access.data?.isAdmin ?? false}>
+    <AppShell isAdmin={access.data?.isAdmin ?? false} hasSubscription={access.data?.hasSubscription ?? false}>
       <main className="pt-14 pb-20">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
           Contribute
