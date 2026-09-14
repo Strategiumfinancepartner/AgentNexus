@@ -101,7 +101,7 @@ function AdminPage() {
   });
 
   return (
-    <AppShell isAdmin={access.data?.isReviewer ?? false}>
+    <AppShell isAdmin={access.data?.isReviewer ?? false} hasSubscription={access.data?.hasSubscription ?? false}>
       <main className="pt-14 pb-20">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
           Trust layer

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { listMyKeys, createApiKey, revokeApiKey } from "@/lib/keys.functions";
+import { getMyAccess } from "@/lib/registry.functions";
 
 export const Route = createFileRoute("/_authenticated/keys")({
   head: () => ({
@@ -30,11 +31,13 @@ export const Route = createFileRoute("/_authenticated/keys")({
 function KeysPage() {
   const queryClient = useQueryClient();
   const fetchKeys = useServerFn(listMyKeys);
+  const fetchAccess = useServerFn(getMyAccess);
   const create = useServerFn(createApiKey);
   const revoke = useServerFn(revokeApiKey);
   const [name, setName] = useState("");
   const [freshKey, setFreshKey] = useState<string | null>(null);
 
+  const access = useQuery({ queryKey: ["access"], queryFn: () => fetchAccess() });
   const { data, isLoading } = useQuery({
     queryKey: ["api-keys"],
     queryFn: () => fetchKeys(),
@@ -63,7 +66,7 @@ function KeysPage() {
   const quota = data?.quota;
 
   return (
-    <AppShell>
+    <AppShell hasSubscription={access.data?.hasSubscription ?? false}>
       <main className="pt-12 pb-24">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">Access</p>
         <h1 className="mt-4 text-3xl font-medium tracking-tight">API keys</h1>

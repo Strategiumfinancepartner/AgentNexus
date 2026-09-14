@@ -52,7 +52,7 @@ function EntryPage() {
   });
 
   return (
-    <AppShell isAdmin={access.data?.isReviewer ?? false}>
+    <AppShell isAdmin={access.data?.isReviewer ?? false} hasSubscription={access.data?.hasSubscription ?? false}>
       <main className="pt-12 pb-20">
         <Link
           to="/registry"
