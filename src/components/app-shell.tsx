@@ -48,6 +48,13 @@ export function AppShell({
             >
               Submit
             </Link>
+            <Link
+              to="/keys"
+              className="text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "text-primary" }}
+            >
+              Keys
+            </Link>
             {isAdmin && (
               <Link
                 to="/admin"
