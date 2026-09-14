@@ -25,7 +25,38 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
+/**
+ * Records every hit on a machine-facing surface (/mcp, /llms.txt, the public
+ * JSON APIs, the well-known manifests). HTML pages are ignored. Best-effort:
+ * a logging failure never affects the response.
+ */
+const accessLogMiddleware = createMiddleware().server(async (ctx: any) => {
+  const request: Request | undefined = ctx?.request;
+  let surface: string | null = null;
+  if (request) {
+    try {
+      const { surfaceFor } = await import("./lib/access-log.server");
+      surface = surfaceFor(new URL(request.url).pathname);
+    } catch {
+      surface = null;
+    }
+  }
+
+  const result = await ctx.next();
+
+  if (request && surface) {
+    try {
+      const { logAccess } = await import("./lib/access-log.server");
+      await logAccess(request, surface);
+    } catch {
+      // swallow
+    }
+  }
+
+  return result;
+});
+
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware, csrfMiddleware],
+  requestMiddleware: [errorMiddleware, csrfMiddleware, accessLogMiddleware],
 }));

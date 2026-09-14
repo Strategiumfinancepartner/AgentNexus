@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_events: {
+        Row: {
+          actor: string
+          api_key_id: string | null
+          country: string
+          created_at: string
+          id: string
+          method: string
+          path: string
+          referer: string
+          surface: string
+          tier: string
+          user_agent: string
+          user_id: string | null
+        }
+        Insert: {
+          actor?: string
+          api_key_id?: string | null
+          country?: string
+          created_at?: string
+          id?: string
+          method?: string
+          path: string
+          referer?: string
+          surface: string
+          tier?: string
+          user_agent?: string
+          user_id?: string | null
+        }
+        Update: {
+          actor?: string
+          api_key_id?: string | null
+          country?: string
+          created_at?: string
+          id?: string
+          method?: string
+          path?: string
+          referer?: string
+          surface?: string
+          tier?: string
+          user_agent?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_events_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_keys: {
         Row: {
           created_at: string
@@ -559,6 +612,21 @@ export type Database = {
           ok: number
           slug: string
         }[]
+      }
+      record_access_event: {
+        Args: {
+          _actor: string
+          _api_key_id: string
+          _country: string
+          _method: string
+          _path: string
+          _referer: string
+          _surface: string
+          _tier: string
+          _user_agent: string
+          _user_id: string
+        }
+        Returns: undefined
       }
       trigger_health_check_run: { Args: never; Returns: undefined }
     }

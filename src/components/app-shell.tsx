@@ -86,6 +86,15 @@ export function AppShell({
                 Signals
               </Link>
             )}
+            {isAdmin && (
+              <Link
+                to="/audience"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+                activeProps={{ className: "text-primary" }}
+              >
+                Audience
+              </Link>
+            )}
 
             <button
               onClick={signOut}
