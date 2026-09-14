@@ -1,6 +1,6 @@
 /** Server-only health + capability probing for registry entries. */
 
-import { probeCapabilities } from "@/lib/capability-probe.server";
+import { hasPlaceholder, probeCapabilities } from "@/lib/capability-probe.server";
 
 
 export type ProbeResult = {
@@ -12,9 +12,14 @@ export type ProbeResult = {
 
 const TIMEOUT_MS = 8000;
 
-/** Only http(s) endpoints are probeable; CLI entries are not network endpoints. */
+/**
+ * Only concrete http(s) endpoints are probeable. CLI entries are not network
+ * endpoints, and templated URLs (`{baseId}`, `<project-ref>`) are not callable
+ * as-is — probing them would report a fake outage.
+ */
 export function isProbeable(endpoint: string): boolean {
-  return /^https?:\/\//i.test(endpoint.trim());
+  const url = endpoint.trim();
+  return /^https?:\/\//i.test(url) && !hasPlaceholder(url);
 }
 
 export async function probeEndpoint(endpoint: string): Promise<ProbeResult> {
@@ -44,8 +49,9 @@ export async function probeEndpoint(endpoint: string): Promise<ProbeResult> {
       response = await attempt("GET");
     }
     const latency = Date.now() - started;
-    // Auth-protected endpoints answering 401/403 are alive and correctly gated.
-    const ok = response.status < 500 && response.status !== 404;
+    // Any answer below 500 proves the host is alive: 401/403 are correct gating,
+    // and 404/405 on a REST base path simply means no handler at the root.
+    const ok = response.status < 500;
     return {
       ok,
       status_code: response.status,
