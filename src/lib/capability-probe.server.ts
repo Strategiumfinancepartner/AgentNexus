@@ -195,8 +195,15 @@ async function probeHttpApi(endpoint: string): Promise<CapabilityProbe> {
       if (response.status >= 500) {
         return { probeable: true, ok: false, detail: `Server error HTTP ${response.status}`, tools: [] };
       }
-      if (response.status === 404) {
-        return { probeable: true, ok: false, detail: "Endpoint not found (HTTP 404)", tools: [] };
+      // A REST base path commonly has no GET handler: the host answered, so the
+      // interface is reachable, but the contract itself stays unverified.
+      if (response.status === 404 || response.status === 405) {
+        return {
+          probeable: true,
+          ok: null,
+          detail: `Base path answered HTTP ${response.status} — no GET contract at the root, call a documented operation`,
+          tools: [],
+        };
       }
       if (contentType.includes("json")) {
         return {
@@ -230,6 +237,9 @@ export async function probeCapabilities(entry: {
   const endpoint = entry.endpoint.trim();
   if (entry.category === "cli") {
     return notProbeable("CLI interfaces are validated locally, not over the network");
+  }
+  if (hasPlaceholder(endpoint)) {
+    return notProbeable("Templated endpoint (placeholders) — resolved per call, not probeable");
   }
   if (!isHttp(endpoint)) {
     return notProbeable("Locally launched interface (stdio) — not remotely probeable");
