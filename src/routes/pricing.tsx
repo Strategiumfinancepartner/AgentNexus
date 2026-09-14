@@ -165,7 +165,7 @@ function PricingPage() {
         </section>
 
         <p className="mt-12 font-mono text-[11px] text-muted-foreground/60">
-          Billing is not wired yet — plans describe the model, not an active checkout.
+          Checkout is live. Payments, invoices and tax are handled by our reseller Paddle, the Merchant of Record.
         </p>
       </main>
     </div>
