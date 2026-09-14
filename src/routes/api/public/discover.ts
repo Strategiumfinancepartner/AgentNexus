@@ -22,7 +22,12 @@ const querySchema = z.object({
 });
 
 /** Capability discovery: match a natural-language need to callable interfaces. */
-async function discover(input: unknown, source: "api" | "mcp" | "web") {
+async function discover(
+  input: unknown,
+  source: "api" | "mcp" | "web",
+  extraHeaders: Record<string, string> = {},
+) {
+  const cors = { ...corsBase, ...extraHeaders };
   const parsed = querySchema.safeParse(input);
   if (!parsed.success) {
     return new Response(
