@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "@/lib/mcp/supabase";
+import { enforceQuota, quotaExceeded } from "@/lib/quota.server";
 
-const cors = {
+const corsBase = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
   "Content-Type": "application/json",
-  "Cache-Control": "public, max-age=60",
+  "Cache-Control": "no-store",
 };
 
 const querySchema = z.object({
@@ -19,9 +21,12 @@ const querySchema = z.object({
 export const Route = createFileRoute("/api/public/registry")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
+      OPTIONS: async () => new Response(null, { status: 204, headers: corsBase }),
       GET: async ({ request }) => {
         const url = new URL(request.url);
+        const quota = await enforceQuota(request);
+        if (!quota.allowed) return quotaExceeded(quota, url.origin, corsBase);
+        const cors = { ...corsBase, ...quota.headers };
         const parsed = querySchema.safeParse({
           q: url.searchParams.get("q") ?? undefined,
           category: url.searchParams.get("category") ?? undefined,

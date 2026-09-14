@@ -3,13 +3,15 @@ import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "@/lib/mcp/supabase";
 import { buildDiscovery, needTokens } from "@/lib/registry-core";
 import { recordNeedSignal } from "@/lib/telemetry.server";
+import { enforceQuota, quotaExceeded } from "@/lib/quota.server";
 
-const cors = {
+const corsBase = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
   "Content-Type": "application/json",
-  "Cache-Control": "public, max-age=60",
+  "Cache-Control": "no-store",
 };
 
 const querySchema = z.object({
@@ -20,7 +22,12 @@ const querySchema = z.object({
 });
 
 /** Capability discovery: match a natural-language need to callable interfaces. */
-async function discover(input: unknown, source: "api" | "mcp" | "web") {
+async function discover(
+  input: unknown,
+  source: "api" | "mcp" | "web",
+  extraHeaders: Record<string, string> = {},
+) {
+  const cors = { ...corsBase, ...extraHeaders };
   const parsed = querySchema.safeParse(input);
   if (!parsed.success) {
     return new Response(
@@ -73,9 +80,11 @@ async function discover(input: unknown, source: "api" | "mcp" | "web") {
 export const Route = createFileRoute("/api/public/discover")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers: cors }),
+      OPTIONS: async () => new Response(null, { status: 204, headers: corsBase }),
       GET: async ({ request }) => {
         const url = new URL(request.url);
+        const quota = await enforceQuota(request);
+        if (!quota.allowed) return quotaExceeded(quota, url.origin, corsBase);
         return discover(
           {
             need: url.searchParams.get("need") ?? "",
@@ -84,19 +93,22 @@ export const Route = createFileRoute("/api/public/discover")({
             limit: url.searchParams.get("limit") ?? undefined,
           },
           "api",
+          quota.headers,
         );
       },
       POST: async ({ request }) => {
+        const quota = await enforceQuota(request);
+        if (!quota.allowed) return quotaExceeded(quota, new URL(request.url).origin, corsBase);
         let body: unknown;
         try {
           body = await request.json();
         } catch {
           return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
             status: 400,
-            headers: cors,
+            headers: corsBase,
           });
         }
-        return discover(body, "api");
+        return discover(body, "api", quota.headers);
       },
     },
   },

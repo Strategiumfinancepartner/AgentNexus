@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAnon } from "@/lib/mcp/supabase";
+import { enforceQuota, quotaExceeded } from "@/lib/quota.server";
 
-const headers = {
+const baseHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
-  "Cache-Control": "public, max-age=300",
+  "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
+  "Cache-Control": "no-store",
 };
 
 type Row = { category: string; capabilities: string[] | null; tags: string[] | null };
@@ -16,9 +19,12 @@ type Row = { category: string; capabilities: string[] | null; tags: string[] | n
 export const Route = createFileRoute("/api/public/capabilities")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers }),
+      OPTIONS: async () => new Response(null, { status: 204, headers: baseHeaders }),
       GET: async ({ request }) => {
         const origin = new URL(request.url).origin;
+        const quota = await enforceQuota(request);
+        if (!quota.allowed) return quotaExceeded(quota, origin, baseHeaders);
+        const headers = { ...baseHeaders, ...quota.headers };
         const { data, error } = await supabaseAnon()
           .from("entries")
           .select("category, capabilities, tags")

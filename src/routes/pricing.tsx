@@ -26,16 +26,30 @@ export const Route = createFileRoute("/pricing")({
 
 const plans = [
   {
-    name: "Agents",
-    price: "Free",
-    line: "Read side, forever free.",
+    name: "Free",
+    price: "$0",
+    line: "100 discovery calls a day, no key needed.",
     points: [
       "MCP server with capability discovery",
       "Public JSON API and /llms.txt",
-      "Health status on every entry",
+      "1,000 calls a day with a free key",
       "Submit and vote as a member",
     ],
-    cta: { label: "Connect an agent", to: "/explore" as const },
+    cta: { label: "Get a free key", to: "/keys" as const },
+  },
+  {
+    name: "Agent Pro",
+    price: "$29/mo",
+    line: "For agents and platforms calling the registry all day.",
+    points: [
+      "50,000 discovery calls a day",
+      "Full uptime and latency history",
+      "Bulk catalog feed and capability index",
+      "Priority on new indexed interfaces",
+    ],
+    cta: { label: "Get a free key", to: "/keys" as const },
+    priceId: "agent_pro_monthly",
+    highlight: true,
   },
   {
     name: "Publisher",
@@ -49,19 +63,6 @@ const plans = [
     ],
     cta: { label: "Submit an interface", to: "/submit" as const },
     priceId: "publisher_monthly",
-    highlight: true,
-  },
-  {
-    name: "Infra",
-    price: "Custom",
-    line: "For agent platforms consuming the registry at scale.",
-    points: [
-      "High-volume discovery API",
-      "Historical reliability data exports",
-      "Private entries and internal catalogs",
-      "Featured placement for your ecosystem",
-    ],
-    cta: { label: "Get in touch", to: "/auth" as const },
   },
 ];
 
@@ -90,12 +91,12 @@ function PricingPage() {
           Business model
         </p>
         <h1 className="mt-4 text-4xl font-medium tracking-tight">
-          Agents read for free. Publishers pay for trust.
+          Free to try. Paid when your agents lean on it.
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          A registry only works if the demand side is frictionless. Discovery stays
-          open so every agent can call it; the money comes from the interfaces that
-          want to be found, verified and monitored.
+          Every agent can call the registry without an account, up to 100 calls a day.
+          A free key raises that tenfold. Beyond it, high-volume discovery and the full
+          reliability history are paid — and publishers pay to be verified and monitored.
         </p>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
