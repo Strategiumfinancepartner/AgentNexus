@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { verifyWebhook, EventName, type PaddleEnv } from "@/lib/paddle.server";
 
 let client: ReturnType<typeof createClient> | null = null;
-function getSupabase() {
+function getSupabase(): any {
   if (!client) {
     client = createClient(process.env['SUPABASE_URL']!, process.env['SUPABASE_SERVICE_ROLE_KEY']!);
   }
