@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      api_usage: {
+        Row: {
+          actor: string
+          calls: number
+          day: string
+          id: string
+        }
+        Insert: {
+          actor: string
+          calls?: number
+          day?: string
+          id?: string
+        }
+        Update: {
+          actor?: string
+          calls?: number
+          day?: string
+          id?: string
+        }
+        Relationships: []
+      }
       entries: {
         Row: {
           auth_mode: string
@@ -455,6 +509,10 @@ export type Database = {
       }
     }
     Functions: {
+      consume_api_quota: {
+        Args: { _actor: string; _limit: number }
+        Returns: Json
+      }
       consume_rate_limit: {
         Args: {
           _actor: string
