@@ -30,6 +30,7 @@ import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport
 import { Route as Char91DotwellKnownChar93McpChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp[.]json'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAudienceRouteImport } from './routes/_authenticated/audience'
 import { Route as AuthenticatedKeysRouteImport } from './routes/_authenticated/keys'
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
@@ -158,6 +159,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAudienceRoute = AuthenticatedAudienceRouteImport.update({
+  id: '/audience',
+  path: '/audience',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedKeysRoute = AuthenticatedKeysRouteImport.update({
   id: '/keys',
   path: '/keys',
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/audience': typeof AuthenticatedAudienceRoute
   '/keys': typeof AuthenticatedKeysRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/signals': typeof AuthenticatedSignalsRoute
@@ -307,6 +314,7 @@ export interface FileRoutesByTo {
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/audience': typeof AuthenticatedAudienceRoute
   '/keys': typeof AuthenticatedKeysRoute
   '/registry': typeof AuthenticatedRegistryRoute
   '/signals': typeof AuthenticatedSignalsRoute
@@ -348,6 +356,7 @@ export interface FileRoutesById {
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/audience': typeof AuthenticatedAudienceRoute
   '/_authenticated/keys': typeof AuthenticatedKeysRoute
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/.well-known/mcp.json'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/audience'
     | '/keys'
     | '/registry'
     | '/signals'
@@ -428,6 +438,7 @@ export interface FileRouteTypes {
     | '/.well-known/mcp.json'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
+    | '/audience'
     | '/keys'
     | '/registry'
     | '/signals'
@@ -468,6 +479,7 @@ export interface FileRouteTypes {
     | '/.well-known/mcp.json'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
+    | '/_authenticated/audience'
     | '/_authenticated/keys'
     | '/_authenticated/registry'
     | '/_authenticated/signals'
@@ -670,6 +682,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/audience': {
+      id: '/_authenticated/audience'
+      path: '/audience'
+      fullPath: '/audience'
+      preLoaderRoute: typeof AuthenticatedAudienceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/keys': {
       id: '/_authenticated/keys'
       path: '/keys'
@@ -794,6 +813,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAudienceRoute: typeof AuthenticatedAudienceRoute
   AuthenticatedKeysRoute: typeof AuthenticatedKeysRoute
   AuthenticatedRegistryRoute: typeof AuthenticatedRegistryRoute
   AuthenticatedSignalsRoute: typeof AuthenticatedSignalsRoute
@@ -803,6 +823,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAudienceRoute: AuthenticatedAudienceRoute,
   AuthenticatedKeysRoute: AuthenticatedKeysRoute,
   AuthenticatedRegistryRoute: AuthenticatedRegistryRoute,
   AuthenticatedSignalsRoute: AuthenticatedSignalsRoute,
