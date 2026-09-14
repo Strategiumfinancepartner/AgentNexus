@@ -23,6 +23,10 @@ Bulk catalog:  GET  ${origin}/api/public/entries.ndjson
 Uptime:        GET  ${origin}/api/public/status  (add ?slug={slug} for one interface)
 Feedback:      POST ${origin}/api/public/report  {"slug":"...","outcome":"success|failure|auth_error|rate_limited|timeout"}
 
+## Fully autonomous access (no human in the loop)
+Self-register:  POST ${origin}/api/public/keys  {"agent":"your-name"}  -> {"key":"nx_…"} then send x-api-key
+MCP read-only:  ${origin}/api/public/mcp   (no auth, no consent screen, Streamable HTTP, stateless)
+
 ## Native protocols
 MCP (Streamable HTTP):  ${origin}/mcp        (OAuth 2.1 with dynamic client registration for write tools)
 MCP discovery:          ${origin}/.well-known/mcp.json

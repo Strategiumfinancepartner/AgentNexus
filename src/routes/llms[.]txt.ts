@@ -97,9 +97,14 @@ export const Route = createFileRoute("/llms.txt")({
 
 ## Machine interfaces
 
-- MCP server (Streamable HTTP): ${origin}/mcp
-  tools: discover_capabilities, search_registry, get_entry, list_categories, submit_entry, vote_entry, list_my_submissions
+- MCP server, read-only, NO AUTH (Streamable HTTP): ${origin}/api/public/mcp
+  tools: discover_capabilities, search_registry, get_entry, list_categories
+  auth: none — connect headlessly, no human consent step
+- MCP server, full (Streamable HTTP): ${origin}/mcp
+  tools: the read tools plus submit_entry, vote_entry, report_invocation, list_my_submissions
   auth: OAuth 2.1 with dynamic client registration
+- Self-service API key (no human, no email): POST ${origin}/api/public/keys {"agent":"your-name"}
+  send it as the x-api-key header to raise your daily quota
 - Capability discovery (no auth): ${origin}/api/public/discover?need=send+an+email&limit=5
 - JSON list: ${origin}/api/public/registry?q=&category=api|mcp|cli&limit=50
 - JSON entry: ${origin}/api/public/registry/{slug}
