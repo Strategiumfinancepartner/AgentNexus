@@ -44,6 +44,7 @@ import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
 import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -228,6 +229,12 @@ const ApiPublicStatusRoute = ApiPublicStatusRouteImport.update({
   path: '/api/public/status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicRegistrySlugRoute = ApiPublicRegistrySlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -269,6 +276,7 @@ export interface FileRoutesByFullPath {
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesByTo {
@@ -306,6 +314,7 @@ export interface FileRoutesByTo {
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRoutesById {
@@ -345,6 +354,7 @@ export interface FileRoutesById {
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
 }
 export interface FileRouteTypes {
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
+    | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
+    | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
   id:
     | '__root__'
@@ -459,6 +471,7 @@ export interface FileRouteTypes {
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
+    | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -493,6 +506,7 @@ export interface RootRouteChildren {
   ApiPublicRegistryRoute: typeof ApiPublicRegistryRouteWithChildren
   ApiPublicReportRoute: typeof ApiPublicReportRoute
   ApiPublicStatusRoute: typeof ApiPublicStatusRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -742,6 +756,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/registry/$slug': {
       id: '/api/public/registry/$slug'
       path: '/$slug'
@@ -818,6 +839,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicRegistryRoute: ApiPublicRegistryRouteWithChildren,
   ApiPublicReportRoute: ApiPublicReportRoute,
   ApiPublicStatusRoute: ApiPublicStatusRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
