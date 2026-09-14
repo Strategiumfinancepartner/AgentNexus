@@ -47,6 +47,12 @@ function Index() {
           </span>
           <div className="flex items-center gap-4">
             <Link
+              to="/pricing"
+              className="rounded-full bg-primary px-2.5 py-1 font-mono text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Pricing
+            </Link>
+            <Link
               to="/explore"
               className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
