@@ -9,7 +9,7 @@ type Props = { priceId: string; label: string };
 export function SubscribeButton({ priceId, label }: Props) {
   const navigate = useNavigate();
   const { openCheckout, loading } = usePaddleCheckout();
-  const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; email?: string | undefined } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
