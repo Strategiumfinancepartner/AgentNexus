@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { SubscribeButton } from "@/components/subscribe-button";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -46,6 +48,7 @@ const plans = [
       "Ownership of your entry's metadata",
     ],
     cta: { label: "Submit an interface", to: "/submit" as const },
+    priceId: "publisher_monthly",
     highlight: true,
   },
   {
