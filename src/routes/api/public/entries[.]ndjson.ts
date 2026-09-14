@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PUBLIC_COLUMNS, supabaseAnon } from "@/lib/mcp/supabase";
+import { enforceQuota, quotaExceeded } from "@/lib/quota.server";
 
-const headers = {
+const baseHeaders = {
   "Content-Type": "application/x-ndjson; charset=utf-8",
   "Access-Control-Allow-Origin": "*",
-  "Cache-Control": "public, max-age=300",
+  "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
+  "Cache-Control": "no-store",
 };
 
 /**
@@ -14,8 +17,15 @@ const headers = {
 export const Route = createFileRoute("/api/public/entries.ndjson")({
   server: {
     handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers }),
-      GET: async () => {
+      OPTIONS: async () => new Response(null, { status: 204, headers: baseHeaders }),
+      GET: async ({ request }) => {
+        const quota = await enforceQuota(request);
+        if (!quota.allowed)
+          return quotaExceeded(quota, new URL(request.url).origin, {
+            ...baseHeaders,
+            "Content-Type": "application/json",
+          });
+        const headers = { ...baseHeaders, ...quota.headers };
         const { data, error } = await supabaseAnon()
           .from("entries")
           .select(PUBLIC_COLUMNS)
