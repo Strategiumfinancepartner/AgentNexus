@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { SubscribeButton } from "@/components/subscribe-button";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -46,6 +48,7 @@ const plans = [
       "Ownership of your entry's metadata",
     ],
     cta: { label: "Submit an interface", to: "/submit" as const },
+    priceId: "publisher_monthly",
     highlight: true,
   },
   {
@@ -65,6 +68,7 @@ const plans = [
 function PricingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <PaymentTestModeBanner />
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
           <Link to="/" className="font-mono text-[11px] tracking-[0.28em] uppercase">
@@ -117,12 +121,16 @@ function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                to={plan.cta.to}
-                className="mt-6 inline-block font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70"
-              >
-                {plan.cta.label} →
-              </Link>
+              {"priceId" in plan && plan.priceId ? (
+                <SubscribeButton priceId={plan.priceId} label="Subscribe" />
+              ) : (
+                <Link
+                  to={plan.cta.to}
+                  className="mt-6 inline-block font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70"
+                >
+                  {plan.cta.label} →
+                </Link>
+              )}
             </section>
           ))}
         </div>
@@ -157,7 +165,7 @@ function PricingPage() {
         </section>
 
         <p className="mt-12 font-mono text-[11px] text-muted-foreground/60">
-          Billing is not wired yet — plans describe the model, not an active checkout.
+          Checkout is live. Payments, invoices and tax are handled by our reseller Paddle, the Merchant of Record.
         </p>
       </main>
     </div>
