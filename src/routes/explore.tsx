@@ -35,9 +35,21 @@ export const Route = createFileRoute("/explore")({
 
 const FILTERS = ["all", "api", "mcp", "cli"] as const;
 
+/** Interfaces that are not remote HTTP endpoints can't be monitored — say why. */
+function unmonitoredLabel(entry: PublicEntry) {
+  if (entry.category === "cli") return "local cli";
+  if (!/^https?:\/\//i.test(entry.endpoint)) return "local (stdio)";
+  if (/[{<][^{}<>\s]+[}>]/.test(entry.endpoint)) return "templated url";
+  return "awaiting probe";
+}
+
 function Health({ entry }: { entry: PublicEntry }) {
   const label =
-    entry.health_ok === null ? "unchecked" : entry.health_ok ? "operational" : "unreachable";
+    entry.health_ok === null
+      ? unmonitoredLabel(entry)
+      : entry.health_ok
+        ? "operational"
+        : "unreachable";
   const tone =
     entry.health_ok === null
       ? "text-muted-foreground"
