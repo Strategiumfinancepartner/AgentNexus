@@ -28,6 +28,11 @@ function isHttp(endpoint: string) {
   return /^https?:\/\//i.test(endpoint.trim());
 }
 
+/** `{baseId}` / `<project-ref>` style endpoints are templates, not callable URLs. */
+export function hasPlaceholder(endpoint: string) {
+  return /[{<][^{}<>\s]+[}>]/.test(endpoint);
+}
+
 async function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -91,11 +96,30 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
         };
       }
       if (payload && typeof payload === "object" && "error" in payload) {
-        const message = (payload as { error?: { message?: string } }).error?.message;
+        const message = String(
+          (payload as { error?: { message?: string } }).error?.message ?? "unknown",
+        );
+        // A session/initialize requirement is correct MCP behaviour, not a failure.
+        if (/session|initialize|not initialized/i.test(message)) {
+          return {
+            probeable: true,
+            ok: true,
+            detail: "Reachable, MCP session handshake required before tools/list",
+            tools: [],
+          };
+        }
         return {
           probeable: true,
           ok: false,
-          detail: `JSON-RPC error: ${String(message ?? "unknown").slice(0, 160)}`,
+          detail: `JSON-RPC error: ${message.slice(0, 160)}`,
+          tools: [],
+        };
+      }
+      if (response.status === 404 || response.status === 405) {
+        return {
+          probeable: true,
+          ok: null,
+          detail: `Endpoint answered HTTP ${response.status} to tools/list — transport may differ (SSE vs streamable HTTP)`,
           tools: [],
         };
       }
