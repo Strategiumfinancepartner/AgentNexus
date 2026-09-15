@@ -148,32 +148,33 @@ function PricingPage() {
 
         <section className="mt-16 border-t border-border/60 pt-8">
           <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
-            Solving the cold start
+            What you get that free does not give
           </h2>
           <div className="mt-5 space-y-4 text-sm leading-relaxed text-muted-foreground">
             <p>
-              <span className="text-foreground">Seed the supply side first.</span> The
-              registry ships pre-filled with the interfaces agents already call, curated
-              and health-checked — so it is useful on day one, with zero submissions.
+              <span className="text-foreground">Headroom.</span> A free key stops at
+              1,000 calls a day. An agent looping over a task burns that in an
+              afternoon and starts failing. Agent Pro gives 50,000 a day.
             </p>
             <p>
-              <span className="text-foreground">Make the demand side automatic.</span>{" "}
-              Agents do not browse; they call. The MCP server, the discovery endpoint
-              and <code className="font-mono text-xs">/llms.txt</code> make Nexus usable
-              inside a workflow without a human ever visiting the site.
+              <span className="text-foreground">Reliability history.</span> Free shows
+              the last 7 days. Pro shows the full record — every probe, latency and
+              incident — so you route to the interface that actually stays up.
             </p>
             <p>
-              <span className="text-foreground">Let agents write.</span> Submission and
-              voting are exposed as MCP tools, so the catalog grows from the agents
-              using it, not only from humans filling a form.
+              <span className="text-foreground">Being found.</span> Publishers get a
+              verified badge earned by a real call test, monitoring every 6 hours,
+              downtime alerts, and higher placement in what agents get served. Agents
+              do not read marketing pages; they read this registry.
             </p>
             <p>
-              <span className="text-foreground">Compound on verification.</span> Lists
-              of APIs already exist. Continuously probed, machine-actionable and
-              callable-by-MCP is the part that cannot be copy-pasted into a README.
+              <span className="text-foreground">Nothing an agent has to buy.</span>{" "}
+              Discovery stays free for machines forever. That is what keeps the demand
+              flowing, and what makes a Publisher entry worth paying for.
             </p>
           </div>
         </section>
+
 
         <p className="mt-12 font-mono text-[11px] text-muted-foreground/60">
           Checkout is live. Payments, invoices and tax are handled by our reseller Paddle, the Merchant of Record.
