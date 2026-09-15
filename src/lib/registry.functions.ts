@@ -116,7 +116,27 @@ export const submitEntry = createServerFn({ method: "POST" })
         .select("slug, status")
         .single();
 
-      if (!error) return row as { slug: string; status: string };
+      if (!error) {
+        const email = (context.claims as { email?: string } | undefined)?.email;
+        if (email) {
+          try {
+            const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+            await sendTemplateEmail("submission-received", email, {
+              idempotencyKey: `submission-received:${slug}`,
+              replyTo: "support@agentnexus.app",
+              templateData: {
+                entryName: data.name,
+                category: data.category,
+                endpoint: data.endpoint,
+                entryUrl: `https://agentnexus.app/entry/${slug}`,
+              },
+            });
+          } catch (mailError) {
+            console.error("submission-received email failed", mailError);
+          }
+        }
+        return row as { slug: string; status: string };
+      }
       if (error.code === "23505") {
         slug = `${base}-${Math.random().toString(36).slice(2, 6)}`;
         continue;
