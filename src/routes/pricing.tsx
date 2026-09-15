@@ -118,11 +118,9 @@ function PricingPage() {
               <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
                 {plan.audience}
               </p>
+              <p className="mt-2 text-base font-medium tracking-tight">{plan.name}</p>
+              <p className="mt-1 text-2xl font-medium tracking-tight">{plan.price}</p>
 
-              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                {plan.name}
-              </p>
-              <p className="mt-3 text-2xl font-medium tracking-tight">{plan.price}</p>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
                 {plan.line}
               </p>
