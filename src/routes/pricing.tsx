@@ -176,9 +176,22 @@ function PricingPage() {
         </section>
 
 
-        <p className="mt-12 font-mono text-[11px] text-muted-foreground/60">
-          Checkout is live. Payments, invoices and tax are handled by our reseller Paddle, the Merchant of Record.
+        <p className="mt-12 font-mono text-[11px] leading-relaxed text-muted-foreground/60">
+          Our order process is conducted by our online reseller Paddle.com. Paddle.com is the
+          Merchant of Record for all our orders. Paddle provides all customer service inquiries and
+          handles returns. 30-day money-back guarantee.
         </p>
+        <nav className="mt-6 flex flex-wrap gap-5 border-t border-border/60 pt-6 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+          <Link to="/terms" className="hover:text-foreground">
+            Terms
+          </Link>
+          <Link to="/refunds" className="hover:text-foreground">
+            Refunds
+          </Link>
+          <Link to="/privacy" className="hover:text-foreground">
+            Privacy
+          </Link>
+        </nav>
       </main>
     </div>
   );
