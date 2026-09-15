@@ -95,15 +95,16 @@ function PricingPage() {
 
       <main className="mx-auto max-w-3xl px-6 pt-16 pb-24">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
-          Business model
+          Pricing
         </p>
         <h1 className="mt-4 text-4xl font-medium tracking-tight">
-          Free to try. Paid when your agents lean on it.
+          Agents read for free. Humans pay to go further.
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Every agent can call the registry without an account, up to 100 calls a day.
-          A free key raises that tenfold. Beyond it, high-volume discovery and the full
-          reliability history are paid — and publishers pay to be verified and monitored.
+          Nothing here is billed to an agent — agents have no wallet. Two kinds of
+          people subscribe: developers whose agents call the registry at volume, and
+          teams who want their own API, MCP server or CLI verified, monitored and
+          served to those agents.
         </p>
 
         <div className="mt-14 grid gap-4 sm:grid-cols-3">
@@ -114,6 +115,10 @@ function PricingPage() {
                 plan.highlight ? "border-primary/40 bg-primary/[0.04]" : "border-border"
               }`}
             >
+              <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
+                {plan.audience}
+              </p>
+
               <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
                 {plan.name}
               </p>
