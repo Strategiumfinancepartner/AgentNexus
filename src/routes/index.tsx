@@ -242,11 +242,22 @@ function Index() {
           </section>
         </main>
 
-        <footer className="flex items-center justify-between border-t border-border/60 py-8 font-mono text-[11px] text-muted-foreground">
+        <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border/60 py-8 font-mono text-[11px] text-muted-foreground">
           <span>{registry.length} callable surfaces indexed</span>
-          <Link to="/pricing" className="transition-colors hover:text-foreground">
-            pricing
-          </Link>
+          <nav className="flex flex-wrap gap-5">
+            <Link to="/pricing" className="transition-colors hover:text-foreground">
+              pricing
+            </Link>
+            <Link to="/terms" className="transition-colors hover:text-foreground">
+              terms
+            </Link>
+            <Link to="/refunds" className="transition-colors hover:text-foreground">
+              refunds
+            </Link>
+            <Link to="/privacy" className="transition-colors hover:text-foreground">
+              privacy
+            </Link>
+          </nav>
         </footer>
 
       </div>
