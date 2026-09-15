@@ -3,6 +3,15 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
+const isLovableInternal = (request?: Request) => {
+  if (!request) return false;
+  try {
+    return new URL(request.url).pathname.startsWith("/lovable/");
+  } catch {
+    return false;
+  }
+};
+
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
     return await next();
@@ -22,7 +31,8 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 // file opts out, so re-add it explicitly to keep server functions protected
 // from cross-site requests.
 const csrfMiddleware = createCsrfMiddleware({
-  filter: (ctx) => ctx.handlerType === "serverFn",
+  filter: (ctx: any) =>
+    ctx.handlerType === "serverFn" && !isLovableInternal(ctx?.request),
 });
 
 /**
@@ -32,6 +42,7 @@ const csrfMiddleware = createCsrfMiddleware({
  */
 const accessLogMiddleware = createMiddleware().server(async (ctx: any) => {
   const request: Request | undefined = ctx?.request;
+  if (isLovableInternal(request)) return ctx.next();
   let surface: string | null = null;
   if (request) {
     try {
