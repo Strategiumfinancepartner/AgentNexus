@@ -27,25 +27,29 @@ export const Route = createFileRoute("/pricing")({
 const plans = [
   {
     name: "Free",
+    audience: "Trying it out",
     price: "$0",
-    line: "100 discovery calls a day, no key needed.",
+    line: "Enough to prototype an agent and see if the registry helps.",
     points: [
-      "MCP server with capability discovery",
-      "Public JSON API and /llms.txt",
+      "100 calls a day with no account",
       "1,000 calls a day with a free key",
+      "Search, capability discovery, MCP server",
+      "Last 7 days of uptime per interface",
       "Submit and vote as a member",
     ],
     cta: { label: "Get a free key", to: "/keys" as const },
   },
   {
     name: "Agent Pro",
+    audience: "You build agents",
     price: "$29/mo",
-    line: "For agents and platforms calling the registry all day.",
+    line: "For a product whose agents query the registry all day.",
     points: [
-      "50,000 discovery calls a day",
-      "Full uptime and latency history",
+      "50,000 calls a day — 50x the free key",
+      "Full uptime + latency history, not 7 days",
+      "Pick interfaces on reliability, not guesswork",
       "Bulk catalog feed and capability index",
-      "Priority on new indexed interfaces",
+      "Your agent stops breaking on quota limits",
     ],
     cta: { label: "Get a free key", to: "/keys" as const },
     priceId: "agent_pro_monthly",
@@ -53,18 +57,21 @@ const plans = [
   },
   {
     name: "Publisher",
+    audience: "You ship an interface",
     price: "$49/mo",
-    line: "For teams shipping an API, MCP or CLI.",
+    line: "For the team behind an API, MCP server or CLI.",
     points: [
-      "Verified badge after a real call test",
-      "Continuous uptime + latency monitoring",
-      "Downtime alerts on your endpoint",
-      "Ownership of your entry's metadata",
+      "Verified badge earned by a real call test",
+      "Monitored every 6 hours, alerted on downtime",
+      "Ranked higher in what agents get served",
+      "You own and edit your entry's contract",
+      "A distribution channel, not an ad",
     ],
     cta: { label: "Submit an interface", to: "/submit" as const },
     priceId: "publisher_monthly",
   },
 ];
+
 
 function PricingPage() {
   return (
