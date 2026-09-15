@@ -20,6 +20,8 @@ import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RefundsRouteImport } from './routes/refunds'
 import { Route as ServerDotjsonRouteImport } from './routes/server[.]json'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StatusRouteImport } from './routes/status'
@@ -104,6 +106,16 @@ const OpenapiDotjsonRoute = OpenapiDotjsonRouteImport.update({
 const PricingRoute = PricingRouteImport.update({
   id: '/pricing',
   path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundsRoute = RefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServerDotjsonRoute = ServerDotjsonRouteImport.update({
@@ -282,6 +294,8 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refunds': typeof RefundsRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
@@ -325,6 +339,8 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refunds': typeof RefundsRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
@@ -370,6 +386,8 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/pricing': typeof PricingRoute
+  '/privacy': typeof PrivacyRoute
+  '/refunds': typeof RefundsRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
@@ -415,6 +433,8 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/openapi.json'
     | '/pricing'
+    | '/privacy'
+    | '/refunds'
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
@@ -458,6 +478,8 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/openapi.json'
     | '/pricing'
+    | '/privacy'
+    | '/refunds'
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
@@ -502,6 +524,8 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/openapi.json'
     | '/pricing'
+    | '/privacy'
+    | '/refunds'
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
@@ -547,6 +571,8 @@ export interface RootRouteChildren {
   McpRoute: typeof McpRoute
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
   PricingRoute: typeof PricingRoute
+  PrivacyRoute: typeof PrivacyRoute
+  RefundsRoute: typeof RefundsRoute
   ServerDotjsonRoute: typeof ServerDotjsonRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StatusRoute: typeof StatusRoute
@@ -649,6 +675,20 @@ declare module '@tanstack/react-router' {
       path: '/pricing'
       fullPath: '/pricing'
       preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refunds': {
+      id: '/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof RefundsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/server.json': {
@@ -917,6 +957,8 @@ const rootRouteChildren: RootRouteChildren = {
   McpRoute: McpRoute,
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,
   PricingRoute: PricingRoute,
+  PrivacyRoute: PrivacyRoute,
+  RefundsRoute: RefundsRoute,
   ServerDotjsonRoute: ServerDotjsonRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StatusRoute: StatusRoute,
