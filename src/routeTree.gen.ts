@@ -23,6 +23,7 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as ServerDotjsonRouteImport } from './routes/server[.]json'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StatusRouteImport } from './routes/status'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-card[.]json'
 import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent[.]json'
@@ -118,6 +119,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const StatusRoute = StatusRouteImport.update({
   id: '/status',
   path: '/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Char91DotmcpChar93ListToolsRoute =
@@ -279,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -321,6 +328,7 @@ export interface FileRoutesByTo {
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -365,6 +373,7 @@ export interface FileRoutesById {
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
+  '/terms': typeof TermsRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -409,6 +418,7 @@ export interface FileRouteTypes {
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
@@ -451,6 +461,7 @@ export interface FileRouteTypes {
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
@@ -494,6 +505,7 @@ export interface FileRouteTypes {
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
+    | '/terms'
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
@@ -538,6 +550,7 @@ export interface RootRouteChildren {
   ServerDotjsonRoute: typeof ServerDotjsonRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StatusRoute: typeof StatusRoute
+  TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
@@ -657,6 +670,13 @@ declare module '@tanstack/react-router' {
       path: '/status'
       fullPath: '/status'
       preLoaderRoute: typeof StatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -900,6 +920,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServerDotjsonRoute: ServerDotjsonRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StatusRoute: StatusRoute,
+  TermsRoute: TermsRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute,
