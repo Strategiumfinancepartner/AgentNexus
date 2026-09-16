@@ -123,7 +123,7 @@ https://agentnexus.app
 mcp model-context-protocol mcp-server ai-agents agent-infrastructure api-registry llm-tools openapi tanstack-start typescript agentic-ai tool-discovery
 ```
 
-### awesome-mcp-servers — procédure PR
+### awesome-mcp-servers — procédure PR (✅ fait le 16 sept 2026 — mais sur awesome-remote-mcp-servers, PR #369 : la liste « awesome-mcp-servers » est réservée aux serveurs à installer soi-même)
 
 Dépôt cible : https://github.com/punkpeye/awesome-mcp-servers
 
