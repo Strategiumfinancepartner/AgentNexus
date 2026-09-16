@@ -30,6 +30,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-card[.]json'
 import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent[.]json'
 import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-plugin[.]json'
+import { Route as Char91DotwellKnownChar93McpRegistryAuthRouteImport } from './routes/[.well-known]/mcp-registry-auth'
 import { Route as Char91DotwellKnownChar93McpChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp[.]json'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -161,6 +162,12 @@ const Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/ai-plugin.json',
     path: '/.well-known/ai-plugin.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93McpRegistryAuthRoute =
+  Char91DotwellKnownChar93McpRegistryAuthRouteImport.update({
+    id: '/.well-known/mcp-registry-auth',
+    path: '/.well-known/mcp-registry-auth',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93McpChar91DotChar93jsonRoute =
@@ -311,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -357,6 +365,7 @@ export interface FileRoutesByTo {
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -405,6 +414,7 @@ export interface FileRoutesById {
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -453,6 +463,7 @@ export interface FileRouteTypes {
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/mcp-registry-auth'
     | '/.well-known/mcp.json'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -499,6 +510,7 @@ export interface FileRouteTypes {
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/mcp-registry-auth'
     | '/.well-known/mcp.json'
     | '/.well-known/oauth-protected-resource'
     | '/admin'
@@ -546,6 +558,7 @@ export interface FileRouteTypes {
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/mcp-registry-auth'
     | '/.well-known/mcp.json'
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
@@ -594,6 +607,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93McpRegistryAuthRoute: typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   Char91DotwellKnownChar93McpChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -759,6 +773,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/ai-plugin.json'
       fullPath: '/.well-known/ai-plugin.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/mcp-registry-auth': {
+      id: '/.well-known/mcp-registry-auth'
+      path: '/.well-known/mcp-registry-auth'
+      fullPath: '/.well-known/mcp-registry-auth'
+      preLoaderRoute: typeof Char91DotwellKnownChar93McpRegistryAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/mcp.json': {
@@ -991,6 +1012,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93McpRegistryAuthRoute:
+    Char91DotwellKnownChar93McpRegistryAuthRoute,
   Char91DotwellKnownChar93McpChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93McpChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
