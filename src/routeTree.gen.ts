@@ -29,6 +29,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-card[.]json'
 import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent[.]json'
+import { Route as Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agents[.]json'
 import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-plugin[.]json'
 import { Route as Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport } from './routes/[.well-known]/glama[.]json'
 import { Route as Char91DotwellKnownChar93McpRouteImport } from './routes/[.well-known]/mcp'
@@ -55,7 +56,8 @@ import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as Char91DotwellKnownChar93AgentsJsonRouteImport } from './routes/[.well-known]/agents.json'
+import { Route as Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp/server-card[.]json'
+import { Route as Char91DotwellKnownChar93McpServerChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp/server[.]json'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceMcpRouteImport } from './routes/[.well-known]/oauth-protected-resource/mcp'
 import { Route as AuthenticatedEntrySlugRouteImport } from './routes/_authenticated/entry.$slug'
 import { Route as ApiPublicCapabilitiesRouteImport } from './routes/api/public/capabilities'
@@ -68,8 +70,7 @@ import { Route as ApiPublicMcpRouteImport } from './routes/api/public/mcp'
 import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/registry'
 import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
-import { Route as Char91DotwellKnownChar93McpServerCardJsonRouteImport } from './routes/[.well-known]/mcp/server-card.json'
-import { Route as Char91DotwellKnownChar93McpServerJsonRouteImport } from './routes/[.well-known]/mcp/server.json'
+import { Route as McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/owners[.]json'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -175,6 +176,12 @@ const Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/agent.json',
     path: '/.well-known/agent.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/agents.json',
+    path: '/.well-known/agents.json',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute =
@@ -326,11 +333,17 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
-const Char91DotwellKnownChar93AgentsJsonRoute =
-  Char91DotwellKnownChar93AgentsJsonRouteImport.update({
-    id: '/.well-known/agents/json',
-    path: '/.well-known/agents/json',
-    getParentRoute: () => rootRouteImport,
+const Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRouteImport.update({
+    id: '/server-card.json',
+    path: '/server-card.json',
+    getParentRoute: () => Char91DotwellKnownChar93McpRoute,
+  } as any)
+const Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93McpServerChar91DotChar93jsonRouteImport.update({
+    id: '/server.json',
+    path: '/server.json',
+    getParentRoute: () => Char91DotwellKnownChar93McpRoute,
   } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceMcpRoute =
   Char91DotwellKnownChar93OauthProtectedResourceMcpRouteImport.update({
@@ -394,17 +407,11 @@ const ApiPublicStatusRoute = ApiPublicStatusRouteImport.update({
   path: '/api/public/status',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotwellKnownChar93McpServerCardJsonRoute =
-  Char91DotwellKnownChar93McpServerCardJsonRouteImport.update({
-    id: '/server-card/json',
-    path: '/server-card/json',
-    getParentRoute: () => Char91DotwellKnownChar93McpRoute,
-  } as any)
-const Char91DotwellKnownChar93McpServerJsonRoute =
-  Char91DotwellKnownChar93McpServerJsonRouteImport.update({
-    id: '/server/json',
-    path: '/server/json',
-    getParentRoute: () => Char91DotwellKnownChar93McpRoute,
+const McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute =
+  McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/owners.json',
+    path: '/.well-known/owners.json',
+    getParentRoute: () => McpRoute,
   } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
@@ -438,7 +445,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
-  '/mcp': typeof McpRoute
+  '/mcp': typeof McpRouteWithChildren
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -450,6 +457,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
+  '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -476,7 +484,8 @@ export interface FileRoutesByFullPath {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/.well-known/agents/json': typeof Char91DotwellKnownChar93AgentsJsonRoute
+  '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
+  '/.well-known/mcp/server.json': typeof Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource/mcp': typeof Char91DotwellKnownChar93OauthProtectedResourceMcpRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/capabilities': typeof ApiPublicCapabilitiesRoute
@@ -489,8 +498,7 @@ export interface FileRoutesByFullPath {
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
-  '/.well-known/mcp/server-card/json': typeof Char91DotwellKnownChar93McpServerCardJsonRoute
-  '/.well-known/mcp/server/json': typeof Char91DotwellKnownChar93McpServerJsonRoute
+  '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -504,7 +512,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
-  '/mcp': typeof McpRoute
+  '/mcp': typeof McpRouteWithChildren
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -516,6 +524,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
+  '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -542,7 +551,8 @@ export interface FileRoutesByTo {
   '/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/.well-known/agents/json': typeof Char91DotwellKnownChar93AgentsJsonRoute
+  '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
+  '/.well-known/mcp/server.json': typeof Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource/mcp': typeof Char91DotwellKnownChar93OauthProtectedResourceMcpRoute
   '/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/capabilities': typeof ApiPublicCapabilitiesRoute
@@ -555,8 +565,7 @@ export interface FileRoutesByTo {
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
-  '/.well-known/mcp/server-card/json': typeof Char91DotwellKnownChar93McpServerCardJsonRoute
-  '/.well-known/mcp/server/json': typeof Char91DotwellKnownChar93McpServerJsonRoute
+  '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -572,7 +581,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
-  '/mcp': typeof McpRoute
+  '/mcp': typeof McpRouteWithChildren
   '/openapi.json': typeof OpenapiDotjsonRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
@@ -584,6 +593,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
+  '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -610,7 +620,8 @@ export interface FileRoutesById {
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
-  '/.well-known/agents/json': typeof Char91DotwellKnownChar93AgentsJsonRoute
+  '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
+  '/.well-known/mcp/server.json': typeof Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute
   '/.well-known/oauth-protected-resource/mcp': typeof Char91DotwellKnownChar93OauthProtectedResourceMcpRoute
   '/_authenticated/entry/$slug': typeof AuthenticatedEntrySlugRoute
   '/api/public/capabilities': typeof ApiPublicCapabilitiesRoute
@@ -623,8 +634,7 @@ export interface FileRoutesById {
   '/api/public/registry': typeof ApiPublicRegistryRouteWithChildren
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
-  '/.well-known/mcp/server-card/json': typeof Char91DotwellKnownChar93McpServerCardJsonRoute
-  '/.well-known/mcp/server/json': typeof Char91DotwellKnownChar93McpServerJsonRoute
+  '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -652,6 +662,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
+    | '/.well-known/agents.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/glama.json'
     | '/.well-known/mcp'
@@ -678,7 +689,8 @@ export interface FileRouteTypes {
     | '/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/.well-known/agents/json'
+    | '/.well-known/mcp/server-card.json'
+    | '/.well-known/mcp/server.json'
     | '/.well-known/oauth-protected-resource/mcp'
     | '/entry/$slug'
     | '/api/public/capabilities'
@@ -691,8 +703,7 @@ export interface FileRouteTypes {
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
-    | '/.well-known/mcp/server-card/json'
-    | '/.well-known/mcp/server/json'
+    | '/mcp/.well-known/owners.json'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
     | '/lovable/email/transactional/preview'
@@ -718,6 +729,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
+    | '/.well-known/agents.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/glama.json'
     | '/.well-known/mcp'
@@ -744,7 +756,8 @@ export interface FileRouteTypes {
     | '/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/.well-known/agents/json'
+    | '/.well-known/mcp/server-card.json'
+    | '/.well-known/mcp/server.json'
     | '/.well-known/oauth-protected-resource/mcp'
     | '/entry/$slug'
     | '/api/public/capabilities'
@@ -757,8 +770,7 @@ export interface FileRouteTypes {
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
-    | '/.well-known/mcp/server-card/json'
-    | '/.well-known/mcp/server/json'
+    | '/mcp/.well-known/owners.json'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
     | '/lovable/email/transactional/preview'
@@ -785,6 +797,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
+    | '/.well-known/agents.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/glama.json'
     | '/.well-known/mcp'
@@ -811,7 +824,8 @@ export interface FileRouteTypes {
     | '/_authenticated/submit'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
-    | '/.well-known/agents/json'
+    | '/.well-known/mcp/server-card.json'
+    | '/.well-known/mcp/server.json'
     | '/.well-known/oauth-protected-resource/mcp'
     | '/_authenticated/entry/$slug'
     | '/api/public/capabilities'
@@ -824,8 +838,7 @@ export interface FileRouteTypes {
     | '/api/public/registry'
     | '/api/public/report'
     | '/api/public/status'
-    | '/.well-known/mcp/server-card/json'
-    | '/.well-known/mcp/server/json'
+    | '/mcp/.well-known/owners.json'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
     | '/lovable/email/transactional/preview'
@@ -841,7 +854,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
-  McpRoute: typeof McpRoute
+  McpRoute: typeof McpRouteWithChildren
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -853,6 +866,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   Char91DotwellKnownChar93McpRoute: typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -873,7 +887,6 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93X402Route: typeof Char91DotwellKnownChar93X402Route
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
-  Char91DotwellKnownChar93AgentsJsonRoute: typeof Char91DotwellKnownChar93AgentsJsonRoute
   ApiPublicCapabilitiesRoute: typeof ApiPublicCapabilitiesRoute
   ApiPublicDiscoverRoute: typeof ApiPublicDiscoverRoute
   ApiPublicEntriesDotndjsonRoute: typeof ApiPublicEntriesDotndjsonRoute
@@ -1028,6 +1041,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/agent.json'
       fullPath: '/.well-known/agent.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/agents.json': {
+      id: '/.well-known/agents.json'
+      path: '/.well-known/agents.json'
+      fullPath: '/.well-known/agents.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/ai-plugin.json': {
@@ -1212,12 +1232,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/agents/json': {
-      id: '/.well-known/agents/json'
-      path: '/.well-known/agents/json'
-      fullPath: '/.well-known/agents/json'
-      preLoaderRoute: typeof Char91DotwellKnownChar93AgentsJsonRouteImport
-      parentRoute: typeof rootRouteImport
+    '/.well-known/mcp/server-card.json': {
+      id: '/.well-known/mcp/server-card.json'
+      path: '/server-card.json'
+      fullPath: '/.well-known/mcp/server-card.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRouteImport
+      parentRoute: typeof Char91DotwellKnownChar93McpRoute
+    }
+    '/.well-known/mcp/server.json': {
+      id: '/.well-known/mcp/server.json'
+      path: '/server.json'
+      fullPath: '/.well-known/mcp/server.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93McpServerChar91DotChar93jsonRouteImport
+      parentRoute: typeof Char91DotwellKnownChar93McpRoute
     }
     '/.well-known/oauth-protected-resource/mcp': {
       id: '/.well-known/oauth-protected-resource/mcp'
@@ -1303,19 +1330,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/mcp/server-card/json': {
-      id: '/.well-known/mcp/server-card/json'
-      path: '/server-card/json'
-      fullPath: '/.well-known/mcp/server-card/json'
-      preLoaderRoute: typeof Char91DotwellKnownChar93McpServerCardJsonRouteImport
-      parentRoute: typeof Char91DotwellKnownChar93McpRoute
-    }
-    '/.well-known/mcp/server/json': {
-      id: '/.well-known/mcp/server/json'
-      path: '/server/json'
-      fullPath: '/.well-known/mcp/server/json'
-      preLoaderRoute: typeof Char91DotwellKnownChar93McpServerJsonRouteImport
-      parentRoute: typeof Char91DotwellKnownChar93McpRoute
+    '/mcp/.well-known/owners.json': {
+      id: '/mcp/.well-known/owners.json'
+      path: '/.well-known/owners.json'
+      fullPath: '/mcp/.well-known/owners.json'
+      preLoaderRoute: typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport
+      parentRoute: typeof McpRoute
     }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
@@ -1371,17 +1391,28 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface McpRouteChildren {
+  McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute: typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+}
+
+const McpRouteChildren: McpRouteChildren = {
+  McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute:
+    McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute,
+}
+
+const McpRouteWithChildren = McpRoute._addFileChildren(McpRouteChildren)
+
 interface Char91DotwellKnownChar93McpRouteChildren {
-  Char91DotwellKnownChar93McpServerCardJsonRoute: typeof Char91DotwellKnownChar93McpServerCardJsonRoute
-  Char91DotwellKnownChar93McpServerJsonRoute: typeof Char91DotwellKnownChar93McpServerJsonRoute
+  Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute
 }
 
 const Char91DotwellKnownChar93McpRouteChildren: Char91DotwellKnownChar93McpRouteChildren =
   {
-    Char91DotwellKnownChar93McpServerCardJsonRoute:
-      Char91DotwellKnownChar93McpServerCardJsonRoute,
-    Char91DotwellKnownChar93McpServerJsonRoute:
-      Char91DotwellKnownChar93McpServerJsonRoute,
+    Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute:
+      Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute,
+    Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute:
+      Char91DotwellKnownChar93McpServerChar91DotChar93jsonRoute,
   }
 
 const Char91DotwellKnownChar93McpRouteWithChildren =
@@ -1427,7 +1458,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   FeedDotxmlRoute: FeedDotxmlRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
-  McpRoute: McpRoute,
+  McpRoute: McpRouteWithChildren,
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
@@ -1441,6 +1472,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute:
+    Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute:
@@ -1475,8 +1508,6 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93X402Route: Char91DotwellKnownChar93X402Route,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
-  Char91DotwellKnownChar93AgentsJsonRoute:
-    Char91DotwellKnownChar93AgentsJsonRoute,
   ApiPublicCapabilitiesRoute: ApiPublicCapabilitiesRoute,
   ApiPublicDiscoverRoute: ApiPublicDiscoverRoute,
   ApiPublicEntriesDotndjsonRoute: ApiPublicEntriesDotndjsonRoute,

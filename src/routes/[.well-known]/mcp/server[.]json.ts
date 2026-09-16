@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 // /.well-known/mcp/server.json — canonical manifest lives at /server.json.
-export const Route = createFileRoute("/.well-known/mcp/server/json")({
+export const Route = createFileRoute("/.well-known/mcp/server.json")({
   server: {
     handlers: {
       GET: async () =>

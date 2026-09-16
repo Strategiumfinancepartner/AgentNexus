@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * MCP server: endpoints, transport, auth model, tools and pointers to the
  * full manifests. Probed by MCP observatories and clients during discovery.
  */
-export const Route = createFileRoute("/.well-known/mcp/server-card/json")({
+export const Route = createFileRoute("/.well-known/mcp/server-card.json")({
   server: {
     handlers: {
       GET: async () => {
