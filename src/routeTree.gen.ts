@@ -30,6 +30,7 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-card[.]json'
 import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent[.]json'
 import { Route as Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agents[.]json'
+import { Route as Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-catalog[.]json'
 import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-plugin[.]json'
 import { Route as Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport } from './routes/[.well-known]/glama[.]json'
 import { Route as Char91DotwellKnownChar93McpRouteImport } from './routes/[.well-known]/mcp'
@@ -182,6 +183,12 @@ const Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/agents.json',
     path: '/.well-known/agents.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/ai-catalog.json',
+    path: '/.well-known/ai-catalog.json',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute =
@@ -458,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
+  '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -525,6 +533,7 @@ export interface FileRoutesByTo {
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
+  '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -594,6 +603,7 @@ export interface FileRoutesById {
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
+  '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -663,6 +673,7 @@ export interface FileRouteTypes {
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
     | '/.well-known/agents.json'
+    | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/glama.json'
     | '/.well-known/mcp'
@@ -730,6 +741,7 @@ export interface FileRouteTypes {
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
     | '/.well-known/agents.json'
+    | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/glama.json'
     | '/.well-known/mcp'
@@ -798,6 +810,7 @@ export interface FileRouteTypes {
     | '/.well-known/agent-card.json'
     | '/.well-known/agent.json'
     | '/.well-known/agents.json'
+    | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/glama.json'
     | '/.well-known/mcp'
@@ -867,6 +880,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   Char91DotwellKnownChar93McpRoute: typeof Char91DotwellKnownChar93McpRouteWithChildren
@@ -1048,6 +1062,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/agents.json'
       fullPath: '/.well-known/agents.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/ai-catalog.json': {
+      id: '/.well-known/ai-catalog.json'
+      path: '/.well-known/ai-catalog.json'
+      fullPath: '/.well-known/ai-catalog.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/ai-plugin.json': {
@@ -1474,6 +1495,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute:
+    Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute:
