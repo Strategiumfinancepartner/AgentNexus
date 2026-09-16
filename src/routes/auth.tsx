@@ -149,7 +149,7 @@ function AuthPage() {
 
         {sent ? (
           <p className="mt-8 rounded-xl border border-border bg-card/60 p-4 text-sm text-muted-foreground">
-            Check your inbox — confirm your email address to activate the account.
+            Check your inbox — open the link we just sent to {email} to continue.
           </p>
         ) : (
           <>
