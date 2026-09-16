@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { SubscribeButton } from "@/components/subscribe-button";
+import { ManageSubscription } from "@/components/manage-subscription";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -147,6 +148,8 @@ function PricingPage() {
             </section>
           ))}
         </div>
+
+        <ManageSubscription />
 
         <section className="mt-16 border-t border-border/60 pt-8">
           <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">

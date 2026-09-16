@@ -88,20 +88,44 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogle() {
+  async function handleOAuth(provider: "google" | "apple" | "microsoft", label: string) {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: next
         ? `${window.location.origin}${next}`
         : window.location.origin,
     });
     if (result.error) {
       setBusy(false);
-      toast.error("Google sign-in failed");
+      toast.error(`${label} sign-in failed`);
       return;
     }
     if (result.redirected) return;
     afterAuth();
+  }
+
+  async function handleMagicLink() {
+    if (!email) {
+      toast.error("Enter your email address first");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: next
+            ? `${window.location.origin}${next}`
+            : window.location.origin,
+        },
+      });
+      if (error) throw error;
+      setSent(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not send the link");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -125,7 +149,7 @@ function AuthPage() {
 
         {sent ? (
           <p className="mt-8 rounded-xl border border-border bg-card/60 p-4 text-sm text-muted-foreground">
-            Check your inbox — confirm your email address to activate the account.
+            Check your inbox — open the link we just sent to {email} to continue.
           </p>
         ) : (
           <>
@@ -172,13 +196,31 @@ function AuthPage() {
               <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
             </div>
 
-            <button
-              onClick={handleGoogle}
-              disabled={busy}
-              className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
-            >
-              Continue with Google
-            </button>
+            <div className="space-y-2">
+              {(
+                [
+                  ["google", "Google"],
+                  ["apple", "Apple"],
+                  ["microsoft", "Microsoft"],
+                ] as const
+              ).map(([provider, label]) => (
+                <button
+                  key={provider}
+                  onClick={() => handleOAuth(provider, label)}
+                  disabled={busy}
+                  className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+                >
+                  Continue with {label}
+                </button>
+              ))}
+              <button
+                onClick={handleMagicLink}
+                disabled={busy}
+                className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+              >
+                Email me a sign-in link
+              </button>
+            </div>
 
             <button
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
