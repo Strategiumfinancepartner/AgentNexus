@@ -8,7 +8,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const origin = "https://agentnexus.app";
         const { data } = await supabaseAnon()
           .from("entries")
-          .select("slug, updated_at")
+          .select("slug")
           .eq("status", "approved")
           .limit(2000);
 
@@ -27,9 +27,9 @@ export const Route = createFileRoute("/sitemap.xml")({
             (p) =>
               `<url><loc>${origin}${p}</loc><changefreq>daily</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`,
           ),
-          ...((data ?? []) as { slug: string; updated_at: string }[]).map(
+          ...((data ?? []) as { slug: string }[]).map(
             (e) =>
-              `<url><loc>${origin}/registry/${e.slug}</loc><lastmod>${new Date(e.updated_at).toISOString().slice(0, 10)}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`,
+              `<url><loc>${origin}/registry/${e.slug}</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>`,
           ),
         ].join("");
 
