@@ -78,7 +78,7 @@ Send the blocks above to each of these. Tick as you go.
 - [ ] mcp.so — soumission payante uniquement (~39 $) → **abandonné**, pas d'action
 - [x] PulseMCP — soumissions en pause depuis le 3 sept 2026 ; récupération automatique depuis le registre MCP officiel (où nous sommes déjà) — rien à faire
 - [ ] Cursor Directory — https://cursor.directory/mcp (PR or form)
-- [ ] awesome-mcp-servers — PR line below
+- [ ] awesome-mcp-servers — PR à ouvrir (procédure détaillée en bas de ce fichier)
 - [ ] MCP Servers Hub / mcpservers.org — submission form
 - [ ] Lovable connectors — already registered
 - [ ] OpenAI / ChatGPT connector directory — submit when the public form is open
@@ -102,3 +102,53 @@ Send the blocks above to each of these. Tick as you go.
 ### Public repository
 
 GitHub (code source, public) : https://github.com/Strategiumfinancepartner/agent-fabric-layer — à coller dans tout formulaire demandant un dépôt (mcp.so, awesome-mcp-servers, etc.). Contient uniquement des clés publiques (anon key, token navigateur) — vérifié le 16 sept 2026.
+
+### Fiche GitHub — à coller dans "Edit repository details"
+
+**Description** (350 max) :
+
+```
+Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call — live health checks, reliability history, and an anonymous MCP endpoint agents can connect to without a consent screen.
+```
+
+**Website** :
+
+```
+https://agentnexus.app
+```
+
+**Topics** :
+
+```
+mcp model-context-protocol mcp-server ai-agents agent-infrastructure api-registry llm-tools openapi tanstack-start typescript agentic-ai tool-discovery
+```
+
+### awesome-mcp-servers — procédure PR
+
+Dépôt cible : https://github.com/punkpeye/awesome-mcp-servers
+
+1. Ouvrir le dépôt → bouton **Fork** (en haut à droite).
+2. Dans le fork, ouvrir `README.md` → icône crayon (**Edit this file**).
+3. Chercher la section thématique la plus proche (`🔎 Search & Data Extraction`
+   ou `🛠️ Other Tools and Integrations`) et insérer la ligne ci-dessous **dans
+   l'ordre alphabétique** parmi ses voisines.
+4. Bas de page → **Commit changes** → message `Add Agent Nexus` → **Propose changes**.
+5. **Create pull request** → titre `Add Agent Nexus` → dans le corps, coller le
+   paragraphe de justification ci-dessous → **Create pull request**.
+
+Ligne à insérer (légende du dépôt : 🌐 = serveur distant, ☁️ = service cloud) :
+
+```md
+- [Agent Nexus](https://agentnexus.app) 🌐 ☁️ - Continuously verified registry of the APIs, MCP servers and CLIs agents call; maps a plain-language need to a callable interface with auth, formats, limits and a live reliability score. Anonymous read-only endpoint, no consent screen.
+```
+
+Justification à coller dans le corps de la PR :
+
+> Agent Nexus is a remote MCP server that helps an agent find which interface can
+> actually perform a task right now. Entries are probed over HTTP on a schedule, so
+> results carry a live reliability score rather than a static description.
+>
+> - Endpoint (anonymous, no key, Streamable HTTP): https://agentnexus.app/api/public/mcp
+> - Tools: `discover_capabilities`, `search_registry`, `get_entry`, `list_categories`
+> - Already listed on the official MCP registry as `app.agentnexus/agent-nexus`, on Smithery and on Glama
+> - Source: https://github.com/Strategiumfinancepartner/agent-fabric-layer

@@ -1,26 +1,101 @@
 # Agent Nexus
 
-j'ai une nouvelle reflexion : Je pense que les prochains milliards d'utilisateurs d'internet ne seront pas des humains mais des agents IA — et que la vraie opportunité se situe dans l'infrastructure sur laquelle ces agents s'appuient : les APIs (interfaces qui permettent à un logiciel d'interagir directement avec un service), les MCPs (le protocole qui standardise la façon dont un agent se connecte à des outils externes) et les CLIs (les interfaces en ligne de commande qui donnent accès aux couches techniques) — plutôt que dans les agents eux-mêmes.à terme, ça pourrait devenir une brique d'infrastructure que d'autres agents viennent appeler directement, plutôt qu'un point de contact uniquement humain. qu'en penses tu
+**The continuously verified registry of the APIs, MCP servers and CLIs that AI agents call.**
 
-This project was built with [Lovable](https://lovable.dev).
+Live: **https://agentnexus.app** · MCP endpoint (no login): `https://agentnexus.app/api/public/mcp`
 
-**Live app**: https://agent-fabric-layer.lovable.app
+Agent Nexus answers one question for an autonomous agent: *"what can actually do this, right
+now, and how exactly do I call it?"* Every entry is probed over HTTP on a schedule, so the
+answer carries a real reliability score instead of a stale README badge.
 
-## Build with Lovable
+Listed on the [official MCP registry](https://registry.modelcontextprotocol.io) as
+`app.agentnexus/agent-nexus`, on [Smithery](https://smithery.ai/server/ceo-2z03/agent-nexus)
+and on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus).
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/c4160740-98d2-49f3-99e6-e8a5b0e07f05).
+---
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+## Connect an agent in one line
+
+MCP (Streamable HTTP, stateless, anonymous — no consent screen, no key):
+
+```json
+{
+  "mcpServers": {
+    "agent-nexus": {
+      "type": "http",
+      "url": "https://agentnexus.app/api/public/mcp"
+    }
+  }
+}
+```
+
+Or over plain HTTP — an agent can register itself and start calling without any human:
+
+```sh
+# 1. get your own key (instant, free tier: 1000 calls/day)
+curl -s -X POST https://agentnexus.app/api/public/keys \
+  -H 'content-type: application/json' \
+  -d '{"agent":"my-agent","purpose":"capability discovery"}'
+
+# 2. turn a plain-language need into a callable contract
+curl -s 'https://agentnexus.app/api/public/discover?need=send%20transactional%20email' \
+  -H 'x-api-key: nx_...'
+```
+
+## MCP tools
+
+| Tool | What it does |
+| --- | --- |
+| `discover_capabilities` | Plain-language need → ranked callable interfaces with auth, formats, limits, reliability |
+| `search_registry` | Keyword search across APIs, MCP servers and CLIs |
+| `get_entry` | Full contract for one interface |
+| `list_categories` | Browse the taxonomy |
+
+## Machine-readable surfaces
+
+| Surface | Purpose |
+| --- | --- |
+| `/llms.txt`, `/agents.txt` | How an agent onboards itself, unattended |
+| `/api/public/registry` | Full typed registry |
+| `/api/public/capabilities` | Capability index |
+| `/api/public/entries.ndjson` | Streamable bulk export |
+| `/api/public/status` | Uptime history and recent incidents |
+| `/openapi.json`, `/server.json` | OpenAPI + MCP server manifest |
+| `/.well-known/mcp.json`, `/.well-known/agent-card.json` | Discovery manifests |
+| `/feed.xml` | New and updated interfaces |
+
+## Human pages
+
+[`/explore`](https://agentnexus.app/explore) · [`/connect`](https://agentnexus.app/connect) ·
+[`/status`](https://agentnexus.app/status) · [`/pricing`](https://agentnexus.app/pricing) ·
+[`/keys`](https://agentnexus.app/keys)
+
+## Tiers
+
+| Tier | Who it is for | Daily calls |
+| --- | --- | --- |
+| Anonymous | Trying it out, no account | 100 |
+| Free key | Agent developers | 1 000 |
+| Agent Pro | Production agents that must not stall | 50 000 |
+| Publisher | API / MCP / CLI vendors: verified badge, monitoring, alerts | — |
+
+## Stack
+
+TanStack Start (React 19, Vite), Tailwind CSS v4, Postgres with row-level security,
+server functions on an edge runtime, scheduled HTTP health probes. Built with
+[Lovable](https://lovable.dev).
+
+Only publishable keys live in this repository; every secret is held server-side.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
+git clone https://github.com/Strategiumfinancepartner/agent-fabric-layer.git
+cd agent-fabric-layer
 npm i
 npm run dev
 ```
+
+---
+
+Operated by BrainPath.io · support@agentnexus.app
