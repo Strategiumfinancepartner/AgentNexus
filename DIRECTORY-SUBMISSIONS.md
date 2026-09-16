@@ -78,7 +78,7 @@ Send the blocks above to each of these. Tick as you go.
 - [ ] mcp.so — soumission payante uniquement (~39 $) → **abandonné**, pas d'action
 - [x] PulseMCP — soumissions en pause depuis le 3 sept 2026 ; récupération automatique depuis le registre MCP officiel (où nous sommes déjà) — rien à faire
 - [ ] Cursor Directory — https://cursor.directory/mcp (PR or form)
-- [ ] awesome-mcp-servers — PR à ouvrir (procédure détaillée en bas de ce fichier)
+- [x] awesome-remote-mcp-servers — **PR ouverte 16 sept 2026 : https://github.com/punkpeye/awesome-remote-mcp-servers/pull/369** (dépôt étoilé + fork + branche `add-agent-nexus`, section Aggregators, badge Glama inclus, titre avec 🤖🤖🤖 pour fusion rapide)
 - [ ] MCP Servers Hub / mcpservers.org — submission form
 - [ ] Lovable connectors — already registered
 - [ ] OpenAI / ChatGPT connector directory — submit when the public form is open
@@ -123,7 +123,7 @@ https://agentnexus.app
 mcp model-context-protocol mcp-server ai-agents agent-infrastructure api-registry llm-tools openapi tanstack-start typescript agentic-ai tool-discovery
 ```
 
-### awesome-mcp-servers — procédure PR
+### awesome-mcp-servers — procédure PR (✅ fait le 16 sept 2026 — mais sur awesome-remote-mcp-servers, PR #369 : la liste « awesome-mcp-servers » est réservée aux serveurs à installer soi-même)
 
 Dépôt cible : https://github.com/punkpeye/awesome-mcp-servers
 
