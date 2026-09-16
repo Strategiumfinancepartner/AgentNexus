@@ -230,25 +230,27 @@ function AuthPage() {
             <div className="space-y-2">
               {(
                 [
-                  ["google", "Google"],
-                  ["apple", "Apple"],
-                  ["microsoft", "Microsoft"],
+                  ["google", "Google", <GoogleLogo key="google" />],
+                  ["apple", "Apple", <AppleLogo key="apple" />],
+                  ["microsoft", "Microsoft", <MicrosoftLogo key="microsoft" />],
                 ] as const
-              ).map(([provider, label]) => (
+              ).map(([provider, label, logo]) => (
                 <button
                   key={provider}
                   onClick={() => handleOAuth(provider, label)}
                   disabled={busy}
-                  className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+                  className="flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
                 >
+                  {logo}
                   Continue with {label}
                 </button>
               ))}
               <button
                 onClick={handleMagicLink}
                 disabled={busy}
-                className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+                className="flex h-11 w-full items-center justify-center gap-2.5 rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
               >
+                <Mail className="size-4 text-muted-foreground" aria-hidden="true" />
                 Email me a sign-in link
               </button>
             </div>
