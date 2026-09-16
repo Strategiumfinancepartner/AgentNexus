@@ -72,7 +72,7 @@ autonomous agents connect without a human in the loop.
 
 Send the blocks above to each of these. Tick as you go.
 
-- [ ] Official MCP registry — https://github.com/modelcontextprotocol/registry (uses `/server.json`)
+- [x] Official MCP registry — published as `app.agentnexus/agent-nexus` v1.0.0 (HTTP domain auth via `/.well-known/mcp-registry-auth`; republish with `mcp-publisher publish /tmp/server.json` after `login http --domain agentnexus.app`)
 - [ ] Smithery — https://smithery.ai/new
 - [ ] Glama — https://glama.ai/mcp/servers (submit form)
 - [ ] mcp.so — https://mcp.so/submit
