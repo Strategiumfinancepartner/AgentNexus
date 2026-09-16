@@ -25,7 +25,9 @@ export const Route = createFileRoute("/connect")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://agentnexus.app/connect" },
     ],
+    links: [{ rel: "canonical", href: "https://agentnexus.app/connect" }],
   }),
   component: Connect,
 });

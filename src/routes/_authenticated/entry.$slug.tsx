@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/entry/$slug")({
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: EntryPage,

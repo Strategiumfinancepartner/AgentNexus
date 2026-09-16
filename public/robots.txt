@@ -40,6 +40,14 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /auth
+Disallow: /keys
+Disallow: /admin
+Disallow: /submit
+Disallow: /signals
+Disallow: /audience
+Disallow: /entry/
+
 
 # Machine-readable surfaces
 # /llms.txt              full catalog, prompt-ready

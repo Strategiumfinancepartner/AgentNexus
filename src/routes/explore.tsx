@@ -19,7 +19,9 @@ export const Route = createFileRoute("/explore")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://agentnexus.app/explore" },
     ],
+    links: [{ rel: "canonical", href: "https://agentnexus.app/explore" }],
   }),
   loader: () => getPublicCatalog(),
   errorComponent: () => (
