@@ -196,13 +196,31 @@ function AuthPage() {
               <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
             </div>
 
-            <button
-              onClick={handleGoogle}
-              disabled={busy}
-              className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
-            >
-              Continue with Google
-            </button>
+            <div className="space-y-2">
+              {(
+                [
+                  ["google", "Google"],
+                  ["apple", "Apple"],
+                  ["microsoft", "Microsoft"],
+                ] as const
+              ).map(([provider, label]) => (
+                <button
+                  key={provider}
+                  onClick={() => handleOAuth(provider, label)}
+                  disabled={busy}
+                  className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+                >
+                  Continue with {label}
+                </button>
+              ))}
+              <button
+                onClick={handleMagicLink}
+                disabled={busy}
+                className="h-11 w-full rounded-lg border border-border bg-card/50 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
+              >
+                Email me a sign-in link
+              </button>
+            </div>
 
             <button
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
