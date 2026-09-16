@@ -7,14 +7,14 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/server.json")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
+      GET: async () => {
+        const origin = "https://agentnexus.app";
         return new Response(
           JSON.stringify(
             {
               $schema:
                 "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
-              name: "dev.agentnexus/agent-nexus",
+              name: "app.agentnexus/agent-nexus",
               description:
                 "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Maps a natural-language need to a callable interface with its auth contract, formats, rate limits and live reliability score.",
               version: "0.3.0",
