@@ -19,7 +19,9 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://agentnexus.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://agentnexus.app/" }],
   }),
   component: Index,
 });

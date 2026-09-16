@@ -17,7 +17,9 @@ export const Route = createFileRoute("/refunds")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: "https://agentnexus.app/refunds" },
     ],
+    links: [{ rel: "canonical", href: "https://agentnexus.app/refunds" }],
   }),
   component: RefundsPage,
 });
