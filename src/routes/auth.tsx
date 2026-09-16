@@ -88,20 +88,44 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogle() {
+  async function handleOAuth(provider: "google" | "apple" | "microsoft", label: string) {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: next
         ? `${window.location.origin}${next}`
         : window.location.origin,
     });
     if (result.error) {
       setBusy(false);
-      toast.error("Google sign-in failed");
+      toast.error(`${label} sign-in failed`);
       return;
     }
     if (result.redirected) return;
     afterAuth();
+  }
+
+  async function handleMagicLink() {
+    if (!email) {
+      toast.error("Enter your email address first");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: next
+            ? `${window.location.origin}${next}`
+            : window.location.origin,
+        },
+      });
+      if (error) throw error;
+      setSent(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not send the link");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
