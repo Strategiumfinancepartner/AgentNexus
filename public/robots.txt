@@ -46,7 +46,7 @@ Allow: /
 # /server.json           MCP registry manifest
 # /.well-known/mcp.json  MCP endpoint discovery
 # /api/public/discover   need -> callable interface
-Sitemap: /sitemap.xml
+Sitemap: https://agentnexus.app/sitemap.xml
 # /agents.txt            short directive file for agents
 # /openapi.json          OpenAPI 3.1 spec
 # /.well-known/ai-plugin.json  plugin manifest
