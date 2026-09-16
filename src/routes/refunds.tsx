@@ -24,7 +24,7 @@ export const Route = createFileRoute("/refunds")({
 
 function RefundsPage() {
   return (
-    <LegalLayout title="Refund Policy" updated="15 September 2026">
+    <LegalLayout title="Refund Policy" updated="16 September 2026">
       <p>
         Agent Nexus is operated by <strong>BrainPath.io</strong>. We want you to be able to try a
         paid plan without risk, so we offer a <strong>30-day money-back guarantee</strong> on

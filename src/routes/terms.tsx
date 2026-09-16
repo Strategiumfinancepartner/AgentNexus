@@ -23,7 +23,7 @@ export const Route = createFileRoute("/terms")({
 
 function TermsPage() {
   return (
-    <LegalLayout title="Terms & Conditions" updated="15 September 2026">
+    <LegalLayout title="Terms & Conditions" updated="16 September 2026">
       <h2>1. Who you are contracting with</h2>
       <p>
         Agent Nexus (the “Service”) is operated by <strong>BrainPath.io</strong> (“we”, “us”,
