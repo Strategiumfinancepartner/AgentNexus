@@ -155,6 +155,7 @@ export type Database = {
           name: string
           output_format: string
           pricing: string
+          probe_url: string | null
           rate_limit: string
           review_note: string | null
           reviewed_at: string | null
@@ -197,6 +198,7 @@ export type Database = {
           name: string
           output_format?: string
           pricing?: string
+          probe_url?: string | null
           rate_limit?: string
           review_note?: string | null
           reviewed_at?: string | null
@@ -239,6 +241,7 @@ export type Database = {
           name?: string
           output_format?: string
           pricing?: string
+          probe_url?: string | null
           rate_limit?: string
           review_note?: string | null
           reviewed_at?: string | null

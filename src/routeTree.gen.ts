@@ -56,6 +56,7 @@ import { Route as AuthenticatedKeysRouteImport } from './routes/_authenticated/k
 import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticated/registry'
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
+import { Route as RegistrySlugRouteImport } from './routes/registry.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp/server-card[.]json'
@@ -336,6 +337,11 @@ const AuthenticatedSubmitRoute = AuthenticatedSubmitRouteImport.update({
   path: '/submit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const RegistrySlugRoute = RegistrySlugRouteImport.update({
+  id: '/registry/$slug',
+  path: '/registry/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
   id: '/.lovable/oauth/consent',
   path: '/.lovable/oauth/consent',
@@ -498,6 +504,7 @@ export interface FileRoutesByFullPath {
   '/registry': typeof AuthenticatedRegistryRoute
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
+  '/registry/$slug': typeof RegistrySlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
@@ -567,6 +574,7 @@ export interface FileRoutesByTo {
   '/registry': typeof AuthenticatedRegistryRoute
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
+  '/registry/$slug': typeof RegistrySlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
@@ -638,6 +646,7 @@ export interface FileRoutesById {
   '/_authenticated/registry': typeof AuthenticatedRegistryRoute
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
+  '/registry/$slug': typeof RegistrySlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
@@ -709,6 +718,7 @@ export interface FileRouteTypes {
     | '/registry'
     | '/signals'
     | '/submit'
+    | '/registry/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/.well-known/mcp/server-card.json'
@@ -778,6 +788,7 @@ export interface FileRouteTypes {
     | '/registry'
     | '/signals'
     | '/submit'
+    | '/registry/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/.well-known/mcp/server-card.json'
@@ -848,6 +859,7 @@ export interface FileRouteTypes {
     | '/_authenticated/registry'
     | '/_authenticated/signals'
     | '/_authenticated/submit'
+    | '/registry/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/.well-known/mcp/server-card.json'
@@ -913,6 +925,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute
   Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute: typeof Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute
   Char91DotwellKnownChar93X402Route: typeof Char91DotwellKnownChar93X402Route
+  RegistrySlugRoute: typeof RegistrySlugRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicCapabilitiesRoute: typeof ApiPublicCapabilitiesRoute
@@ -1260,6 +1273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSubmitRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/registry/$slug': {
+      id: '/registry/$slug'
+      path: '/registry/$slug'
+      fullPath: '/registry/$slug'
+      preLoaderRoute: typeof RegistrySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.lovable/oauth/consent': {
       id: '/.lovable/oauth/consent'
       path: '/.lovable/oauth/consent'
@@ -1551,6 +1571,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute:
     Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute,
   Char91DotwellKnownChar93X402Route: Char91DotwellKnownChar93X402Route,
+  RegistrySlugRoute: RegistrySlugRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicCapabilitiesRoute: ApiPublicCapabilitiesRoute,

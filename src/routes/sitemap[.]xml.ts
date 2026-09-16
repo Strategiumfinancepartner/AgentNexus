@@ -29,7 +29,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           ),
           ...((data ?? []) as { slug: string; updated_at: string }[]).map(
             (e) =>
-              `<url><loc>${origin}/explore?entry=${e.slug}</loc><lastmod>${new Date(e.updated_at).toISOString().slice(0, 10)}</lastmod><priority>0.6</priority></url>`,
+              `<url><loc>${origin}/registry/${e.slug}</loc><lastmod>${new Date(e.updated_at).toISOString().slice(0, 10)}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`,
           ),
         ].join("");
 

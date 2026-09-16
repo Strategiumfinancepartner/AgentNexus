@@ -43,12 +43,19 @@ function unmonitoredLabel(entry: PublicEntry) {
   return "awaiting probe";
 }
 
+/** True when the probe hit the entry's own endpoint, not a curated reference. */
+function directlyProbed(entry: PublicEntry) {
+  return /^https?:\/\//i.test(entry.endpoint) && !/[{<][^{}<>\s]+[}>]/.test(entry.endpoint);
+}
+
 function Health({ entry }: { entry: PublicEntry }) {
   const label =
     entry.health_ok === null
       ? unmonitoredLabel(entry)
       : entry.health_ok
-        ? "operational"
+        ? directlyProbed(entry)
+          ? "operational"
+          : "reference verified"
         : "unreachable";
   const tone =
     entry.health_ok === null
@@ -145,14 +152,16 @@ function Explore() {
           <ul className="mt-8 divide-y divide-border/60 border-t border-border/60">
             {items.map((entry) => (
               <li key={entry.slug} className="group py-5">
-                <div className="flex items-baseline justify-between gap-4">
-                  <span className="font-medium">{entry.name}</span>
-                  <Health entry={entry} />
-                </div>
-                <p className="mt-1.5 text-sm text-muted-foreground">{entry.summary}</p>
-                <p className="mt-2 font-mono text-[11px] break-all text-muted-foreground/70">
-                  {entry.category} · {entry.endpoint} · auth: {entry.auth_mode}
-                </p>
+                <Link to="/registry/$slug" params={{ slug: entry.slug }} className="block">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <span className="font-medium group-hover:text-primary">{entry.name}</span>
+                    <Health entry={entry} />
+                  </div>
+                  <p className="mt-1.5 text-sm text-muted-foreground">{entry.summary}</p>
+                  <p className="mt-2 font-mono text-[11px] break-all text-muted-foreground/70">
+                    {entry.category} · {entry.endpoint} · auth: {entry.auth_mode}
+                  </p>
+                </Link>
               </li>
             ))}
             {items.length === 0 && (

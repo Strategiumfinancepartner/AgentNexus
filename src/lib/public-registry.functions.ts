@@ -12,6 +12,7 @@ export type PublicEntry = {
   health_ok: boolean | null;
   health_checked_at: string | null;
   health_latency_ms: number | null;
+  probe_url: string | null;
 };
 
 export type PublicCatalog = {
@@ -46,3 +47,39 @@ export const getPublicCatalog = createServerFn({ method: "GET" }).handler(
     return { entries, counts, health };
   },
 );
+
+export type PublicEntryDetail = PublicEntry & {
+  description: string;
+  capabilities: string[];
+  input_format: string;
+  output_format: string;
+  rate_limit: string;
+  pricing: string;
+  invocation_example: string;
+  verified: boolean;
+  featured: boolean;
+  checks_total: number;
+  checks_ok: number;
+  avg_latency_ms: number | null;
+};
+
+/** Public read of a single approved entry — powers the indexable detail page. */
+export const getPublicEntry = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) => {
+    const slug = (data as { slug?: unknown })?.slug;
+    if (typeof slug !== "string" || !/^[a-z0-9-]{1,80}$/i.test(slug)) {
+      throw new Error("Invalid slug");
+    }
+    return { slug: slug.toLowerCase() };
+  })
+  .handler(async ({ data }): Promise<PublicEntryDetail | null> => {
+    const { PUBLIC_COLUMNS, supabaseAnon } = await import("@/lib/mcp/supabase");
+    const { data: row, error } = await supabaseAnon()
+      .from("entries")
+      .select(PUBLIC_COLUMNS)
+      .eq("status", "approved")
+      .eq("slug", data.slug)
+      .maybeSingle();
+    if (error || !row) return null;
+    return row as unknown as PublicEntryDetail;
+  });
