@@ -98,3 +98,7 @@ Send the blocks above to each of these. Tick as you go.
 > one question: "what can actually do this, right now, and how do I call it?"
 > Free to read, no login, connect over MCP at
 > https://agentnexus.app/api/public/mcp
+
+### Public repository
+
+GitHub (code source, public) : https://github.com/Strategiumfinancepartner/agent-fabric-layer — à coller dans tout formulaire demandant un dépôt (mcp.so, awesome-mcp-servers, etc.). Contient uniquement des clés publiques (anon key, token navigateur) — vérifié le 16 sept 2026.
