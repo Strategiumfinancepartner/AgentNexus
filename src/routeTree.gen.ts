@@ -33,7 +33,9 @@ import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } 
 import { Route as Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agents[.]json'
 import { Route as Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-catalog[.]json'
 import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-plugin[.]json'
+import { Route as Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ard[.]json'
 import { Route as Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport } from './routes/[.well-known]/glama[.]json'
+import { Route as Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRouteImport } from './routes/[.well-known]/http-message-signatures-directory'
 import { Route as Char91DotwellKnownChar93McpRouteImport } from './routes/[.well-known]/mcp'
 import { Route as Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp-probing[.]json'
 import { Route as Char91DotwellKnownChar93McpRegistryAuthRouteImport } from './routes/[.well-known]/mcp-registry-auth'
@@ -205,10 +207,22 @@ const Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute =
     path: '/.well-known/ai-plugin.json',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/ard.json',
+    path: '/.well-known/ard.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/glama.json',
     path: '/.well-known/glama.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute =
+  Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRouteImport.update({
+    id: '/.well-known/http-message-signatures-directory',
+    path: '/.well-known/http-message-signatures-directory',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93McpRoute =
@@ -481,7 +495,9 @@ export interface FileRoutesByFullPath {
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
+  '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
   '/.well-known/mcp-probing.json': typeof Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRoute
   '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
@@ -551,7 +567,9 @@ export interface FileRoutesByTo {
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
+  '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
   '/.well-known/mcp-probing.json': typeof Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRoute
   '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
@@ -623,7 +641,9 @@ export interface FileRoutesById {
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
+  '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/mcp': typeof Char91DotwellKnownChar93McpRouteWithChildren
   '/.well-known/mcp-probing.json': typeof Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRoute
   '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
@@ -695,7 +715,9 @@ export interface FileRouteTypes {
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/ard.json'
     | '/.well-known/glama.json'
+    | '/.well-known/http-message-signatures-directory'
     | '/.well-known/mcp'
     | '/.well-known/mcp-probing.json'
     | '/.well-known/mcp-registry-auth'
@@ -765,7 +787,9 @@ export interface FileRouteTypes {
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/ard.json'
     | '/.well-known/glama.json'
+    | '/.well-known/http-message-signatures-directory'
     | '/.well-known/mcp'
     | '/.well-known/mcp-probing.json'
     | '/.well-known/mcp-registry-auth'
@@ -836,7 +860,9 @@ export interface FileRouteTypes {
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/ard.json'
     | '/.well-known/glama.json'
+    | '/.well-known/http-message-signatures-directory'
     | '/.well-known/mcp'
     | '/.well-known/mcp-probing.json'
     | '/.well-known/mcp-registry-auth'
@@ -908,7 +934,9 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute: typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   Char91DotwellKnownChar93McpRoute: typeof Char91DotwellKnownChar93McpRouteWithChildren
   Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRoute
   Char91DotwellKnownChar93McpRegistryAuthRoute: typeof Char91DotwellKnownChar93McpRegistryAuthRoute
@@ -1112,11 +1140,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/ard.json': {
+      id: '/.well-known/ard.json'
+      path: '/.well-known/ard.json'
+      fullPath: '/.well-known/ard.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/glama.json': {
       id: '/.well-known/glama.json'
       path: '/.well-known/glama.json'
       fullPath: '/.well-known/glama.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/http-message-signatures-directory': {
+      id: '/.well-known/http-message-signatures-directory'
+      path: '/.well-known/http-message-signatures-directory'
+      fullPath: '/.well-known/http-message-signatures-directory'
+      preLoaderRoute: typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/mcp': {
@@ -1541,8 +1583,12 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute:
+    Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute:
+    Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute,
   Char91DotwellKnownChar93McpRoute:
     Char91DotwellKnownChar93McpRouteWithChildren,
   Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRoute:
