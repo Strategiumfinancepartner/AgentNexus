@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 // /.well-known/agents.json — structured twin of /agents.txt for agents that
 // prefer JSON over plain text.
-export const Route = createFileRoute("/.well-known/agents.json")({
+export const Route = createFileRoute("/.well-known/agents/json")({
   server: {
     handlers: {
       GET: async () => {
