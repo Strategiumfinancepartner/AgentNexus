@@ -42,10 +42,7 @@ export const createSubscriptionPortalSession = createServerFn({ method: "POST" }
     if (error) throw new Error("Could not read your subscription.");
     if (!row?.paddle_customer_id) throw new Error("No subscription found for this account.");
 
-    const { gatewayFetch, type: _t } = await import("@/lib/paddle.server").then((m) => ({
-      gatewayFetch: m.gatewayFetch,
-      type: null,
-    }));
+    const { gatewayFetch } = await import("@/lib/paddle.server");
 
     const env = (row.environment === "live" ? "live" : "sandbox") as "sandbox" | "live";
     const response = await gatewayFetch(
