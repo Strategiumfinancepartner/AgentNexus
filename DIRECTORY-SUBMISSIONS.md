@@ -74,8 +74,8 @@ Send the blocks above to each of these. Tick as you go.
 
 - [x] Official MCP registry — published as `app.agentnexus/agent-nexus` v1.0.0 (HTTP domain auth via `/.well-known/mcp-registry-auth`; republish with `mcp-publisher publish /tmp/server.json` after `login http --domain agentnexus.app`)
 - [x] Smithery — published 16 sept 2026 as https://smithery.ai/server/ceo-2z03/agent-nexus (URL tested: `https://agentnexus.app/api/public/mcp`)
-- [x] Glama — https://glama.ai/mcp/servers — soumis 16 sept 2026, en attente de validation
-- [ ] mcp.so — https://mcp.so/submit — onglet **Remote Server** ; exige un dépôt GitHub public → utiliser https://github.com/Strategiumfinancepartner/agent-fabric-layer
+- [x] Glama — ✅ **APPROUVÉ 16 sept 2026** — page auteur : https://glama.ai/mcp/servers?query=author%3Aagent-nexus (fiche individuelle indexée prochainement)
+- [ ] mcp.so — soumission payante uniquement (~39 $) → **abandonné**, pas d'action
 - [x] PulseMCP — soumissions en pause depuis le 3 sept 2026 ; récupération automatique depuis le registre MCP officiel (où nous sommes déjà) — rien à faire
 - [ ] Cursor Directory — https://cursor.directory/mcp (PR or form)
 - [ ] awesome-mcp-servers — PR line below
