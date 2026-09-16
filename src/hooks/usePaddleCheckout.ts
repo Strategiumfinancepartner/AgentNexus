@@ -25,6 +25,7 @@ export function usePaddleCheckout() {
           successUrl: options.successUrl ?? `${window.location.origin}/pricing?checkout=success`,
           allowLogout: false,
           variant: "one-page",
+          showAddDiscounts: true,
         },
       });
     } finally {
