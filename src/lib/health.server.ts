@@ -70,7 +70,25 @@ export async function probeEndpoint(endpoint: string): Promise<ProbeResult> {
   }
 }
 
-type EntryRow = { id: string; slug: string; endpoint: string; category: string };
+type EntryRow = {
+  id: string;
+  slug: string;
+  endpoint: string;
+  category: string;
+  probe_url: string | null;
+};
+
+/**
+ * The URL we can actually ping for an entry: its endpoint when that is a
+ * concrete http(s) URL, otherwise the curated fallback reference (package
+ * registry, docs page) stored in `probe_url`.
+ */
+export function probeTarget(row: { endpoint: string; probe_url?: string | null }) {
+  if (isProbeable(row.endpoint)) return { url: row.endpoint.trim(), fallback: false };
+  const fallback = row.probe_url?.trim();
+  if (fallback && isProbeable(fallback)) return { url: fallback, fallback: true };
+  return null;
+}
 
 /**
  * Probes approved entries and persists results. Requires a service-role client.
@@ -92,7 +110,7 @@ export async function runHealthChecks(
 }> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, endpoint, category")
+    .select("id, slug, endpoint, category, probe_url")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -106,11 +124,18 @@ export async function runHealthChecks(
   let capabilityOk = 0;
 
   for (const row of rows) {
-    if (!isProbeable(row.endpoint)) {
+    const target = probeTarget(row);
+    if (!target) {
+      // Nothing pingable. Still stamp the row so the rotation moves on instead
+      // of picking the same unprobeable entries on every run.
       skipped++;
+      await supabaseAdmin
+        .from("entries")
+        .update({ health_checked_at: new Date().toISOString() })
+        .eq("id", row.id);
       continue;
     }
-    const result = await probeEndpoint(row.endpoint);
+    const result = await probeEndpoint(target.url);
     result.ok ? ok++ : failed++;
 
     const capability = await probeCapabilities(row);
@@ -127,7 +152,7 @@ export async function runHealthChecks(
       latency_ms: result.latency_ms,
       error: result.error,
       checked_at: checkedAt,
-      probe_kind: row.category === "mcp" ? "mcp" : "http",
+      probe_kind: target.fallback ? "reference" : row.category === "mcp" ? "mcp" : "http",
     });
 
     const update: Record<string, unknown> = {

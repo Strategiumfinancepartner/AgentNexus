@@ -12,6 +12,7 @@ export type PublicEntry = {
   health_ok: boolean | null;
   health_checked_at: string | null;
   health_latency_ms: number | null;
+  probe_url: string | null;
 };
 
 export type PublicCatalog = {

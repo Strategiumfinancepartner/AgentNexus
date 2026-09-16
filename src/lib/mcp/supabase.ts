@@ -61,7 +61,7 @@ export function supabaseAnon() {
 }
 
 export const PUBLIC_COLUMNS =
-  "slug, name, category, summary, description, auth_mode, endpoint, docs_url, tags, capabilities, auth_params, input_format, output_format, rate_limit, pricing, invocation_example, verified, verified_at, featured, checks_total, checks_ok, avg_latency_ms, health_ok, health_status_code, health_checked_at, health_latency_ms";
+  "slug, name, category, summary, description, auth_mode, endpoint, docs_url, tags, capabilities, auth_params, input_format, output_format, rate_limit, pricing, invocation_example, verified, verified_at, featured, checks_total, checks_ok, avg_latency_ms, health_ok, health_status_code, health_checked_at, health_latency_ms, probe_url";
 
 /** Forwards the verified OAuth token so RLS runs as the signed-in Nexus member. */
 export function supabaseForUser(ctx: { getToken: () => string | null | undefined }) {
