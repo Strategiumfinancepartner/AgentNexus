@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * Only well-formed control-file names are answered; anything else stays a 404
  * so we never mask genuinely missing manifests.
  */
-const CONTROL_FILE = /^([a-z0-9-]*?)-control-([0-9a-f]{16,64})\.json$/;
+const CONTROL_FILE = /^([a-z0-9-]*?)-control-([0-9a-f]{16,64})(?:\.json)?$/;
 
 export const Route = createFileRoute("/.well-known/$file")({
   server: {
