@@ -51,6 +51,7 @@ import { Route as Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRouteImport
 import { Route as Char91DotwellKnownChar93PricingRouteImport } from './routes/[.well-known]/pricing'
 import { Route as Char91DotwellKnownChar93PricingChar91DotChar93jsonRouteImport } from './routes/[.well-known]/pricing[.]json'
 import { Route as Char91DotwellKnownChar93SecurityChar91DotChar93txtRouteImport } from './routes/[.well-known]/security[.]txt'
+import { Route as Char91DotwellKnownChar93UcpRouteImport } from './routes/[.well-known]/ucp'
 import { Route as Char91DotwellKnownChar93X402RouteImport } from './routes/[.well-known]/x402'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAudienceRouteImport } from './routes/_authenticated/audience'
@@ -315,6 +316,12 @@ const Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute =
     path: '/.well-known/security.txt',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93UcpRoute =
+  Char91DotwellKnownChar93UcpRouteImport.update({
+    id: '/.well-known/ucp',
+    path: '/.well-known/ucp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotwellKnownChar93X402Route =
   Char91DotwellKnownChar93X402RouteImport.update({
     id: '/.well-known/x402',
@@ -513,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/pricing': typeof Char91DotwellKnownChar93PricingRoute
   '/.well-known/pricing.json': typeof Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute
   '/.well-known/security.txt': typeof Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute
+  '/.well-known/ucp': typeof Char91DotwellKnownChar93UcpRoute
   '/.well-known/x402': typeof Char91DotwellKnownChar93X402Route
   '/admin': typeof AuthenticatedAdminRoute
   '/audience': typeof AuthenticatedAudienceRoute
@@ -585,6 +593,7 @@ export interface FileRoutesByTo {
   '/.well-known/pricing': typeof Char91DotwellKnownChar93PricingRoute
   '/.well-known/pricing.json': typeof Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute
   '/.well-known/security.txt': typeof Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute
+  '/.well-known/ucp': typeof Char91DotwellKnownChar93UcpRoute
   '/.well-known/x402': typeof Char91DotwellKnownChar93X402Route
   '/admin': typeof AuthenticatedAdminRoute
   '/audience': typeof AuthenticatedAudienceRoute
@@ -659,6 +668,7 @@ export interface FileRoutesById {
   '/.well-known/pricing': typeof Char91DotwellKnownChar93PricingRoute
   '/.well-known/pricing.json': typeof Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute
   '/.well-known/security.txt': typeof Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute
+  '/.well-known/ucp': typeof Char91DotwellKnownChar93UcpRoute
   '/.well-known/x402': typeof Char91DotwellKnownChar93X402Route
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/audience': typeof AuthenticatedAudienceRoute
@@ -733,6 +743,7 @@ export interface FileRouteTypes {
     | '/.well-known/pricing'
     | '/.well-known/pricing.json'
     | '/.well-known/security.txt'
+    | '/.well-known/ucp'
     | '/.well-known/x402'
     | '/admin'
     | '/audience'
@@ -805,6 +816,7 @@ export interface FileRouteTypes {
     | '/.well-known/pricing'
     | '/.well-known/pricing.json'
     | '/.well-known/security.txt'
+    | '/.well-known/ucp'
     | '/.well-known/x402'
     | '/admin'
     | '/audience'
@@ -878,6 +890,7 @@ export interface FileRouteTypes {
     | '/.well-known/pricing'
     | '/.well-known/pricing.json'
     | '/.well-known/security.txt'
+    | '/.well-known/ucp'
     | '/.well-known/x402'
     | '/_authenticated/admin'
     | '/_authenticated/audience'
@@ -952,6 +965,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93PricingRoute: typeof Char91DotwellKnownChar93PricingRoute
   Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute
   Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute: typeof Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute
+  Char91DotwellKnownChar93UcpRoute: typeof Char91DotwellKnownChar93UcpRoute
   Char91DotwellKnownChar93X402Route: typeof Char91DotwellKnownChar93X402Route
   RegistrySlugRoute: typeof RegistrySlugRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -1264,6 +1278,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/security.txt'
       fullPath: '/.well-known/security.txt'
       preLoaderRoute: typeof Char91DotwellKnownChar93SecurityChar91DotChar93txtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/ucp': {
+      id: '/.well-known/ucp'
+      path: '/.well-known/ucp'
+      fullPath: '/.well-known/ucp'
+      preLoaderRoute: typeof Char91DotwellKnownChar93UcpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/x402': {
@@ -1616,6 +1637,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93PricingChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute:
     Char91DotwellKnownChar93SecurityChar91DotChar93txtRoute,
+  Char91DotwellKnownChar93UcpRoute: Char91DotwellKnownChar93UcpRoute,
   Char91DotwellKnownChar93X402Route: Char91DotwellKnownChar93X402Route,
   RegistrySlugRoute: RegistrySlugRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
