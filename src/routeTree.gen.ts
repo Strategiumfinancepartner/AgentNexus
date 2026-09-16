@@ -13,7 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AgentsDottxtRouteImport } from './routes/agents[.]txt'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CapabilitiesRouteImport } from './routes/capabilities'
 import { Route as ConnectRouteImport } from './routes/connect'
+import { Route as EntriesDotndjsonRouteImport } from './routes/entries[.]ndjson'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
@@ -22,6 +24,7 @@ import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundsRouteImport } from './routes/refunds'
+import { Route as ReportRouteImport } from './routes/report'
 import { Route as ServerDotjsonRouteImport } from './routes/server[.]json'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as StatusRouteImport } from './routes/status'
@@ -101,9 +104,19 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CapabilitiesRoute = CapabilitiesRouteImport.update({
+  id: '/capabilities',
+  path: '/capabilities',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConnectRoute = ConnectRouteImport.update({
   id: '/connect',
   path: '/connect',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntriesDotndjsonRoute = EntriesDotndjsonRouteImport.update({
+  id: '/entries.ndjson',
+  path: '/entries.ndjson',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreRoute = ExploreRouteImport.update({
@@ -144,6 +157,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const RefundsRoute = RefundsRouteImport.update({
   id: '/refunds',
   path: '/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ServerDotjsonRoute = ServerDotjsonRouteImport.update({
@@ -482,7 +500,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
+  '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
+  '/entries.ndjson': typeof EntriesDotndjsonRoute
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
@@ -491,6 +511,7 @@ export interface FileRoutesByFullPath {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refunds': typeof RefundsRoute
+  '/report': typeof ReportRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
@@ -555,7 +576,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
+  '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
+  '/entries.ndjson': typeof EntriesDotndjsonRoute
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
@@ -564,6 +587,7 @@ export interface FileRoutesByTo {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refunds': typeof RefundsRoute
+  '/report': typeof ReportRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
@@ -630,7 +654,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
+  '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
+  '/entries.ndjson': typeof EntriesDotndjsonRoute
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/llms.txt': typeof LlmsDottxtRoute
@@ -639,6 +665,7 @@ export interface FileRoutesById {
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refunds': typeof RefundsRoute
+  '/report': typeof ReportRoute
   '/server.json': typeof ServerDotjsonRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/status': typeof StatusRoute
@@ -705,7 +732,9 @@ export interface FileRouteTypes {
     | '/'
     | '/agents.txt'
     | '/auth'
+    | '/capabilities'
     | '/connect'
+    | '/entries.ndjson'
     | '/explore'
     | '/feed.xml'
     | '/llms.txt'
@@ -714,6 +743,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/refunds'
+    | '/report'
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
@@ -778,7 +808,9 @@ export interface FileRouteTypes {
     | '/'
     | '/agents.txt'
     | '/auth'
+    | '/capabilities'
     | '/connect'
+    | '/entries.ndjson'
     | '/explore'
     | '/feed.xml'
     | '/llms.txt'
@@ -787,6 +819,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/refunds'
+    | '/report'
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
@@ -852,7 +885,9 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/agents.txt'
     | '/auth'
+    | '/capabilities'
     | '/connect'
+    | '/entries.ndjson'
     | '/explore'
     | '/feed.xml'
     | '/llms.txt'
@@ -861,6 +896,7 @@ export interface FileRouteTypes {
     | '/pricing'
     | '/privacy'
     | '/refunds'
+    | '/report'
     | '/server.json'
     | '/sitemap.xml'
     | '/status'
@@ -927,7 +963,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AgentsDottxtRoute: typeof AgentsDottxtRoute
   AuthRoute: typeof AuthRoute
+  CapabilitiesRoute: typeof CapabilitiesRoute
   ConnectRoute: typeof ConnectRoute
+  EntriesDotndjsonRoute: typeof EntriesDotndjsonRoute
   ExploreRoute: typeof ExploreRoute
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
@@ -936,6 +974,7 @@ export interface RootRouteChildren {
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundsRoute: typeof RefundsRoute
+  ReportRoute: typeof ReportRoute
   ServerDotjsonRoute: typeof ServerDotjsonRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   StatusRoute: typeof StatusRoute
@@ -1014,11 +1053,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/capabilities': {
+      id: '/capabilities'
+      path: '/capabilities'
+      fullPath: '/capabilities'
+      preLoaderRoute: typeof CapabilitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/connect': {
       id: '/connect'
       path: '/connect'
       fullPath: '/connect'
       preLoaderRoute: typeof ConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entries.ndjson': {
+      id: '/entries.ndjson'
+      path: '/entries.ndjson'
+      fullPath: '/entries.ndjson'
+      preLoaderRoute: typeof EntriesDotndjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore': {
@@ -1075,6 +1128,13 @@ declare module '@tanstack/react-router' {
       path: '/refunds'
       fullPath: '/refunds'
       preLoaderRoute: typeof RefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/server.json': {
@@ -1579,7 +1639,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AgentsDottxtRoute: AgentsDottxtRoute,
   AuthRoute: AuthRoute,
+  CapabilitiesRoute: CapabilitiesRoute,
   ConnectRoute: ConnectRoute,
+  EntriesDotndjsonRoute: EntriesDotndjsonRoute,
   ExploreRoute: ExploreRoute,
   FeedDotxmlRoute: FeedDotxmlRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
@@ -1588,6 +1650,7 @@ const rootRouteChildren: RootRouteChildren = {
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundsRoute: RefundsRoute,
+  ReportRoute: ReportRoute,
   ServerDotjsonRoute: ServerDotjsonRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   StatusRoute: StatusRoute,
