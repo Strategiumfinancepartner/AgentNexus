@@ -74,7 +74,7 @@ Send the blocks above to each of these. Tick as you go.
 
 - [x] Official MCP registry — published as `app.agentnexus/agent-nexus` v1.0.0 (HTTP domain auth via `/.well-known/mcp-registry-auth`; republish with `mcp-publisher publish /tmp/server.json` after `login http --domain agentnexus.app`)
 - [ ] Smithery — https://smithery.ai/new
-- [ ] Glama — https://glama.ai/mcp/servers (submit form)
+- [x] Glama — https://glama.ai/mcp/servers (submit form) — soumis 16 sept 2026, en attente de validation
 - [ ] mcp.so — https://mcp.so/submit
 - [ ] PulseMCP — https://www.pulsemcp.com/submit
 - [ ] Cursor Directory — https://cursor.directory/mcp (PR or form)
