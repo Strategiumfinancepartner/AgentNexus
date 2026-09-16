@@ -30,7 +30,7 @@ function PrivacyPage() {
         Agent Nexus is operated by <strong>BrainPath.io</strong>. For the personal data described
         here, BrainPath.io acts as the <strong>data controller</strong>: we decide what data is
         collected and why. Contact:{" "}
-        <a href="mailto:privacy@agentnexus.app">privacy@agentnexus.app</a>.
+        <a href="mailto:support@agentnexus.app">support@agentnexus.app</a>.
       </p>
 
       <h2>2. What we collect and why</h2>
@@ -106,7 +106,7 @@ function PrivacyPage() {
         Subject to applicable law, you may request access to your data, correction of inaccurate
         data, erasure, restriction of processing, portability, and you may object to processing
         based on legitimate interests or withdraw consent where consent was the basis. Email{" "}
-        <a href="mailto:privacy@agentnexus.app">privacy@agentnexus.app</a> and we will respond
+         <a href="mailto:support@agentnexus.app">support@agentnexus.app</a> and we will respond
         within one month. If you are in the UK or EEA you also have the right to complain to your
         data protection supervisory authority.
       </p>
