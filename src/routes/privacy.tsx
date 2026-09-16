@@ -24,7 +24,7 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <LegalLayout title="Privacy Notice" updated="15 September 2026">
+    <LegalLayout title="Privacy Notice" updated="16 September 2026">
       <h2>1. Who we are</h2>
       <p>
         Agent Nexus is operated by <strong>BrainPath.io</strong>. For the personal data described

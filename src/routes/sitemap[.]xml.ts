@@ -4,15 +4,24 @@ import { supabaseAnon } from "@/lib/mcp/supabase";
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
+      GET: async () => {
+        const origin = "https://agentnexus.app";
         const { data } = await supabaseAnon()
           .from("entries")
           .select("slug, updated_at")
           .eq("status", "approved")
           .limit(2000);
 
-        const staticPaths = ["/", "/explore", "/status", "/connect", "/pricing", "/auth"];
+        const staticPaths = [
+          "/",
+          "/explore",
+          "/status",
+          "/connect",
+          "/pricing",
+          "/terms",
+          "/refunds",
+          "/privacy",
+        ];
         const urls = [
           ...staticPaths.map(
             (p) =>
