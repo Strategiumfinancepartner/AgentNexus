@@ -25,11 +25,13 @@ export const Route = createFileRoute("/api/public/registry/$slug")({
           });
         }
 
-        const { data, error } = await supabaseAnon()
+        const slug = parsed.data.toLowerCase();
+        const client = supabaseAnon();
+        const { data, error } = await client
           .from("entries")
           .select(PUBLIC_COLUMNS)
           .eq("status", "approved")
-          .eq("slug", parsed.data.toLowerCase())
+          .eq("slug", slug)
           .maybeSingle();
 
         if (error) {
@@ -39,6 +41,17 @@ export const Route = createFileRoute("/api/public/registry/$slug")({
           });
         }
         if (!data) {
+          const { data: alias } = await client
+            .from("entry_aliases")
+            .select("to_slug")
+            .eq("from_slug", slug)
+            .maybeSingle();
+          if (alias?.to_slug) {
+            return new Response(null, {
+              status: 301,
+              headers: { ...cors, Location: `/api/public/registry/${alias.to_slug}` },
+            });
+          }
           return new Response(JSON.stringify({ error: "Not found" }), {
             status: 404,
             headers: cors,

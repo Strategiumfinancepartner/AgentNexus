@@ -72,14 +72,23 @@ export const getPublicEntry = createServerFn({ method: "GET" })
     }
     return { slug: slug.toLowerCase() };
   })
-  .handler(async ({ data }): Promise<PublicEntryDetail | null> => {
+  .handler(async ({ data }): Promise<PublicEntryDetail | { redirectTo: string } | null> => {
     const { PUBLIC_COLUMNS, supabaseAnon } = await import("@/lib/mcp/supabase");
-    const { data: row, error } = await supabaseAnon()
+    const client = supabaseAnon();
+    const { data: row, error } = await client
       .from("entries")
       .select(PUBLIC_COLUMNS)
       .eq("status", "approved")
       .eq("slug", data.slug)
       .maybeSingle();
-    if (error || !row) return null;
-    return row as unknown as PublicEntryDetail;
+    if (!error && row) return row as unknown as PublicEntryDetail;
+
+    // Retired duplicate slug → tell the caller where the canonical entry lives.
+    const { data: alias } = await client
+      .from("entry_aliases")
+      .select("to_slug")
+      .eq("from_slug", data.slug)
+      .maybeSingle();
+    if (alias?.to_slug) return { redirectTo: alias.to_slug as string };
+    return null;
   });
