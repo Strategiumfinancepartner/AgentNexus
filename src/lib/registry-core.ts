@@ -190,6 +190,9 @@ export function matchScore(entry: MatchSource, tokens: string[]): number {
   const rel = reliability(entry);
   if (rel.score != null) score += rel.score / 40; // up to +2.5 for proven interfaces
   if (entry.verified) score += 1;
+  // Publisher placement: a tiebreak among interfaces that already match the
+  // need, never a way to outrank a more relevant or more reliable interface.
+  if (entry.featured) score += 0.5;
   if (entry.health_ok === false) score -= 2;
   return Math.round(score * 100) / 100;
 }
