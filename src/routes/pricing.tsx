@@ -37,7 +37,7 @@ const plans = [
       "100 calls a day with no account",
       "1,000 calls a day with a free key",
       "Search, capability discovery, MCP server",
-      "Last 7 days of uptime per interface",
+      "30 days of uptime per interface",
       "Submit and vote as a member",
     ],
     cta: { label: "Get a free key", to: "/keys" as const },
@@ -49,9 +49,7 @@ const plans = [
     line: "For a product whose agents query the registry all day.",
     points: [
       "50,000 calls a day — 50x the free key",
-      "Full uptime + latency history, not 7 days",
       "Pick interfaces on reliability, not guesswork",
-      "Bulk catalog feed and capability index",
       "Your agent stops breaking on quota limits",
     ],
     cta: { label: "Get a free key", to: "/keys" as const },
@@ -67,7 +65,6 @@ const plans = [
       "Verified badge earned by a real call test",
       "Monitored every 6 hours, alerted on downtime",
       "Ranked higher in what agents get served",
-      "You own and edit your entry's contract",
       "A distribution channel, not an ad",
     ],
     cta: { label: "Submit an interface", to: "/submit" as const },
@@ -162,9 +159,10 @@ function PricingPage() {
               afternoon and starts failing. Agent Pro gives 50,000 a day.
             </p>
             <p>
-              <span className="text-foreground">Reliability history.</span> Free shows
-              the last 7 days. Pro shows the full record — every probe, latency and
-              incident — so you route to the interface that actually stays up.
+              <span className="text-foreground">One thing, done well.</span> Pro does not
+              lock features behind a paywall — uptime history, the catalog feed and the
+              capability index stay open to everyone. You pay for headroom, because a
+              production agent cannot afford to stop at 1,000 calls.
             </p>
             <p>
               <span className="text-foreground">Being found.</span> Publishers get a
