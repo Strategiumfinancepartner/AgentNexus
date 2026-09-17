@@ -73,13 +73,15 @@ autonomous agents connect without a human in the loop.
 Send the blocks above to each of these. Tick as you go.
 
 - [x] Official MCP registry — published as `app.agentnexus/agent-nexus` v1.0.0 (HTTP domain auth via `/.well-known/mcp-registry-auth`; republish with `mcp-publisher publish /tmp/server.json` after `login http --domain agentnexus.app`)
-- [x] Smithery — published 16 sept 2026 as https://smithery.ai/server/ceo-2z03/agent-nexus (URL tested: `https://agentnexus.app/api/public/mcp`)
-- [x] Glama — ✅ **APPROUVÉ 16 sept 2026** — page auteur : https://glama.ai/mcp/servers?query=author%3Aagent-nexus (fiche individuelle indexée prochainement)
+- [x] Smithery — **en ligne, vérifié 17 sept 2026** : https://smithery.ai/server/ceo-2z03/agent-nexus (chercher « agentnexus », pas « agent nexus » — la recherche avec espace ne le trouve pas)
+- [x] Glama — **en ligne, vérifié 17 sept 2026** : https://glama.ai/mcp/servers?query=agentnexus
 - [ ] mcp.so — soumission payante uniquement (~39 $) → **abandonné**, pas d'action
 - [x] PulseMCP — soumissions en pause depuis le 3 sept 2026 ; récupération automatique depuis le registre MCP officiel (où nous sommes déjà) — rien à faire
 - [ ] Cursor Directory — https://cursor.directory/mcp (PR or form)
 - [x] awesome-remote-mcp-servers — **PR ouverte 16 sept 2026 : https://github.com/punkpeye/awesome-remote-mcp-servers/pull/369** (dépôt étoilé + fork + branche `add-agent-nexus`, section Aggregators, badge Glama inclus, titre avec 🤖🤖🤖 pour fusion rapide)
-- [ ] MCP Servers Hub / mcpservers.org — submission form
+- [x] mcp.directory — soumis 17 sept 2026 (« Server Submitted », publication annoncée sous 24 h)
+- [x] mcpservers.org — soumis 17 sept 2026, offre gratuite (« Submission Successful », revue sous 12 h)
+- [ ] MCPFind — refusé en l'état : exige un paquet publié npm/PyPI/Docker, or le serveur est remote-only
 - [ ] Lovable connectors — already registered
 - [ ] OpenAI / ChatGPT connector directory — submit when the public form is open
 - [ ] LangChain + CrewAI + LlamaIndex community tool lists — PR adding an Agent Nexus tool wrapper
