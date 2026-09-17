@@ -154,3 +154,46 @@ Justification à coller dans le corps de la PR :
 > - Tools: `discover_capabilities`, `search_registry`, `get_entry`, `list_categories`
 > - Already listed on the official MCP registry as `app.agentnexus/agent-nexus`, on Smithery and on Glama
 > - Source: https://github.com/Strategiumfinancepartner/AgentNexus
+
+## Annuaires d'APIs classiques (préparé le 17 sept 2026 — demande un compte à toi)
+
+### 1. public-apis/public-apis (~350k étoiles)
+
+Leur règle est explicite : la liste n'est pas un outil marketing, seules les
+APIs à accès libre ou avec palier gratuit sont acceptées, et chaque ligne doit
+pointer vers la doc de l'API elle-même (pas vers un annuaire). On n'y inscrit
+donc PAS les fiches d'autrui avec un lien Agent Nexus — ce serait refusé.
+Ce qui est légitime : inscrire l'API publique d'Agent Nexus, qui est gratuite
+et sans clé.
+
+Procédure : Fork de https://github.com/public-apis/public-apis → éditer
+`README.md` → section **Development** → insérer dans l'ordre alphabétique :
+
+```md
+| [Agent Nexus](https://agentnexus.app/llms.txt) | Continuously probed registry of APIs, MCP servers and CLIs callable by agents | No | Yes | Yes |
+```
+
+Contraintes CI : description ≤ 100 caractères, majuscule au début, pas de point
+final, pas de " API" à la fin du nom, `Auth` = `No`.
+
+### 2. Postman API Network
+
+Collection prête à importer : `public/agent-nexus.postman_collection.json`
+(en ligne : https://agentnexus.app/agent-nexus.postman_collection.json).
+
+1. Créer un compte Postman → Workspaces → **Create workspace** → type **Public**.
+2. **Import** → déposer le fichier de collection.
+3. Rendre le profil d'équipe public (Team profile → Make my team's profile public),
+   sinon la collection n'apparaît pas sur l'API Network.
+4. Publier le workspace : Options → Workspace overview → Settings → Workspace type → Public.
+
+Bonus : une fois la collection publique, son bouton « Run in Postman » peut être
+collé dans la colonne « Call this API » de la ligne public-apis ci-dessus.
+
+### 3. RapidAPI
+
+RapidAPI exige que les appels passent par leur passerelle (clé RapidAPI, quotas
+et facturation gérés chez eux). C'est faisable mais ce n'est pas une simple
+inscription : il faut créer un compte provider, déclarer `agentnexus.app` comme
+backend et importer `/openapi.json`. À faire seulement si tu veux vendre l'accès
+via leur place de marché.
