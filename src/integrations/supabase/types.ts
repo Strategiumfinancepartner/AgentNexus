@@ -469,6 +469,45 @@ export type Database = {
         }
         Relationships: []
       }
+      publisher_alerts: {
+        Row: {
+          entry_id: string
+          id: string
+          kind: string
+          recipient: string
+          sent_at: string
+        }
+        Insert: {
+          entry_id: string
+          id?: string
+          kind: string
+          recipient?: string
+          sent_at?: string
+        }
+        Update: {
+          entry_id?: string
+          id?: string
+          kind?: string
+          recipient?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publisher_alerts_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "publisher_alerts_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
+      }
       rate_limit_events: {
         Row: {
           actor: string
