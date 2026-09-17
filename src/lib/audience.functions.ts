@@ -189,6 +189,18 @@ export const getAudience = createServerFn({ method: "POST" })
       createdAt: e.created_at,
     }));
 
+    // Lifetime call counter: counted server-side so it is never capped by row paging.
+    const { count: hitsAllTimeCount } = await client
+      .from("access_events")
+      .select("id", { count: "exact", head: true });
+    const { data: firstRow } = await client
+      .from("access_events")
+      .select("created_at")
+      .order("created_at", { ascending: true })
+      .limit(1);
+    const hitsAllTime = Number(hitsAllTimeCount ?? 0);
+    const firstCallAt = (firstRow?.[0]?.created_at as string | undefined) ?? null;
+
     const day = 24 * 60 * 60 * 1000;
     const now = Date.now();
     const hitsLast24h = events.filter((e) => now - Date.parse(e.created_at) < day).length;
@@ -204,6 +216,8 @@ export const getAudience = createServerFn({ method: "POST" })
         activeLast7d,
         hits30d: events.length,
         hitsLast24h,
+        hitsAllTime,
+        firstCallAt,
         distinctCallers: callerMap.size,
       },
       members: members.slice(0, 100),

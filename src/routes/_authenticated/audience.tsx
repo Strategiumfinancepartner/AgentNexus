@@ -105,6 +105,20 @@ function AudiencePage() {
               <Stat label="Distinct callers" value={data.totals.distinctCallers} />
             </div>
 
+            <div className="mt-3 rounded-lg border border-border bg-card/60 p-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                Total calls since launch
+              </p>
+              <p className="mt-1 font-mono text-3xl font-semibold text-foreground">
+                {data.totals.hitsAllTime.toLocaleString("en-US")}
+              </p>
+              {data.totals.firstCallAt && (
+                <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+                  since {new Date(data.totals.firstCallAt).toISOString().slice(0, 16).replace("T", " ")} UTC
+                </p>
+              )}
+            </div>
+
             <Section
               title="Entry points"
               hint="Which machine-facing surface agents actually hit: /mcp, /llms.txt, the public APIs and the manifests."

@@ -179,9 +179,30 @@ function AuthPage() {
         </p>
 
         {sent ? (
-          <p className="mt-8 rounded-xl border border-border bg-card/60 p-4 text-sm text-muted-foreground">
-            Check your inbox — open the link we just sent to {email} to continue.
-          </p>
+          <div className="mt-8 rounded-xl border border-border bg-card/60 p-4">
+            <p className="text-sm text-muted-foreground">
+              Check your inbox — open the link we just sent to {email} to continue. It can take a
+              minute to arrive, and it may land in spam.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-4 font-mono text-[11px] uppercase tracking-widest">
+              <button
+                onClick={handleMagicLink}
+                disabled={busy}
+                className="text-primary transition-opacity hover:opacity-80 disabled:opacity-50"
+              >
+                Resend the link
+              </button>
+              <button
+                onClick={() => {
+                  setSent(false);
+                  setPassword("");
+                }}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Use another address
+              </button>
+            </div>
+          </div>
         ) : (
           <>
             <form onSubmit={handleSubmit} className="mt-8 space-y-3">
