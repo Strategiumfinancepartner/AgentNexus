@@ -101,7 +101,7 @@ Send the blocks above to each of these. Tick as you go.
 
 ### Public repository
 
-GitHub (code source, public) : https://github.com/Strategiumfinancepartner/agent-fabric-layer — à coller dans tout formulaire demandant un dépôt (mcp.so, awesome-mcp-servers, etc.). Contient uniquement des clés publiques (anon key, token navigateur) — vérifié le 16 sept 2026.
+GitHub (code source, public) : https://github.com/Strategiumfinancepartner/AgentNexus — à coller dans tout formulaire demandant un dépôt (mcp.so, awesome-mcp-servers, etc.). Contient uniquement des clés publiques (anon key, token navigateur) — vérifié le 16 sept 2026.
 
 ### Fiche GitHub — à coller dans "Edit repository details"
 
@@ -151,4 +151,4 @@ Justification à coller dans le corps de la PR :
 > - Endpoint (anonymous, no key, Streamable HTTP): https://agentnexus.app/api/public/mcp
 > - Tools: `discover_capabilities`, `search_registry`, `get_entry`, `list_categories`
 > - Already listed on the official MCP registry as `app.agentnexus/agent-nexus`, on Smithery and on Glama
-> - Source: https://github.com/Strategiumfinancepartner/agent-fabric-layer
+> - Source: https://github.com/Strategiumfinancepartner/AgentNexus

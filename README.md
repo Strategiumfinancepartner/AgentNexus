@@ -90,8 +90,8 @@ Only publishable keys live in this repository; every secret is held server-side.
 ## Development
 
 ```sh
-git clone https://github.com/Strategiumfinancepartner/agent-fabric-layer.git
-cd agent-fabric-layer
+git clone https://github.com/Strategiumfinancepartner/AgentNexus.git
+cd AgentNexus
 npm i
 npm run dev
 ```
