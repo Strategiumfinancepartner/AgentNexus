@@ -21,4 +21,5 @@ export interface TemplateEntry {
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'submission-received': submissionReceivedTemplate,
+  'publisher-health-alert': publisherHealthAlertTemplate,
 }
