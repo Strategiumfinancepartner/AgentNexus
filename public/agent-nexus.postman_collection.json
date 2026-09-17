@@ -1,0 +1,135 @@
+{
+  "info": {
+    "name": "Agent Nexus — public API",
+    "description": "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Read access is free and needs no login (100 calls/day per IP). A free API key raises this to 1,000/day: POST /api/public/keys.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://agentnexus.app" },
+    { "key": "apiKey", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Discover interfaces for a need",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "x-api-key", "value": "{{apiKey}}", "disabled": true }],
+        "url": {
+          "raw": "{{baseUrl}}/api/public/discover?need=send a transactional email&limit=5",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "discover"],
+          "query": [
+            { "key": "need", "value": "send a transactional email" },
+            { "key": "category", "value": "api", "disabled": true },
+            { "key": "min_reliability", "value": "70", "disabled": true },
+            { "key": "limit", "value": "5" }
+          ]
+        },
+        "description": "Maps a plain-language need to callable interfaces, ranked by live reliability."
+      }
+    },
+    {
+      "name": "Search the registry",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "x-api-key", "value": "{{apiKey}}", "disabled": true }],
+        "url": {
+          "raw": "{{baseUrl}}/api/public/registry?q=weather&category=api&limit=20",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "registry"],
+          "query": [
+            { "key": "q", "value": "weather" },
+            { "key": "category", "value": "api" },
+            { "key": "limit", "value": "20" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get one entry (full contract)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "x-api-key", "value": "{{apiKey}}", "disabled": true }],
+        "url": {
+          "raw": "{{baseUrl}}/api/public/registry/open-meteo-api",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "registry", "open-meteo-api"]
+        },
+        "description": "Endpoint, auth mode, capabilities, formats, pricing, tested example call and health history."
+      }
+    },
+    {
+      "name": "Bulk catalog feed (NDJSON)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/public/entries.ndjson",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "entries.ndjson"]
+        }
+      }
+    },
+    {
+      "name": "Capability index",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/public/capabilities",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "capabilities"]
+        }
+      }
+    },
+    {
+      "name": "Registry status and uptime",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/public/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "status"]
+        },
+        "description": "30 days of uptime and latency history for every monitored entry."
+      }
+    },
+    {
+      "name": "Create a free API key",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"label\": \"my-agent\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/public/keys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "keys"]
+        },
+        "description": "Self-service key, no dashboard needed. Raises the quota to 1,000 calls/day."
+      }
+    },
+    {
+      "name": "MCP endpoint (Streamable HTTP, anonymous)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Accept", "value": "application/json, text/event-stream" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"jsonrpc\": \"2.0\",\n  \"id\": 1,\n  \"method\": \"tools/list\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/public/mcp",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "public", "mcp"]
+        }
+      }
+    }
+  ]
+}
