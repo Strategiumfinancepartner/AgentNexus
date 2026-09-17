@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { getPublicEntry, type PublicEntryDetail } from "@/lib/public-registry.functions";
+import { CopyExample } from "@/components/copy-example";
 
 const ORIGIN = "https://agentnexus.app";
 
