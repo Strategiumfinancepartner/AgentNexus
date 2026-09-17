@@ -216,6 +216,8 @@ export const getAudience = createServerFn({ method: "POST" })
         activeLast7d,
         hits30d: events.length,
         hitsLast24h,
+        hitsAllTime,
+        firstCallAt,
         distinctCallers: callerMap.size,
       },
       members: members.slice(0, 100),
