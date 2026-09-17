@@ -128,6 +128,11 @@ function EntryPage() {
               <code className="font-mono text-[13px]">{entry.endpoint}</code>
             </Field>
             <Field label="auth">{entry.auth_mode}</Field>
+            {entry.invocation_example && (
+              <Field label="try it">
+                <CopyExample command={entry.invocation_example} />
+              </Field>
+            )}
             {entry.capabilities?.length > 0 && (
               <Field label="capabilities">{entry.capabilities.join(" · ")}</Field>
             )}
