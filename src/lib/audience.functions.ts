@@ -52,18 +52,30 @@ export const getAudience = createServerFn({ method: "POST" })
 
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    const [usersRes, rolesRes, keysRes, entriesRes, eventsRes] = await Promise.all([
+    const [usersRes, rolesRes, keysRes, entriesRes] = await Promise.all([
       client.auth.admin.listUsers({ page: 1, perPage: 200 }),
       client.from("user_roles").select("user_id, role"),
       client.from("api_keys").select("id, user_id, revoked_at"),
       client.from("entries").select("submitted_by"),
-      client
+    ]);
+
+    // PostgREST caps a single response at 1000 rows — page through access_events
+    // so the report reflects the real 30-day volume instead of stopping at 1000.
+    const PAGE = 1000;
+    const MAX_ROWS = 10000;
+    const eventsResData: any[] = [];
+    for (let from = 0; from < MAX_ROWS; from += PAGE) {
+      const { data: page } = await client
         .from("access_events")
         .select("surface, path, method, tier, actor, user_id, user_agent, country, created_at")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
-        .limit(5000),
-    ]);
+        .range(from, from + PAGE - 1);
+      const rows = (page ?? []) as any[];
+      eventsResData.push(...rows);
+      if (rows.length < PAGE) break;
+    }
+    const eventsRes = { data: eventsResData };
 
     const users = (usersRes?.data?.users ?? []) as any[];
     const roles = (rolesRes.data ?? []) as { user_id: string; role: string }[];
