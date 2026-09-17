@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import { template as submissionReceivedTemplate } from './submission-received'
+import { template as publisherHealthAlertTemplate } from './publisher-health-alert'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -20,4 +21,5 @@ export interface TemplateEntry {
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'submission-received': submissionReceivedTemplate,
+  'publisher-health-alert': publisherHealthAlertTemplate,
 }
