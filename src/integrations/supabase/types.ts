@@ -259,6 +259,24 @@ export type Database = {
         }
         Relationships: []
       }
+      entry_aliases: {
+        Row: {
+          created_at: string
+          from_slug: string
+          to_slug: string
+        }
+        Insert: {
+          created_at?: string
+          from_slug: string
+          to_slug: string
+        }
+        Update: {
+          created_at?: string
+          from_slug?: string
+          to_slug?: string
+        }
+        Relationships: []
+      }
       entry_votes: {
         Row: {
           created_at: string
