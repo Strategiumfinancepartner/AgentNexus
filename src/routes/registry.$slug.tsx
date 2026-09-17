@@ -11,9 +11,17 @@ const KIND: Record<string, string> = {
 
 export const Route = createFileRoute("/registry/$slug")({
   loader: async ({ params }) => {
-    const entry = await getPublicEntry({ data: { slug: params.slug } });
-    if (!entry) throw notFound();
-    return entry;
+    const result = await getPublicEntry({ data: { slug: params.slug } });
+    if (!result) throw notFound();
+    if ("redirectTo" in result) {
+      // Retired duplicate slug — permanent redirect to the canonical entry.
+      throw redirect({
+        to: "/registry/$slug",
+        params: { slug: result.redirectTo },
+        statusCode: 301,
+      });
+    }
+    return result as PublicEntryDetail;
   },
   head: ({ loaderData }) => {
     const entry = loaderData as PublicEntryDetail | undefined;
