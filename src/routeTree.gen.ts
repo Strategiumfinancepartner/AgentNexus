@@ -32,6 +32,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotwellKnownChar93FileRouteImport } from './routes/[.well-known]/$file'
 import { Route as Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-card[.]json'
+import { Route as Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent-directory[.]json'
 import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agent[.]json'
 import { Route as Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agents[.]json'
 import { Route as Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-catalog[.]json'
@@ -45,10 +46,12 @@ import { Route as Char91DotwellKnownChar93McpRegistryAuthRouteImport } from './r
 import { Route as Char91DotwellKnownChar93McpChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp[.]json'
 import { Route as Char91DotwellKnownChar93MonetizationRouteImport } from './routes/[.well-known]/monetization'
 import { Route as Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRouteImport } from './routes/[.well-known]/monetization[.]json'
+import { Route as Char91DotwellKnownChar93MppRouteImport } from './routes/[.well-known]/mpp'
 import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/[.well-known]/oauth-authorization-server'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport } from './routes/[.well-known]/owners[.]json'
 import { Route as Char91DotwellKnownChar93PaymentRouteImport } from './routes/[.well-known]/payment'
+import { Route as Char91DotwellKnownChar93PaymentManifestRouteImport } from './routes/[.well-known]/payment-manifest'
 import { Route as Char91DotwellKnownChar93PaymentsRouteImport } from './routes/[.well-known]/payments'
 import { Route as Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRouteImport } from './routes/[.well-known]/payments[.]json'
 import { Route as Char91DotwellKnownChar93PricingRouteImport } from './routes/[.well-known]/pricing'
@@ -202,6 +205,12 @@ const Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute =
     path: '/.well-known/agent-card.json',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/agent-directory.json',
+    path: '/.well-known/agent-directory.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/agent.json',
@@ -280,6 +289,12 @@ const Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute =
     path: '/.well-known/monetization.json',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93MppRoute =
+  Char91DotwellKnownChar93MppRouteImport.update({
+    id: '/.well-known/mpp',
+    path: '/.well-known/mpp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const Char91DotwellKnownChar93OauthAuthorizationServerRoute =
   Char91DotwellKnownChar93OauthAuthorizationServerRouteImport.update({
     id: '/.well-known/oauth-authorization-server',
@@ -302,6 +317,12 @@ const Char91DotwellKnownChar93PaymentRoute =
   Char91DotwellKnownChar93PaymentRouteImport.update({
     id: '/.well-known/payment',
     path: '/.well-known/payment',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93PaymentManifestRoute =
+  Char91DotwellKnownChar93PaymentManifestRouteImport.update({
+    id: '/.well-known/payment-manifest',
+    path: '/.well-known/payment-manifest',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93PaymentsRoute =
@@ -519,6 +540,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/$file': typeof Char91DotwellKnownChar93FileRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  '/.well-known/agent-directory.json': typeof Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
@@ -532,10 +554,12 @@ export interface FileRoutesByFullPath {
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/monetization': typeof Char91DotwellKnownChar93MonetizationRoute
   '/.well-known/monetization.json': typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
+  '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
+  '/.well-known/payment-manifest': typeof Char91DotwellKnownChar93PaymentManifestRoute
   '/.well-known/payments': typeof Char91DotwellKnownChar93PaymentsRoute
   '/.well-known/payments.json': typeof Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute
   '/.well-known/pricing': typeof Char91DotwellKnownChar93PricingRoute
@@ -595,6 +619,7 @@ export interface FileRoutesByTo {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/$file': typeof Char91DotwellKnownChar93FileRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  '/.well-known/agent-directory.json': typeof Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
@@ -608,10 +633,12 @@ export interface FileRoutesByTo {
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/monetization': typeof Char91DotwellKnownChar93MonetizationRoute
   '/.well-known/monetization.json': typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
+  '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
+  '/.well-known/payment-manifest': typeof Char91DotwellKnownChar93PaymentManifestRoute
   '/.well-known/payments': typeof Char91DotwellKnownChar93PaymentsRoute
   '/.well-known/payments.json': typeof Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute
   '/.well-known/pricing': typeof Char91DotwellKnownChar93PricingRoute
@@ -673,6 +700,7 @@ export interface FileRoutesById {
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/$file': typeof Char91DotwellKnownChar93FileRoute
   '/.well-known/agent-card.json': typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  '/.well-known/agent-directory.json': typeof Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute
   '/.well-known/agent.json': typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
@@ -686,10 +714,12 @@ export interface FileRoutesById {
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/.well-known/monetization': typeof Char91DotwellKnownChar93MonetizationRoute
   '/.well-known/monetization.json': typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
+  '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
+  '/.well-known/payment-manifest': typeof Char91DotwellKnownChar93PaymentManifestRoute
   '/.well-known/payments': typeof Char91DotwellKnownChar93PaymentsRoute
   '/.well-known/payments.json': typeof Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute
   '/.well-known/pricing': typeof Char91DotwellKnownChar93PricingRoute
@@ -751,6 +781,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/$file'
     | '/.well-known/agent-card.json'
+    | '/.well-known/agent-directory.json'
     | '/.well-known/agent.json'
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
@@ -764,10 +795,12 @@ export interface FileRouteTypes {
     | '/.well-known/mcp.json'
     | '/.well-known/monetization'
     | '/.well-known/monetization.json'
+    | '/.well-known/mpp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
+    | '/.well-known/payment-manifest'
     | '/.well-known/payments'
     | '/.well-known/payments.json'
     | '/.well-known/pricing'
@@ -827,6 +860,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/$file'
     | '/.well-known/agent-card.json'
+    | '/.well-known/agent-directory.json'
     | '/.well-known/agent.json'
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
@@ -840,10 +874,12 @@ export interface FileRouteTypes {
     | '/.well-known/mcp.json'
     | '/.well-known/monetization'
     | '/.well-known/monetization.json'
+    | '/.well-known/mpp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
+    | '/.well-known/payment-manifest'
     | '/.well-known/payments'
     | '/.well-known/payments.json'
     | '/.well-known/pricing'
@@ -904,6 +940,7 @@ export interface FileRouteTypes {
     | '/.mcp/list-tools'
     | '/.well-known/$file'
     | '/.well-known/agent-card.json'
+    | '/.well-known/agent-directory.json'
     | '/.well-known/agent.json'
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
@@ -917,10 +954,12 @@ export interface FileRouteTypes {
     | '/.well-known/mcp.json'
     | '/.well-known/monetization'
     | '/.well-known/monetization.json'
+    | '/.well-known/mpp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
+    | '/.well-known/payment-manifest'
     | '/.well-known/payments'
     | '/.well-known/payments.json'
     | '/.well-known/pricing'
@@ -982,6 +1021,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93FileRoute: typeof Char91DotwellKnownChar93FileRoute
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
@@ -995,10 +1035,12 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93McpChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
   Char91DotwellKnownChar93MonetizationRoute: typeof Char91DotwellKnownChar93MonetizationRoute
   Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93MppRoute: typeof Char91DotwellKnownChar93MppRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   Char91DotwellKnownChar93PaymentRoute: typeof Char91DotwellKnownChar93PaymentRoute
+  Char91DotwellKnownChar93PaymentManifestRoute: typeof Char91DotwellKnownChar93PaymentManifestRoute
   Char91DotwellKnownChar93PaymentsRoute: typeof Char91DotwellKnownChar93PaymentsRoute
   Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute
   Char91DotwellKnownChar93PricingRoute: typeof Char91DotwellKnownChar93PricingRoute
@@ -1186,6 +1228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/agent-directory.json': {
+      id: '/.well-known/agent-directory.json'
+      path: '/.well-known/agent-directory.json'
+      fullPath: '/.well-known/agent-directory.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/agent.json': {
       id: '/.well-known/agent.json'
       path: '/.well-known/agent.json'
@@ -1277,6 +1326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/mpp': {
+      id: '/.well-known/mpp'
+      path: '/.well-known/mpp'
+      fullPath: '/.well-known/mpp'
+      preLoaderRoute: typeof Char91DotwellKnownChar93MppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.well-known/oauth-authorization-server': {
       id: '/.well-known/oauth-authorization-server'
       path: '/.well-known/oauth-authorization-server'
@@ -1303,6 +1359,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/payment'
       fullPath: '/.well-known/payment'
       preLoaderRoute: typeof Char91DotwellKnownChar93PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/payment-manifest': {
+      id: '/.well-known/payment-manifest'
+      path: '/.well-known/payment-manifest'
+      fullPath: '/.well-known/payment-manifest'
+      preLoaderRoute: typeof Char91DotwellKnownChar93PaymentManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/payments': {
@@ -1659,6 +1722,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93FileRoute: Char91DotwellKnownChar93FileRoute,
   Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute:
+    Char91DotwellKnownChar93AgentDirectoryChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AgentChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute:
@@ -1685,6 +1750,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93MonetizationRoute,
   Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93MppRoute: Char91DotwellKnownChar93MppRoute,
   Char91DotwellKnownChar93OauthAuthorizationServerRoute:
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
@@ -1692,6 +1758,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93PaymentRoute: Char91DotwellKnownChar93PaymentRoute,
+  Char91DotwellKnownChar93PaymentManifestRoute:
+    Char91DotwellKnownChar93PaymentManifestRoute,
   Char91DotwellKnownChar93PaymentsRoute: Char91DotwellKnownChar93PaymentsRoute,
   Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93PaymentsChar91DotChar93jsonRoute,
