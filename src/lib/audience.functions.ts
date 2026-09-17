@@ -62,7 +62,7 @@ export const getAudience = createServerFn({ method: "POST" })
     // PostgREST caps a single response at 1000 rows — page through access_events
     // so the report reflects the real 30-day volume instead of stopping at 1000.
     const PAGE = 1000;
-    const MAX_ROWS = 10000;
+    const MAX_ROWS = 100000;
     const eventsResData: any[] = [];
     for (let from = 0; from < MAX_ROWS; from += PAGE) {
       const { data: page } = await client
