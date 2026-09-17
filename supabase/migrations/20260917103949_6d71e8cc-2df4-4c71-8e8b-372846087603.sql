@@ -1,0 +1,2 @@
+REVOKE SELECT ON TABLE public.entries FROM anon;
+GRANT SELECT (id, slug, name, category, summary, description, auth_mode, endpoint, docs_url, tags, status, reviewed_at, review_note, health_ok, health_status_code, health_latency_ms, health_checked_at, created_at, updated_at, capabilities, auth_params, input_format, output_format, rate_limit, pricing, invocation_example, verified, verified_at, featured, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_detail, capability_checked_at, discovered_tools, source, probe_url) ON public.entries TO anon;
