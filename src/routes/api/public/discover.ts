@@ -21,6 +21,19 @@ const querySchema = z.object({
   limit: z.coerce.number().int().min(1).max(20).optional().default(5),
 });
 
+/**
+ * Agents don't always read the schema before their first call. Accept the
+ * obvious aliases (`q`, `query`) for `need` instead of bouncing a request
+ * that's 95% correct.
+ */
+function withNeedAliases(input: unknown): unknown {
+  if (typeof input !== "object" || input === null) return input;
+  const obj = input as Record<string, unknown>;
+  if (obj["need"]) return obj;
+  const alias = obj["q"] ?? obj["query"];
+  return alias ? { ...obj, need: alias } : obj;
+}
+
 /** Capability discovery: match a natural-language need to callable interfaces. */
 async function discover(
   input: unknown,
@@ -28,13 +41,14 @@ async function discover(
   extraHeaders: Record<string, string> = {},
 ) {
   const cors = { ...corsBase, ...extraHeaders };
-  const parsed = querySchema.safeParse(input);
+  const parsed = querySchema.safeParse(withNeedAliases(input));
   if (!parsed.success) {
     return new Response(
       JSON.stringify({
-        error: "Invalid query. Required: ?need=<what you want to do>",
+        error: "Invalid query. Required: need=<what you want to do> (at least 3 characters)",
         optional: ["category=api|mcp|cli", "min_reliability=0-100", "limit=1-20"],
         example: "/api/public/discover?need=send%20a%20transactional%20email",
+        note: 'POST also accepts a JSON body, e.g. {"need": "send a transactional email"}.',
       }),
       { status: 400, headers: cors },
     );
@@ -97,17 +111,34 @@ export const Route = createFileRoute("/api/public/discover")({
         );
       },
       POST: async ({ request }) => {
+        const url = new URL(request.url);
         const quota = await enforceQuota(request);
-        if (!quota.allowed) return quotaExceeded(quota, new URL(request.url).origin, corsBase);
-        let body: unknown;
-        try {
-          body = await request.json();
-        } catch {
-          return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-            status: 400,
-            headers: corsBase,
-          });
+        if (!quota.allowed) return quotaExceeded(quota, url.origin, corsBase);
+
+        // Agents sometimes POST with an empty body and the query in the URL
+        // (i.e. they treated this like GET). Try the body first, fall back
+        // to the query string instead of rejecting a request that clearly
+        // carries a need.
+        const raw = await request.text();
+        let body: unknown = {};
+        if (raw.trim()) {
+          try {
+            body = JSON.parse(raw);
+          } catch {
+            return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+              status: 400,
+              headers: corsBase,
+            });
+          }
         }
+        if (typeof body === "object" && body !== null) {
+          const obj = body as Record<string, unknown>;
+          if (!obj["need"] && !obj["q"] && !obj["query"]) {
+            const fromQuery = url.searchParams.get("need");
+            if (fromQuery) obj["need"] = fromQuery;
+          }
+        }
+
         return discover(body, "api", quota.headers);
       },
     },
