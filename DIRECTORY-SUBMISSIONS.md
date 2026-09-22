@@ -84,7 +84,7 @@ Send the blocks above to each of these. Tick as you go.
 - [ ] MCPFind — refusé en l'état : exige un paquet publié npm/PyPI/Docker, or le serveur est remote-only
 - [ ] Lovable connectors — already registered
 - [ ] OpenAI / ChatGPT connector directory — submit when the public form is open
-- [ ] LangChain + CrewAI + LlamaIndex community tool lists — PR adding an Agent Nexus tool wrapper
+- [x] LangChain + CrewAI + LlamaIndex — wrappers branchés via Lovable le 22 sept 2026 (à vérifier : synchronisés sur GitHub ? PR envoyée vers les repos communautaires de chaque framework, ou juste le wrapper côté Agent Nexus ?)
 
 ### awesome-mcp-servers PR line
 
