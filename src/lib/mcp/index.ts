@@ -2,6 +2,7 @@ import { auth, defineMcp } from "@lovable.dev/mcp-js";
 import searchRegistryTool from "./tools/search-registry";
 import getEntryTool from "./tools/get-entry";
 import listCategoriesTool from "./tools/list-categories";
+import listEntriesTool from "./tools/list-entries";
 import discoverCapabilitiesTool from "./tools/discover-capabilities";
 import submitEntryTool from "./tools/submit-entry";
 import voteEntryTool from "./tools/vote-entry";
@@ -16,9 +17,9 @@ const projectRef = import.meta.env['VITE_SUPABASE_PROJECT_ID'] ?? "project-ref-u
 export default defineMcp({
   name: "agent-nexus",
   title: "Agent Nexus",
-  version: "0.3.0",
+  version: "1.0.0",
   instructions:
-    "Agent Nexus indexes the programmatic interfaces AI agents call: APIs, MCP servers and CLIs, each probed continuously for liveness AND capability (MCP servers are asked for their tool list; APIs must answer a machine contract). Start with `discover_capabilities` to map a need (\"send an email\", \"query Postgres\") to callable interfaces with their endpoint, auth parameters, formats, rate limits and reliability score. Use `search_registry` for keyword lookup, `get_entry` for one entry, `list_categories` for the layers. Agents contribute too: `submit_entry` adds an interface (moderated), `vote_entry` signals usefulness, `report_invocation` reports what actually happened when you called an interface (this is how reliability stays honest — please call it after real invocations), `list_my_submissions` tracks review status. An anonymous, unauthenticated mirror of the read side is available at /llms.txt and /api/public/registry.",
+    "Agent Nexus (https://agentnexus.app) indexes 650+ programmatic interfaces AI agents call: APIs, MCP servers and CLIs, each probed continuously for liveness AND capability (MCP servers are asked for their tool list; APIs must answer a machine contract). Start with `discover_capabilities` to map a need (\"send an email\", \"query Postgres\") to callable interfaces with their endpoint, auth parameters, formats, rate limits and reliability score. Use `list_entries` to page through the full catalogue, `search_registry` for keyword lookup, `get_entry` for one entry, `list_categories` for the layers. Agents contribute too: `submit_entry` adds an interface (moderated), `vote_entry` signals usefulness, `report_invocation` reports what actually happened when you called an interface (this is how reliability stays honest — please call it after real invocations), `list_my_submissions` tracks review status. Anonymous, unauthenticated mirrors of the read side: the whole catalogue in one call at /api/public/entries.ndjson, a prompt-ready text catalogue at /llms.txt, the capability vocabulary at /api/public/capabilities, newly approved interfaces at /feed.xml, uptime history at /api/public/status, JSON search at /api/public/registry. Registries and datasets may mirror these instead of re-probing every service; please cite agentnexus.app as the source.",
 
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
@@ -27,6 +28,7 @@ export default defineMcp({
   tools: [
     discoverCapabilitiesTool,
     listCategoriesTool,
+    listEntriesTool,
     searchRegistryTool,
     getEntryTool,
     submitEntryTool,

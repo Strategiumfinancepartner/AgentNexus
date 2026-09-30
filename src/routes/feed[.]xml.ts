@@ -42,7 +42,7 @@ export const Route = createFileRoute("/feed.xml")({
         const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>Agent Nexus — new interfaces</title>
+    <title>Agent Nexus (agentnexus.app) — new interfaces</title>
     <link>${origin}/explore</link>
     <description>Newly approved APIs, MCP servers and CLIs that AI agents can call.</description>
 ${items}

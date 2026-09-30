@@ -4,17 +4,18 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyAccess } from "@/lib/registry.functions";
 import { getAudience } from "@/lib/audience.functions";
 import { AppShell } from "@/components/app-shell";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/audience")({
   head: () => ({
     meta: [
-      { title: "Audience — Agent Nexus" },
+      { title: "Audience — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Who signed up, who signed in recently, and which agents called /mcp, /llms.txt and the public registry APIs.",
       },
-      { property: "og:title", content: "Audience — Agent Nexus" },
+      { property: "og:title", content: "Audience — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Members, sign-ins and machine traffic per entry point.",
@@ -51,13 +52,29 @@ function Stat({ label, value }: { label: string; value: number }) {
 
 function Section({ title, hint, children }: { title: string; hint: string; children: React.ReactNode }) {
   return (
-    <section className="mt-10">
+    <section className="mt-6">
       <h2 className="font-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
         {title}
       </h2>
       <p className="mt-2 text-xs text-muted-foreground">{hint}</p>
-      <div className="mt-4 overflow-hidden rounded-lg border border-border/60">{children}</div>
+      <div className="mt-4 overflow-x-auto rounded-lg border border-border/60">{children}</div>
     </section>
+  );
+}
+
+function PlanBadge({ plan }: { plan: "Free" | "Agent Pro" | "Publisher" }) {
+  const tone =
+    plan === "Publisher"
+      ? "border-primary/50 text-primary"
+      : plan === "Agent Pro"
+        ? "border-accent/50 text-accent-foreground"
+        : "border-border/60 text-muted-foreground";
+  return (
+    <span
+      className={`inline-block rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest ${tone}`}
+    >
+      {plan}
+    </span>
   );
 }
 
@@ -101,6 +118,9 @@ function AudiencePage() {
               <Stat label="Signups 7d" value={data.totals.signupsLast7d} />
               <Stat label="Signed in 7d" value={data.totals.activeLast7d} />
               <Stat label="Calls 24h" value={data.totals.hitsLast24h} />
+              <Stat label="MCP calls 24h" value={data.totals.mcpCalls24h} />
+              <Stat label="MCP without key 24h" value={data.totals.anonMcpCalls24h} />
+              <Stat label="MCP with key 24h" value={data.totals.keyedMcpCalls24h} />
               <Stat label="Calls 30d" value={data.totals.hits30d} />
               <Stat label="Distinct callers" value={data.totals.distinctCallers} />
             </div>
@@ -119,6 +139,29 @@ function AudiencePage() {
               )}
             </div>
 
+            <Tabs defaultValue="entry-points" className="mt-8">
+              <TabsList className="flex w-full flex-wrap justify-start gap-1 bg-card/60">
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="entry-points">
+                  Entry points
+                </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="members">
+                  Members
+                </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="keys">
+                  Keys
+                </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="top-callers">
+                  Top callers
+                </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="mcp-activity">
+                  MCP activity
+                </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="recent-calls">
+                  Recent calls
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="entry-points">
             <Section
               title="Entry points"
               hint="Which machine-facing surface agents actually hit: /mcp, /llms.txt, the public APIs and the manifests."
@@ -151,15 +194,18 @@ function AudiencePage() {
                 </tbody>
               </table>
             </Section>
+              </TabsContent>
 
+              <TabsContent value="members">
             <Section
               title="Members"
-              hint="Everyone who created an account, when they signed up and when they last signed in."
+              hint="Everyone who created an account, their plan, when they signed up and when they last signed in."
             >
               <table className="w-full text-left font-mono text-xs">
                 <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2">Email</th>
+                    <th className="px-3 py-2">Plan</th>
                     <th className="px-3 py-2">Signed up</th>
                     <th className="px-3 py-2">Last sign-in</th>
                     <th className="px-3 py-2">Keys</th>
@@ -171,6 +217,9 @@ function AudiencePage() {
                   {data.members.map((m) => (
                     <tr key={m.email} className="border-t border-border/40">
                       <td className="px-3 py-2">{m.email}</td>
+                      <td className="px-3 py-2">
+                        <PlanBadge plan={m.plan} />
+                      </td>
                       <td className="px-3 py-2 text-muted-foreground">{when(m.createdAt)}</td>
                       <td className="px-3 py-2 text-muted-foreground">{when(m.lastSignInAt)}</td>
                       <td className="px-3 py-2">{m.keys}</td>
@@ -183,7 +232,66 @@ function AudiencePage() {
                 </tbody>
               </table>
             </Section>
+              </TabsContent>
 
+              <TabsContent value="keys">
+            <Section
+              title="API keys"
+              hint="Every key ever issued. Agent keys are minted self-service by machines with no signup: no email, no dashboard, 1 000 calls/day. Account keys belong to a member."
+            >
+              <table className="w-full text-left font-mono text-xs">
+                <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <tr>
+                    <th className="px-3 py-2">Key</th>
+                    <th className="px-3 py-2">Type</th>
+                    <th className="px-3 py-2">Label</th>
+                    <th className="px-3 py-2">Owner</th>
+                    <th className="px-3 py-2">Created</th>
+                    <th className="px-3 py-2">Calls 30d</th>
+                    <th className="px-3 py-2">Last call</th>
+                    <th className="px-3 py-2">State</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.keys.length === 0 && (
+                    <tr>
+                      <td className="px-3 py-3 text-muted-foreground" colSpan={8}>
+                        No key issued yet.
+                      </td>
+                    </tr>
+                  )}
+                  {data.keys.map((k) => (
+                    <tr key={k.keyId} className="border-t border-border/40">
+                      <td className="px-3 py-2">{k.prefix}</td>
+                      <td className="px-3 py-2">
+                        <span
+                          className={
+                            k.kind === "agent"
+                              ? "rounded border border-primary/40 px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-primary"
+                              : "rounded border border-border px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground"
+                          }
+                        >
+                          {k.kind === "agent" ? "Agent (no signup)" : "Account"}
+                        </span>
+                      </td>
+                      <td className="max-w-[14rem] truncate px-3 py-2">{k.label}</td>
+                      <td className="px-3 py-2 text-muted-foreground">{k.owner ?? "—"}</td>
+                      <td className="px-3 py-2 text-muted-foreground">{when(k.createdAt)}</td>
+                      <td className="px-3 py-2">{k.calls}</td>
+                      <td className="px-3 py-2 text-muted-foreground">
+                        {when(k.lastCallAt ?? k.lastUsedAt)}
+                      </td>
+                      <td className="px-3 py-2 text-muted-foreground">
+                        {k.revoked ? "revoked" : k.calls > 0 || k.lastUsedAt ? "active" : "unused"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Section>
+              </TabsContent>
+
+              <TabsContent value="top-callers">
             <Section
               title="Top callers"
               hint="An agent with an API key shows the owning account. Anonymous callers show a hashed IP and their client software."
@@ -227,7 +335,30 @@ function AudiencePage() {
                 </tbody>
               </table>
             </Section>
+              </TabsContent>
 
+              <TabsContent value="mcp-activity">
+                <Section title="MCP without a key · last 24 hours" hint="Most active anonymous callers on the MCP endpoint. Counts include handshakes, not just searches; this is not quota usage or distinct people.">
+                  <table className="w-full text-left font-mono text-xs">
+                    <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+                      <tr><th className="px-3 py-2">Caller</th><th className="px-3 py-2">Calls</th><th className="px-3 py-2">Client</th><th className="px-3 py-2">Last</th></tr>
+                    </thead>
+                    <tbody>
+                      {data.topAnonMcp.length === 0 && <tr><td className="px-3 py-3 text-muted-foreground" colSpan={4}>No anonymous MCP calls in the last 24 hours.</td></tr>}
+                      {data.topAnonMcp.map((c) => (
+                        <tr key={c.actor} className="border-t border-border/40">
+                          <td className="px-3 py-2 break-all">{c.actor}{c.country && <span className="ml-2 text-muted-foreground">{c.country}</span>}</td>
+                          <td className="px-3 py-2">{c.hits.toLocaleString("en-US")}</td>
+                          <td className="px-3 py-2 break-all text-muted-foreground">{c.userAgent || "—"}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{when(c.lastSeen)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Section>
+              </TabsContent>
+
+              <TabsContent value="recent-calls">
             <Section title="Recent calls" hint="The last 60 machine requests, newest first.">
               <table className="w-full text-left font-mono text-xs">
                 <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -261,6 +392,8 @@ function AudiencePage() {
                 </tbody>
               </table>
             </Section>
+              </TabsContent>
+            </Tabs>
           </>
         )}
       </main>

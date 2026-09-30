@@ -3,7 +3,7 @@ import { runHealthChecks } from "@/lib/health.server";
 import { authorizeOpsRequest, jsonHeaders } from "@/lib/cron-auth.server";
 
 /**
- * Scheduled probe run. Called every 6 hours by the database scheduler, and
+ * Scheduled probe run. Called hourly by the database scheduler, and
  * callable manually with `Authorization: Bearer $CRON_SECRET`.
  */
 export const Route = createFileRoute("/api/public/health-check")({

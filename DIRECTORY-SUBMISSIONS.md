@@ -74,7 +74,7 @@ Send the blocks above to each of these. Tick as you go.
 
 - [x] Official MCP registry — published as `app.agentnexus/agent-nexus` v1.0.0 (HTTP domain auth via `/.well-known/mcp-registry-auth`; republish with `mcp-publisher publish /tmp/server.json` after `login http --domain agentnexus.app`)
 - [x] Smithery — **en ligne, vérifié 17 sept 2026** : https://smithery.ai/server/ceo-2z03/agent-nexus (chercher « agentnexus », pas « agent nexus » — la recherche avec espace ne le trouve pas)
-- [x] Glama — **en ligne, vérifié 17 sept 2026** : https://glama.ai/mcp/servers?query=agentnexus
+- [x] Glama — **en ligne, vérifié 27 sept 2026** : https://glama.ai/mcp/connectors/app.agentnexus/agent-nexus (grade A, Healthy ; l'ancienne fiche /mcp/servers/ceo-2z03/agent-nexus a été remplacée par cette fiche « connector » importée du registre MCP officiel — ne plus utiliser l'ancienne adresse)
 - [ ] mcp.so — soumission payante uniquement (~39 $) → **abandonné**, pas d'action
 - [x] PulseMCP — soumissions en pause depuis le 3 sept 2026 ; récupération automatique depuis le registre MCP officiel (où nous sommes déjà) — rien à faire
 - [ ] Cursor Directory — https://cursor.directory/mcp (PR or form)
@@ -197,3 +197,16 @@ et facturation gérés chez eux). C'est faisable mais ce n'est pas une simple
 inscription : il faut créer un compte provider, déclarer `agentnexus.app` comme
 backend et importer `/openapi.json`. À faire seulement si tu veux vendre l'accès
 via leur place de marché.
+
+### Suivi PR (27 sept 2026)
+- awesome-mcp-servers : PR #15234 ouverte (section Aggregators) — https://github.com/punkpeye/awesome-mcp-servers/pull/15234
+- public-apis #7463 : toujours ouverte, aucun retour mainteneur (validateur cassé sur master)
+- Glama « servers » : soumission envoyée 27 sept 2026 15h38 (fiche « Agent Nexus », onglet Hosted endpoint = https://agentnexus.app/api/public/mcp, site agentnexus.app) — **en attente de validation Glama** ; vérifié 15h40 : /mcp/servers/Strategiumfinancepartner/AgentNexus → 404 (pas encore publiée), la fiche connector reste en ligne (grade A, Healthy) et n'est pas impactée. À re-vérifier dans 24-48h, puis ajouter le badge à la PR #15234 si nécessaire
+> 27 sept 15h39 : le bot github-actions de awesome-mcp-servers a commenté la PR #15234 (note info standard « glama-badge-check »). Le badge score.svg existe mais affiche « This MCP server is not listed on Glama » tant que la fiche n'est pas approuvée. Réponse postée dans le fil.
+
+### Glama — propriété du connecteur (27 sept 2026)
+- Mail « connector approved » reçu 27 sept 15h41 ; jeton de claim : glama_claim_TaDNfPrcVoBxkEqssFA-fqU6FezFZ722
+- Fichier de vérification DÉJÀ publié : route /.well-known/glama.json (src/routes/[.well-known]/glama[.]json.ts), vérifié en ligne 15h45 → HTTP 200, contenu conforme
+- Statut sur la page connecteur Glama : badge « Ownership verified » avec icône bouclier → **proprieté vérifiée, claim terminé**
+- À GARDER publié : le fichier doit rester en place pour que Glama re-vérifie en continu (ne jamais supprimer la route)
+- Débloque : détails de listing, vignette, health checks, analytics sur la fiche connector

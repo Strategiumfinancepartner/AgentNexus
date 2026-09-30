@@ -14,7 +14,7 @@ export const Route = createFileRoute("/.well-known/mcp/server-card.json")({
           JSON.stringify(
             {
               name: "agent-nexus",
-              title: "Agent Nexus",
+              title: "Agent Nexus (agentnexus.app)",
               description:
                 "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Maps a natural-language need to a callable interface with its auth contract, formats, rate limits and live reliability score.",
               version: "0.3.0",

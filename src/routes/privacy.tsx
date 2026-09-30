@@ -4,13 +4,13 @@ import { LegalLayout } from "./terms";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Notice — Agent Nexus" },
+      { title: "Privacy Notice — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "What personal data Agent Nexus collects, why, who it is shared with, how long it is kept, and the rights you have over it.",
       },
-      { property: "og:title", content: "Privacy Notice — Agent Nexus" },
+      { property: "og:title", content: "Privacy Notice — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "How BrainPath.io handles personal data for Agent Nexus.",

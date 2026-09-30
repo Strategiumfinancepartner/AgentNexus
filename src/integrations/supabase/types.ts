@@ -157,13 +157,18 @@ export type Database = {
           pricing: string
           probe_url: string | null
           rate_limit: string
+          reports_count: number
           review_note: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          schema_checked_at: string | null
+          schema_detail: string | null
+          schema_ok: boolean | null
           slug: string
           source: string
           status: Database["public"]["Enums"]["entry_status"]
           submitted_by: string | null
+          submitted_by_actor: string | null
           summary: string
           tags: string[]
           updated_at: string
@@ -200,13 +205,18 @@ export type Database = {
           pricing?: string
           probe_url?: string | null
           rate_limit?: string
+          reports_count?: number
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          schema_checked_at?: string | null
+          schema_detail?: string | null
+          schema_ok?: boolean | null
           slug: string
           source?: string
           status?: Database["public"]["Enums"]["entry_status"]
           submitted_by?: string | null
+          submitted_by_actor?: string | null
           summary: string
           tags?: string[]
           updated_at?: string
@@ -243,13 +253,18 @@ export type Database = {
           pricing?: string
           probe_url?: string | null
           rate_limit?: string
+          reports_count?: number
           review_note?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          schema_checked_at?: string | null
+          schema_detail?: string | null
+          schema_ok?: boolean | null
           slug?: string
           source?: string
           status?: Database["public"]["Enums"]["entry_status"]
           submitted_by?: string | null
+          submitted_by_actor?: string | null
           summary?: string
           tags?: string[]
           updated_at?: string
@@ -312,6 +327,45 @@ export type Database = {
             referencedColumns: ["entry_id"]
           },
         ]
+      }
+      error_events: {
+        Row: {
+          actor: string
+          created_at: string
+          detail: string
+          id: string
+          method: string
+          path: string
+          status_code: number
+          surface: string
+          tier: string
+          user_agent: string
+        }
+        Insert: {
+          actor?: string
+          created_at?: string
+          detail?: string
+          id?: string
+          method?: string
+          path?: string
+          status_code: number
+          surface?: string
+          tier?: string
+          user_agent?: string
+        }
+        Update: {
+          actor?: string
+          created_at?: string
+          detail?: string
+          id?: string
+          method?: string
+          path?: string
+          status_code?: number
+          surface?: string
+          tier?: string
+          user_agent?: string
+        }
+        Relationships: []
       }
       health_checks: {
         Row: {
@@ -547,6 +601,102 @@ export type Database = {
         }
         Relationships: []
       }
+      report_credits: {
+        Row: {
+          actor: string
+          day: string
+          reports: number
+        }
+        Insert: {
+          actor: string
+          day?: string
+          reports?: number
+        }
+        Update: {
+          actor?: string
+          day?: string
+          reports?: number
+        }
+        Relationships: []
+      }
+      spam_blocks: {
+        Row: {
+          actor: string
+          category: string
+          created_at: string
+          endpoint: string
+          id: string
+          name: string
+          payload: Json
+          reasons: string[]
+          score: number
+          summary: string
+        }
+        Insert: {
+          actor?: string
+          category?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          name?: string
+          payload?: Json
+          reasons?: string[]
+          score?: number
+          summary?: string
+        }
+        Update: {
+          actor?: string
+          category?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          name?: string
+          payload?: Json
+          reasons?: string[]
+          score?: number
+          summary?: string
+        }
+        Relationships: []
+      }
+      submission_contacts: {
+        Row: {
+          created_at: string
+          email: string
+          entry_id: string
+          notified_at: string | null
+          notified_decision: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          entry_id: string
+          notified_at?: string | null
+          notified_decision?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          entry_id?: string
+          notified_at?: string | null
+          notified_decision?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_contacts_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: true
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submission_contacts_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: true
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean | null
@@ -648,6 +798,7 @@ export type Database = {
           votes_received: number
         }[]
       }
+      grant_report_credit: { Args: { _actor: string }; Returns: number }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
@@ -691,6 +842,19 @@ export type Database = {
           _tier: string
           _user_agent: string
           _user_id: string
+        }
+        Returns: undefined
+      }
+      record_error_event: {
+        Args: {
+          _actor: string
+          _detail: string
+          _method: string
+          _path: string
+          _status: number
+          _surface: string
+          _tier: string
+          _user_agent: string
         }
         Returns: undefined
       }

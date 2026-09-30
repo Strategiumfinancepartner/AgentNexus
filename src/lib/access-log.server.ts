@@ -27,6 +27,7 @@ const EXACT: Record<string, string> = {
   "/api/public/capabilities": "capabilities",
   "/api/public/entries.ndjson": "entries.ndjson",
   "/api/public/status": "status",
+  "/api/public/submission": "submission",
   "/api/public/report": "report",
   "/api/public/ingest": "ingest",
 };

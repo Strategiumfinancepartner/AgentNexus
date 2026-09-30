@@ -11,7 +11,7 @@ export const Route = createFileRoute("/.well-known/agent-directory.json")({
         const origin = new URL(request.url).origin;
         const body = {
           name: "agent-nexus",
-          title: "Agent Nexus",
+          title: "Agent Nexus (agentnexus.app)",
           type: "agent-interface-directory",
           version: "0.3.0",
           description:

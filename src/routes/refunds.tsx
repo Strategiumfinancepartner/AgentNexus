@@ -4,13 +4,13 @@ import { LegalLayout } from "./terms";
 export const Route = createFileRoute("/refunds")({
   head: () => ({
     meta: [
-      { title: "Refund Policy — Agent Nexus" },
+      { title: "Refund Policy — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "30-day money-back guarantee on Agent Nexus subscriptions. How to request a refund through Paddle, our Merchant of Record.",
       },
-      { property: "og:title", content: "Refund Policy — Agent Nexus" },
+      { property: "og:title", content: "Refund Policy — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "30-day money-back guarantee on Agent Nexus subscriptions.",

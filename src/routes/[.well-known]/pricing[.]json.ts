@@ -48,17 +48,24 @@ const PRICING = {
   },
 };
 
+/** Crawlers POST at read-only manifests; answer the document either way. */
+const serve = async () =>
+  new Response(JSON.stringify(PRICING, null, 2), {
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "public, max-age=3600",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS",
+    },
+  });
+
 export const Route = createFileRoute("/.well-known/pricing.json")({
   server: {
     handlers: {
-      GET: async () =>
-        new Response(JSON.stringify(PRICING, null, 2), {
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=3600",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }),
+      OPTIONS: async () => new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, HEAD, OPTIONS", "Access-Control-Allow-Headers": "content-type" } }),
+      GET: serve,
+      HEAD: serve,
+      POST: serve,
     },
   },
 });

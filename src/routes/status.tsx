@@ -6,13 +6,13 @@ import { formatPercent, type StatusEntry, type UptimeDay } from "@/lib/uptime-co
 export const Route = createFileRoute("/status")({
   head: () => ({
     meta: [
-      { title: "Status — 30-day uptime for every interface in Agent Nexus" },
+      { title: "Status — 30-day uptime for every interface in Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
-          "Public reliability history for every API, MCP server and CLI in the Agent Nexus registry: 30-day uptime, average latency and recent incidents, updated every 6 hours.",
+          "Public reliability history for every API, MCP server and CLI in the Agent Nexus registry: 30-day uptime, average latency and recent incidents, updated automatically as the probes rotate.",
       },
-      { property: "og:title", content: "Agent Nexus status — public uptime history" },
+      { property: "og:title", content: "Agent Nexus (agentnexus.app) status — public uptime history" },
       {
         property: "og:description",
         content:
@@ -62,7 +62,14 @@ function Timeline({ entry }: { entry: StatusEntry }) {
 }
 
 function Status() {
-  const { totals, entries, incidents, window_days, generated_at } = Route.useLoaderData();
+  const {
+    totals,
+    entries,
+    incidents,
+    window_days,
+    generated_at,
+    schema_validation: schema,
+  } = Route.useLoaderData();
   const [onlyMonitored, setOnlyMonitored] = useState(true);
   const [query, setQuery] = useState("");
 
@@ -80,10 +87,10 @@ function Status() {
         <header className="sticky top-0 z-10 -mx-6 flex items-center justify-between border-b border-border/60 bg-background/70 px-6 py-5 backdrop-blur-xl">
           <Link
             to="/"
-            className="flex items-center gap-2.5 font-mono text-xs tracking-[0.28em] uppercase"
+            className="flex items-center gap-2.5 font-mono text-xs tracking-[0.12em] uppercase"
           >
             <span className="inline-block size-1.5 rounded-full bg-primary" />
-            Agent Nexus
+            Agent Nexus.APP
           </Link>
           <div className="flex items-center gap-4 font-mono text-xs text-muted-foreground">
             <Link to="/explore" className="transition-colors hover:text-foreground">
@@ -101,8 +108,8 @@ function Status() {
         <main className="pt-16 pb-24">
           <h1 className="text-3xl font-medium tracking-tight sm:text-4xl">Reliability history</h1>
           <p className="mt-4 max-w-xl text-muted-foreground">
-            Every approved interface is probed automatically every 6 hours. This page is the public
-            record — same numbers agents read over{" "}
+            Every probeable interface is probed automatically — each one about once a day.
+            This page is the public record — same numbers agents read over{" "}
             <a
               href="/api/public/status"
               className="text-foreground underline underline-offset-4"
@@ -111,6 +118,32 @@ function Status() {
             </a>
             .
           </p>
+
+          <div className="mt-6 max-w-xl rounded-xl border border-border/60 p-4 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">Two levels of checks — never mixed</p>
+            <ul className="mt-2 space-y-1.5">
+              <li>
+                <span className="text-foreground">Service tested</span> — we call the interface
+                itself. Only these count toward uptime and the "Monitored" figure.
+              </li>
+              <li>
+                <span className="text-foreground">Publisher reachable</span> — some interfaces have
+                no address we can call as-is (it needs your own key or server name). For those we
+                only check that the publisher's documentation page is online. That proves the
+                publisher is alive, not that the service works.
+                {totals.docs_tracked ? (
+                  <>
+                    {" "}
+                    Currently {totals.docs_reachable ?? 0}/{totals.docs_tracked} reachable.
+                  </>
+                ) : null}
+              </li>
+              <li>
+                <span className="text-foreground">Not checked</span> — tools installed on your own
+                machine (CLI) have nothing online to test, so they show no history.
+              </li>
+            </ul>
+          </div>
 
           <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border/60 bg-border/60 sm:grid-cols-4">
             {[
@@ -180,6 +213,46 @@ function Status() {
 
           <section className="mt-16">
             <h2 className="font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
+              Response schema validation
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+              Beyond liveness: for AI APIs we pin each provider's documented response schema and
+              verify a real response matches it. A body that parses but is missing or has renamed a
+              required field is a shape failure — confirmed on a second attempt before it is ever
+              published. Rolling out: AI APIs first.
+            </p>
+            <ul className="mt-4 divide-y divide-border/60 border-t border-border/60">
+              {(schema?.entries ?? []).map((entry) => (
+                <li
+                  key={entry.slug}
+                  className="flex flex-wrap items-baseline justify-between gap-2 py-3 font-mono text-[11px]"
+                >
+                  <span className="text-foreground">{entry.name}</span>
+                  <span
+                    className={
+                      entry.ok === false
+                        ? "text-destructive"
+                        : entry.ok === true
+                          ? "text-muted-foreground"
+                          : "text-muted-foreground/70"
+                    }
+                  >
+                    {entry.ok === true ? "schema ok" : entry.ok === false ? "shape failure" : "not verified"} ·{" "}
+                    {entry.detail?.slice(0, 90) ?? "—"} ·{" "}
+                    {new Date(entry.checked_at).toISOString().slice(0, 16).replace("T", " ")}Z
+                  </span>
+                </li>
+              ))}
+              {(!schema || schema.entries.length === 0) && (
+                <li className="py-6 text-sm text-muted-foreground">
+                  Rolling out — AI APIs first. Results appear here at the next health-check run.
+                </li>
+              )}
+            </ul>
+          </section>
+
+          <section className="mt-16">
+            <h2 className="font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
               Recent incidents
             </h2>
             <ul className="mt-4 divide-y divide-border/60 border-t border-border/60">
@@ -201,6 +274,27 @@ function Status() {
                   No failed probe in the last 30 days.
                 </li>
               )}
+            </ul>
+          </section>
+
+          <section className="mt-16">
+            <h2 className="font-mono text-[11px] tracking-widest text-muted-foreground uppercase">
+              Independent monitors
+            </h2>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+              Third parties that watch Agent Nexus from the outside, quoted with their own wording:
+            </p>
+            <ul className="mt-4 divide-y divide-border/60 border-t border-border/60">
+              <li className="py-4">
+                <span className="font-medium">Talandor</span>{" "}
+                <span className="text-muted-foreground">(talandor.com)</span>
+                <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                  “Talandor (talandor.com) checks the public availability of Agent Nexus and
+                  consults the public catalogue and health signals published by Agent Nexus. It
+                  does not invoke the tools listed in the registry or certify that they work with
+                  a particular assistant.”
+                </p>
+              </li>
             </ul>
           </section>
 

@@ -16,6 +16,9 @@ export type StatusEntry = {
   checks_total: number;
   checks_ok: number;
   avg_latency_ms: number | null;
+  schema_ok?: boolean | null;
+  schema_detail?: string | null;
+  schema_checked_at?: string | null;
   /** Oldest → newest, one bucket per UTC day over the window. */
   days: UptimeDay[];
   window_uptime: number | null;
@@ -27,6 +30,14 @@ export type Incident = {
   checked_at: string;
   status_code: number | null;
   error: string | null;
+};
+
+export type SchemaValidationEntry = {
+  slug: string;
+  name: string;
+  ok: boolean | null;
+  detail: string | null;
+  checked_at: string;
 };
 
 export type StatusPayload = {
@@ -41,7 +52,17 @@ export type StatusPayload = {
     checks: number;
     checks_ok: number;
     uptime: number | null;
+    /** Entries with no callable address whose documentation page is probed instead. */
+    docs_tracked?: number;
+    docs_reachable?: number;
     avg_latency_ms: number | null;
+  };
+  /** Response-schema validation results for pinned providers (AI APIs first). */
+  schema_validation?: {
+    probed: number;
+    ok: number;
+    failed: number;
+    entries: SchemaValidationEntry[];
   };
   entries: StatusEntry[];
   incidents: Incident[];

@@ -6,7 +6,7 @@ const baseHeaders = {
   "Content-Type": "application/x-ndjson; charset=utf-8",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
-  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier, X-Nexus-Quota-Warning, X-Nexus-Free-Key",
   "Cache-Control": "no-store",
 };
 

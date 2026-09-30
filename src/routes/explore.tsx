@@ -1,17 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { getPublicCatalog, type PublicEntry } from "@/lib/public-registry.functions";
+import { KeyCallout } from "@/components/key-callout";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
     meta: [
-      { title: "Explore the Agent Nexus registry — APIs, MCP servers, CLIs" },
+      { title: "Explore the Agent Nexus registry (agentnexus.app) — APIs, MCP servers, CLIs" },
       {
         name: "description",
         content:
           "Browse every approved interface in the Agent Nexus registry: HTTP APIs, MCP servers and CLIs, with live health status and machine-readable endpoints.",
       },
-      { property: "og:title", content: "Explore the Agent Nexus registry" },
+      { property: "og:title", content: "Explore the Agent Nexus registry — agentnexus.app" },
       {
         property: "og:description",
         content:
@@ -92,9 +93,9 @@ function Explore() {
     <div className="relative min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-3xl px-6">
         <header className="sticky top-0 z-10 -mx-6 flex items-center justify-between border-b border-border/60 bg-background/70 px-6 py-5 backdrop-blur-xl">
-          <Link to="/" className="flex items-center gap-2.5 font-mono text-xs tracking-[0.28em] uppercase">
+          <Link to="/" className="flex items-center gap-2.5 font-mono text-xs tracking-[0.12em] uppercase">
             <span className="inline-block size-1.5 rounded-full bg-primary" />
-            Agent Nexus
+            Agent Nexus.APP
           </Link>
           <div className="flex items-center gap-4 font-mono text-xs text-muted-foreground">
             <a href="/llms.txt" className="transition-colors hover:text-foreground">
@@ -128,6 +129,8 @@ function Explore() {
             .
           </p>
 
+          <KeyCallout />
+
           <div className="mt-10 flex flex-wrap items-center gap-2">
             {FILTERS.map((f) => (
               <button
@@ -147,7 +150,7 @@ function Explore() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search…"
               aria-label="Search the registry"
-              className="ml-auto h-8 w-44 rounded-full border border-border/60 bg-transparent px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary/40"
+              className="h-9 w-full rounded-full border border-border/60 bg-transparent px-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary/40 sm:ml-auto sm:h-8 sm:w-44"
             />
           </div>
 

@@ -79,10 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Agent Nexus — Infrastructure for AI agents" },
+      { title: "Agent Nexus (agentnexus.app) — Infrastructure for AI agents" },
       { name: "description", content: "The registry of APIs, MCP servers and CLIs that AI agents call." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Agent Nexus" },
+      { property: "og:title", content: "Agent Nexus (agentnexus.app)" },
       { property: "og:description", content: "Infrastructure for the agentic web." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

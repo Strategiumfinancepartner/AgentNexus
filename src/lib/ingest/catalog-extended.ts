@@ -489,23 +489,8 @@ export const EXTRA_CATALOG: CatalogEntry[] = [
     invocation_example:
       'curl -X POST https://api.unstructuredapp.io/general/v0/general -H "unstructured-api-key: $KEY" -F "files=@doc.pdf"',
   },
-  {
-    slug: "clearbit-logo-api",
-    name: "Logo API (Clearbit)",
-    category: "api",
-    summary: "Company logo by domain, keyless image endpoint.",
-    endpoint: "https://logo.clearbit.com/{domain}",
-    docs_url: "https://clearbit.com/logo",
-    auth_mode: "None",
-    auth_params: none,
-    tags: ["assets", "branding"],
-    capabilities: ["get a company logo", "brand assets"],
-    input_format: "path parameter",
-    output_format: "image/png",
-    rate_limit: "fair use",
-    pricing: "free",
-    invocation_example: "curl https://logo.clearbit.com/stripe.com --output logo.png",
-  },
+  // Clearbit Logo API was retired after the HubSpot acquisition: the host no
+  // longer answers, so listing it would send agents to a dead service.
   {
     slug: "vercel-api",
     name: "Vercel REST API",

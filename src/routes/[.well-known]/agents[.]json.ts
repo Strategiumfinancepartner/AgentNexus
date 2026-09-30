@@ -11,7 +11,7 @@ export const Route = createFileRoute("/.well-known/agents.json")({
           JSON.stringify(
             {
               name: "agent-nexus",
-              title: "Agent Nexus",
+              title: "Agent Nexus (agentnexus.app)",
               version: "0.3.0",
               description:
                 "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Resolve a capability need into a callable interface.",

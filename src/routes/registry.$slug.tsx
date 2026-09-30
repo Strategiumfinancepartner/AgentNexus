@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { getPublicEntry, type PublicEntryDetail } from "@/lib/public-registry.functions";
 import { CopyExample } from "@/components/copy-example";
+import { KeyCallout } from "@/components/key-callout";
 
 const ORIGIN = "https://agentnexus.app";
 
@@ -10,9 +11,39 @@ const KIND: Record<string, string> = {
   cli: "CLI",
 };
 
+/**
+ * Slugs arrive from third-party lists with trailing markdown punctuation
+ * (`jq-cli):`), percent-encoding, or as an unfilled template (`{slug}`).
+ * Normalise before hitting the server fn, which rejects anything else with a
+ * 500. Anything that is not a plausible slug becomes a clean 404 page.
+ */
+function cleanSlug(raw: string): string | null {
+  let s = raw;
+  try {
+    s = decodeURIComponent(raw);
+  } catch {
+    // keep raw when it is not valid percent-encoding
+  }
+  s = s.trim().replace(/^[^a-z0-9]+/i, "").replace(/[^a-z0-9]+$/i, "").toLowerCase();
+  // Placeholders copied from docs plus plural list words ("entries", "all"…)
+  // all mean "the catalogue", not one entry — send them to the browsable list.
+  if (
+    ["slug", "entry", "id", "name", "example", "entries", "all", "list", "index", "catalog", "catalogue"].includes(s)
+  )
+    return null;
+  return /^[a-z0-9-]{1,80}$/.test(s) ? s : null;
+}
+
 export const Route = createFileRoute("/registry/$slug")({
   loader: async ({ params }) => {
-    const result = await getPublicEntry({ data: { slug: params.slug } });
+    const slug = cleanSlug(params.slug);
+    // Crawlers copy the documented `{slug}` placeholder verbatim. Send them to
+    // the browsable list instead of scoring a 404 against us.
+    if (!slug) throw redirect({ to: "/explore", statusCode: 308 });
+    if (slug !== params.slug) {
+      throw redirect({ to: "/registry/$slug", params: { slug }, statusCode: 301 });
+    }
+    const result = await getPublicEntry({ data: { slug } });
     if (!result) throw notFound();
     if ("redirectTo" in result) {
       // Retired duplicate slug — permanent redirect to the canonical entry.
@@ -28,7 +59,7 @@ export const Route = createFileRoute("/registry/$slug")({
     const entry = loaderData as PublicEntryDetail | undefined;
     if (!entry) return {};
     const kind = KIND[entry.category] ?? entry.category;
-    const title = `${entry.name} — ${kind} for AI agents | Agent Nexus`;
+    const title = `${entry.name} — ${kind} for AI agents | Agent Nexus (agentnexus.app)`;
     const description = `${entry.summary} Auth: ${entry.auth_mode}. Endpoint, capabilities and live health status for ${entry.name}, callable by agents through the Agent Nexus registry and MCP.`.slice(
       0,
       158,
@@ -106,9 +137,9 @@ function EntryPage() {
     <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-3xl px-6">
         <header className="flex items-center justify-between border-b border-border/60 py-5">
-          <Link to="/" className="flex items-center gap-2.5 font-mono text-xs tracking-[0.28em] uppercase">
+          <Link to="/" className="flex items-center gap-2.5 font-mono text-xs tracking-[0.12em] uppercase">
             <span className="inline-block size-1.5 rounded-full bg-primary" />
-            Agent Nexus
+            Agent Nexus.APP
           </Link>
           <Link to="/explore" className="font-mono text-xs text-muted-foreground hover:text-foreground">
             ← registry
@@ -164,6 +195,24 @@ function EntryPage() {
               </a>
             </Field>
           </dl>
+
+          <KeyCallout compact />
+
+          <section className="mt-6 rounded-2xl border border-border/60 bg-card/40 p-5 sm:p-6">
+            <p className="font-mono text-[10px] tracking-widest text-muted-foreground uppercase">
+              Use it from your agent
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Point any MCP-capable agent (Claude, Cursor, your own) at the no-auth endpoint — it can
+              then find {entry.name} and {entry.category === "api" ? "every other listed interface" : "the rest of the registry"} on
+              its own:
+            </p>
+            <div className="mt-4">
+              <CopyExample
+                command={`claude mcp add --transport http agent-nexus ${ORIGIN}/api/public/mcp`}
+              />
+            </div>
+          </section>
 
           <p className="mt-10 text-sm text-muted-foreground">
             Agents can discover {entry.name} through the Agent Nexus{" "}

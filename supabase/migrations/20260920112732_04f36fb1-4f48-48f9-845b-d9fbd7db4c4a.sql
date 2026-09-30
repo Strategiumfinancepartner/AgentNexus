@@ -1,0 +1,45 @@
+INSERT INTO public.entries (
+  slug, name, category, summary, description, auth_mode, endpoint, docs_url, probe_url,
+  tags, capabilities, input_format, output_format, rate_limit, pricing,
+  invocation_example, status, source
+) VALUES
+(
+  'weather-gov-api',
+  'National Weather Service API',
+  'api',
+  'Official US government forecasts, hourly forecasts, alerts and observations, no API key required.',
+  'The US National Weather Service exposes forecasts, hourly forecasts, active alerts, radar stations and station observations as GeoJSON. No key and no account: you look up a point with latitude/longitude, then follow the returned forecast URL. A descriptive User-Agent is requested by their terms. Complements Open-Meteo and OpenWeatherMap with authoritative US data and severe-weather alerts.',
+  'none',
+  'https://api.weather.gov/points/38.8894,-77.0352',
+  'https://www.weather.gov/documentation/services-web-api',
+  'https://www.weather.gov/documentation/services-web-api',
+  ARRAY['weather','forecast','alerts','geo','government'],
+  ARRAY['get a weather forecast','get hourly forecast','get severe weather alerts','get station observations'],
+  'HTTP GET with latitude,longitude in the path; send a descriptive User-Agent header',
+  'GeoJSON',
+  'No published hard limit; generous but throttled per client. Cache responses and send a real User-Agent, unattended hammering gets blocked.',
+  'Free, public domain data.',
+  'curl -s -H "User-Agent: my-agent (contact@example.com)" https://api.weather.gov/points/38.8894,-77.0352',
+  'approved',
+  'curated'
+),
+(
+  'met-norway-locationforecast-api',
+  'MET Norway Locationforecast',
+  'api',
+  'Worldwide hourly weather forecast from the Norwegian Meteorological Institute, no key required.',
+  'MET Norway publishes its global forecast model as a free JSON API: give a latitude and longitude, get temperature, wind, precipitation, humidity and symbol codes hour by hour for the next nine days. No key, no account. Their terms require a real identifying User-Agent and respect for the Expires header (do not refetch before it expires). A solid keyless worldwide alternative to Open-Meteo.',
+  'none',
+  'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=48.85&lon=2.35',
+  'https://api.met.no/weatherapi/locationforecast/2.0/documentation',
+  'https://api.met.no/weatherapi/locationforecast/2.0/documentation',
+  ARRAY['weather','forecast','geo','free'],
+  ARRAY['get a weather forecast','get hourly forecast','get precipitation forecast'],
+  'HTTP GET with lat and lon query parameters; identifying User-Agent header required',
+  'JSON',
+  'About 20 requests per second per client, and clients must honour the Expires header instead of re-polling. Anonymous or generic User-Agents get blocked.',
+  'Free, licensed under CC BY 4.0 with attribution.',
+  'curl -s -H "User-Agent: my-agent (contact@example.com)" "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=48.85&lon=2.35"',
+  'approved',
+  'curated'
+);

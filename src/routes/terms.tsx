@@ -3,13 +3,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions — Agent Nexus" },
+      { title: "Terms & Conditions — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "The terms governing use of Agent Nexus, the registry of APIs, MCP servers and CLIs that AI agents call, operated by BrainPath.io.",
       },
-      { property: "og:title", content: "Terms & Conditions — Agent Nexus" },
+      { property: "og:title", content: "Terms & Conditions — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Terms of service for Agent Nexus, operated by BrainPath.io.",
@@ -184,7 +184,7 @@ export function LegalLayout({
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
           <Link to="/" className="font-mono text-[11px] tracking-[0.28em] uppercase">
-            Agent Nexus
+            Agent Nexus.APP
           </Link>
           <nav className="flex items-center gap-5 text-sm text-muted-foreground">
             <Link to="/pricing" className="transition-colors hover:text-foreground">

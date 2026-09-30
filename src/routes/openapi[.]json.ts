@@ -11,11 +11,7 @@ const headers = {
  * Lets tool-calling agents (GPT Actions, LangChain OpenAPI toolkits, n8n,
  * Zapier-style runners) import Nexus without any bespoke integration code.
  */
-export const Route = createFileRoute("/openapi.json")({
-  server: {
-    handlers: {
-      OPTIONS: async () => new Response(null, { status: 204, headers }),
-      GET: async ({ request }) => {
+const serveSpec = async ({ request }: { request: Request }) => {
         const origin = new URL(request.url).origin;
 
         const entry = {
@@ -44,7 +40,7 @@ export const Route = createFileRoute("/openapi.json")({
         const spec = {
           openapi: "3.1.0",
           info: {
-            title: "Agent Nexus",
+            title: "Agent Nexus (agentnexus.app)",
             version: "0.4.0",
             description:
               "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Every endpoint below is anonymous: no key, no account.",
@@ -52,6 +48,48 @@ export const Route = createFileRoute("/openapi.json")({
           },
           servers: [{ url: origin }],
           paths: {
+            "/api/public/keys": {
+              post: {
+                operationId: "createApiKey",
+                summary:
+                  "Mint your own free API key instantly — no account, no email, no human approval",
+                description:
+                  "Self-service registration for autonomous agents and developers. The key is returned once in the response body; send it as the x-api-key header on any /api/public/* request to raise the daily quota from 100 to 1000 calls.",
+                requestBody: {
+                  required: false,
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          agent: { type: "string", maxLength: 80, example: "my-agent" },
+                          purpose: { type: "string", maxLength: 200, example: "tool discovery" },
+                        },
+                      },
+                    },
+                  },
+                },
+                responses: {
+                  "200": {
+                    description: "Key issued (shown once)",
+                    content: {
+                      "application/json": {
+                        schema: {
+                          type: "object",
+                          properties: {
+                            key: { type: "string", example: "nx_…" },
+                            tier: { type: "string", example: "free" },
+                            daily_limit: { type: "integer" },
+                            header: { type: "string", example: "x-api-key" },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  "429": { description: "Up to 5 self-service keys per source per 24h" },
+                },
+              },
+            },
             "/api/public/discover": {
               get: {
                 operationId: "discoverCapabilities",
@@ -215,8 +253,17 @@ export const Route = createFileRoute("/openapi.json")({
           },
         };
 
-        return new Response(JSON.stringify(spec, null, 2), { headers });
-      },
+  return new Response(JSON.stringify(spec, null, 2), { headers });
+};
+
+export const Route = createFileRoute("/openapi.json")({
+  server: {
+    handlers: {
+      OPTIONS: async () => new Response(null, { status: 204, headers }),
+      // Crawlers POST at the spec URL; serve it for any read method.
+      GET: async (ctx: any) => serveSpec(ctx),
+      HEAD: async (ctx: any) => serveSpec(ctx),
+      POST: async (ctx: any) => serveSpec(ctx),
     },
   },
 });

@@ -72,7 +72,7 @@ function Consent() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6 text-foreground">
       <div className="w-full max-w-sm">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
-          Agent Nexus
+          Agent Nexus.APP
         </p>
         <h1 className="mt-6 text-2xl font-medium tracking-tight">
           Connect {clientName}

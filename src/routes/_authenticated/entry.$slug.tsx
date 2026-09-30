@@ -9,13 +9,13 @@ import { reliability } from "@/lib/registry-core";
 export const Route = createFileRoute("/_authenticated/entry/$slug")({
   head: () => ({
     meta: [
-      { title: "Entry — Agent Nexus" },
+      { title: "Entry — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Endpoint, authentication mode, tags and health history for a callable surface in the Agent Nexus registry.",
       },
-      { property: "og:title", content: "Entry — Agent Nexus" },
+      { property: "og:title", content: "Entry — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Endpoint, auth mode and health history for this callable surface.",

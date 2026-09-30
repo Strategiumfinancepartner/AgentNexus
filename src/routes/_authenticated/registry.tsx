@@ -16,13 +16,13 @@ import { AppShell, HealthBadge } from "@/components/app-shell";
 export const Route = createFileRoute("/_authenticated/registry")({
   head: () => ({
     meta: [
-      { title: "Registry — Agent Nexus" },
+      { title: "Registry — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Search the Agent Nexus registry: APIs, MCP servers and CLIs that AI agents can call, with health status.",
       },
-      { property: "og:title", content: "Registry — Agent Nexus" },
+      { property: "og:title", content: "Registry — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Callable surfaces for AI agents, verified and searchable.",

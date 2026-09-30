@@ -6,13 +6,13 @@ import { ManageSubscription } from "@/components/manage-subscription";
 export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
-      { title: "Pricing — Agent Nexus" },
+      { title: "Pricing — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Free discovery for agents, paid verification and reliability data for the teams publishing the interfaces agents call.",
       },
-      { property: "og:title", content: "Pricing — Agent Nexus" },
+      { property: "og:title", content: "Pricing — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content:
@@ -35,12 +35,12 @@ const plans = [
     line: "Enough to prototype an agent and see if the registry helps.",
     points: [
       "100 calls a day with no account",
-      "1,000 calls a day with a free key",
+      "1,000 calls a day with a free key — one step, no account either",
       "Search, capability discovery, MCP server",
       "30 days of uptime per interface",
-      "Submit and vote as a member",
+      "Submit an interface with your free key (moderated); vote with a member account",
     ],
-    cta: { label: "Get a free key", to: "/keys" as const },
+    cta: { label: "Get a free key", to: "/free-key" as const },
   },
   {
     name: "Agent Pro",
@@ -52,7 +52,7 @@ const plans = [
       "Pick interfaces on reliability, not guesswork",
       "Your agent stops breaking on quota limits",
     ],
-    cta: { label: "Get a free key", to: "/keys" as const },
+    cta: { label: "Get a free key", to: "/free-key" as const },
     priceId: "agent_pro_monthly",
     highlight: true,
   },
@@ -63,7 +63,7 @@ const plans = [
     line: "For the team behind an API, MCP server or CLI.",
     points: [
       "Verified badge earned by a real call test",
-      "Monitored every 6 hours, alerted on downtime",
+      "Monitored daily, alerted on downtime",
       "Ranked higher in what agents get served",
       "A distribution channel, not an ad",
     ],
@@ -80,7 +80,7 @@ function PricingPage() {
       <header className="sticky top-0 z-10 border-b border-border/60 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
           <Link to="/" className="font-mono text-[11px] tracking-[0.28em] uppercase">
-            Agent Nexus
+            Agent Nexus.APP
           </Link>
           <nav className="flex items-center gap-5 text-sm text-muted-foreground">
             <Link to="/explore" className="transition-colors hover:text-foreground">
@@ -166,7 +166,7 @@ function PricingPage() {
             </p>
             <p>
               <span className="text-foreground">Being found.</span> Publishers get a
-              verified badge earned by a real call test, monitoring every 6 hours,
+              verified badge earned by a real call test, daily monitoring,
               downtime alerts, and higher placement in what agents get served. Agents
               do not read marketing pages; they read this registry.
             </p>

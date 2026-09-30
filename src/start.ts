@@ -62,6 +62,28 @@ const accessLogMiddleware = createMiddleware().server(async (ctx: any) => {
     } catch {
       // swallow
     }
+
+    // Failed responses go to their own counter, never mixed with traffic.
+    // ctx.next() resolves to either a Response or a wrapper carrying one.
+    try {
+      const response: any = result?.status != null ? result : result?.response;
+      const status: unknown = response?.status;
+      if (typeof status === "number" && status >= 400) {
+        // Handlers can explain the failure in an internal header; we read it
+        // for the log and strip it so callers never see it.
+        let detail = "";
+        try {
+          detail = response.headers?.get("x-nexus-error-detail") ?? "";
+          if (detail) response.headers.delete("x-nexus-error-detail");
+        } catch {
+          detail = "";
+        }
+        const { logSurfaceError } = await import("./lib/error-log.server");
+        await logSurfaceError(request, surface, status, detail);
+      }
+    } catch {
+      // swallow
+    }
   }
 
   return result;

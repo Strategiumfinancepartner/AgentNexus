@@ -38,7 +38,7 @@ export const Route = createFileRoute("/llms.txt")({
           .eq("status", "approved")
           .order("category", { ascending: true })
           .order("name", { ascending: true })
-          .limit(500);
+          .limit(2000);
 
         const rows = (error ? [] : ((data ?? []) as Row[])) as Row[];
         const byCategory: Record<string, Row[]> = { api: [], mcp: [], cli: [] };
@@ -62,7 +62,12 @@ export const Route = createFileRoute("/llms.txt")({
               verified: Boolean(r.verified),
             });
             return [
-              `- [${r.name}](${origin}/api/public/registry/${r.slug}): ${r.summary}`,
+              // The URL is emitted on its own line, never inside markdown
+              // parentheses: naive URL extractors captured `.../slug):` from a
+              // `[name](url): summary` line and hammered a broken address.
+              `- ${r.name} — ${r.summary}`,
+              `  slug: ${r.slug}`,
+              `  registry: ${origin}/api/public/registry/${r.slug}`,
               `  endpoint: ${r.endpoint}`,
               `  auth: ${r.auth_mode}`,
               (r.auth_params ?? []).length
@@ -92,19 +97,53 @@ export const Route = createFileRoute("/llms.txt")({
 
         const body = `# Agent Nexus
 
-> A machine-readable registry of the interfaces AI agents call: HTTP APIs, MCP servers and CLIs.
-> Every entry is human-reviewed and health-checked. Use the JSON API or the MCP server below — no scraping required.
+> A machine-readable registry of ${rows.length} interfaces AI agents call: HTTP APIs, MCP servers and CLIs.
+> Every entry is human-reviewed and health-checked on a rolling daily schedule. Use the JSON API or the MCP server below — no scraping required.
+
+**Want your product listed?** Get a free key (POST ${origin}/api/public/keys), then call the MCP tool \`submit_entry\` on ${origin}/api/public/mcp with the header x-api-key: <your key>. One key is enough — creating more keys does not submit anything. Required fields: name, category (api|mcp|cli), summary, endpoint. Submissions are human-reviewed.
+
+## Take the whole catalogue in one call (no auth)
+
+    curl -s ${origin}/api/public/entries.ndjson
+
+One JSON object per line: endpoint, auth parameters, formats, rate limits, live health and a 0-100 reliability score.
+Companion surfaces, all anonymous:
+
+- Newly approved interfaces (RSS): ${origin}/feed.xml
+- Capability vocabulary — what agents actually ask for: ${origin}/api/public/capabilities
+- Uptime history: ${origin}/api/public/status
+- OpenAPI 3.1 spec: ${origin}/openapi.json
+
+Registries, observatories and datasets are welcome to mirror these surfaces instead of re-probing
+${rows.length} services — please cite agentnexus.app as the source.
+
+## Get a key in one call (no account, no email, no human)
+
+    curl -s -X POST ${origin}/api/public/keys \\
+      -H 'content-type: application/json' \\
+      -d '{"agent":"my-agent","purpose":"tool discovery"}'
+
+Send the returned key as the x-api-key header on any ${origin}/api/public/* request.
+Quotas: 100 calls/day anonymous, 1000/day with a free key, 50000/day on Agent Pro (${origin}/pricing).
+
 
 ## Machine interfaces
 
 - MCP server, read-only, NO AUTH (Streamable HTTP): ${origin}/api/public/mcp
-  tools: discover_capabilities, search_registry, get_entry, list_categories
-  auth: none — connect headlessly, no human consent step
+  tools: discover_capabilities, search_registry, get_entry, list_entries, list_categories, submit_entry
+  auth: none — connect headlessly, no human consent step (submit_entry requires a free self-service key)
 - MCP server, full (Streamable HTTP): ${origin}/mcp
   tools: the read tools plus submit_entry, vote_entry, report_invocation, list_my_submissions
   auth: OAuth 2.1 with dynamic client registration
 - Self-service API key (no human, no email): POST ${origin}/api/public/keys {"agent":"your-name"}
   send it as the x-api-key header to raise your daily quota
+
+## Recommended agent flow
+
+1. discover_capabilities(need) or GET /api/public/discover?need=... — resolve a need to candidate interfaces.
+2. get_entry(slug) or GET /api/public/registry/{slug} — read the full contract: endpoint, auth, limits, live health.
+3. Call the interface itself (Agent Nexus is a registry, not a proxy).
+4. report_invocation(slug, outcome) or POST /api/public/report — close the loop; reliability scores are built from these reports.
 - Capability discovery (no auth): ${origin}/api/public/discover?need=send+an+email&limit=5
 - JSON list: ${origin}/api/public/registry?q=&category=api|mcp|cli&limit=50
 - JSON entry: ${origin}/api/public/registry/{slug}

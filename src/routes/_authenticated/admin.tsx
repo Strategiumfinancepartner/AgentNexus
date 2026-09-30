@@ -10,20 +10,21 @@ import {
   listEntries,
   setEntryFlags,
   runHealthChecksNow,
+  listSpamBlocks,
 } from "@/lib/registry.functions";
-import type { Entry } from "@/lib/registry.functions";
+import type { Entry, SpamBlock } from "@/lib/registry.functions";
 import { AppShell } from "@/components/app-shell";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Moderation — Agent Nexus" },
+      { title: "Moderation — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Review pending registry submissions and approve or reject the callable surfaces exposed to agents.",
       },
-      { property: "og:title", content: "Moderation — Agent Nexus" },
+      { property: "og:title", content: "Moderation — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Approve or reject pending registry submissions.",
@@ -43,6 +44,7 @@ function AdminPage() {
   const moderate = useServerFn(moderateEntry);
   const runChecks = useServerFn(runHealthChecksNow);
   const fetchApproved = useServerFn(listEntries);
+  const fetchSpamBlocks = useServerFn(listSpamBlocks);
   const setFlags = useServerFn(setEntryFlags);
   const [notes, setNotes] = useState<Record<string, string>>({});
 
@@ -56,6 +58,12 @@ function AdminPage() {
   const approved = useQuery({
     queryKey: ["entries", "approved"],
     queryFn: () => fetchApproved({ data: {} }),
+    enabled: access.data?.isReviewer === true,
+  });
+
+  const spamBlocks = useQuery({
+    queryKey: ["spam-blocks"],
+    queryFn: () => fetchSpamBlocks(),
     enabled: access.data?.isReviewer === true,
   });
 
@@ -159,6 +167,16 @@ function AdminPage() {
                   <p className="mt-1 font-mono text-[11px] text-muted-foreground/60">
                     auth: {e.auth_mode}
                   </p>
+                  {e.submitted_by_actor && (
+                    <p className="mt-1 font-mono text-[11px] text-primary/70">
+                      submitted by agent key: {e.submitted_by_actor}
+                    </p>
+                  )}
+                  {e.review_note?.startsWith("auto-flag") && (
+                    <p className="mt-2 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 font-mono text-[11px] text-destructive">
+                      {e.review_note}
+                    </p>
+                  )}
                   <input
                     className="mt-4 h-10 w-full rounded-lg border border-border bg-card/50 px-3 text-sm outline-hidden placeholder:text-muted-foreground/60 focus:border-primary"
                     placeholder="Review note (optional, shared with the author)"
@@ -185,6 +203,49 @@ function AdminPage() {
                 </li>
               ))}
             </ul>
+
+            <section className="mt-16">
+              <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+                Automatic filter — refused submissions
+              </h2>
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                Every machine submission the promotional filter refused at the door.
+                Audit these from time to time: if one looks legitimate, the filter
+                needs adjusting.
+              </p>
+              {spamBlocks.data?.length === 0 && (
+                <p className="mt-6 font-mono text-xs text-muted-foreground">
+                  nothing refused yet
+                </p>
+              )}
+              <ul className="mt-6 space-y-4">
+                {spamBlocks.data?.map((b: SpamBlock) => (
+                  <li
+                    key={b.id}
+                    className="rounded-xl border border-destructive/30 bg-destructive/5 p-5"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-3">
+                      <p className="text-sm font-medium">{b.name || "(unnamed)"}</p>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-destructive/80">
+                        score {b.score}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {b.summary}
+                    </p>
+                    <p className="mt-2 font-mono text-[11px] break-all text-muted-foreground/60">
+                      {b.endpoint}
+                    </p>
+                    <p className="mt-2 font-mono text-[11px] text-destructive/80">
+                      {b.reasons.join(", ")}
+                    </p>
+                    <p className="mt-1 font-mono text-[10px] text-muted-foreground/50">
+                      {new Date(b.created_at).toLocaleString()} — {b.actor}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </section>
 
             <section className="mt-16">
               <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">

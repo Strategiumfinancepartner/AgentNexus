@@ -8,13 +8,13 @@ import { AppShell } from "@/components/app-shell";
 export const Route = createFileRoute("/_authenticated/signals")({
   head: () => ({
     meta: [
-      { title: "Demand signals — Agent Nexus" },
+      { title: "Demand signals — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "What agents asked Agent Nexus for, what the registry could not answer, and what broke when agents actually invoked an indexed interface.",
       },
-      { property: "og:title", content: "Demand signals — Agent Nexus" },
+      { property: "og:title", content: "Demand signals — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Unmet needs, invocation failures and capability probe results.",
@@ -78,9 +78,85 @@ function SignalsPage() {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <Stat label="Queries" value={insights.data.totals.queries} />
               <Stat label="Unmet" value={insights.data.totals.unmet} />
+              <Stat label="Queries 24h" value={insights.data.totals.queries24h} />
+              <Stat label="Unmet 24h" value={insights.data.totals.unmet24h} />
+              <Stat label="Thin coverage" value={insights.data.totals.thin} />
               <Stat label="Reports" value={insights.data.totals.reports} />
               <Stat label="Failures" value={insights.data.totals.failures} />
             </div>
+
+            <section>
+              <h2 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                Broken responses — machine surfaces
+              </h2>
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+                Counted apart from traffic on purpose: every answer we handed back with an error
+                code. A run of the same path and status is ours to fix, not the caller's.
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <Stat label="Errors" value={insights.data.totals.errors} />
+                <Stat label="Errors 24h" value={insights.data.totals.errors24h} />
+              </div>
+              {insights.data.errors.length === 0 ? (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  No failed response logged. Machine surfaces are answering clean.
+                </p>
+              ) : (
+                <ul className="mt-3 divide-y divide-border/50 rounded-lg border border-border/60">
+                  {insights.data.errors.map((row, i) => (
+                    <li
+                      key={`${row.created_at}-${i}`}
+                      className="flex items-baseline justify-between gap-4 px-4 py-3"
+                    >
+                      <span className="font-mono text-xs break-all">
+                        <span className="text-destructive">{row.status_code}</span> {row.method}{" "}
+                        {row.path}
+                      </span>
+                      <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                        {row.surface} · {row.tier} ·{" "}
+                        {new Date(row.created_at).toLocaleString("fr-FR", {
+                          timeZone: "Europe/Paris",
+                          day: "2-digit",
+                          month: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            <section>
+              <h2 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+                Thin coverage — gaps forming
+              </h2>
+              <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+                Queries that matched only one or two interfaces. If any of them goes stale, the
+                next agent asking this gets nothing — add an entry before that happens.
+              </p>
+              {insights.data.thin.length === 0 ? (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  No thinly covered query logged yet.
+                </p>
+              ) : (
+                <ul className="mt-3 divide-y divide-border/50 rounded-lg border border-border/60">
+                  {insights.data.thin.map((row) => (
+                    <li
+                      key={row.need}
+                      className="flex items-baseline justify-between gap-4 px-4 py-3"
+                    >
+                      <span className="text-sm">{row.need}</span>
+                      <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+                        {row.matched} match{row.matched === 1 ? "" : "es"} · ×{row.occurrences}
+                        {row.slugs.length > 0 ? ` · ${row.slugs.slice(0, 2).join(", ")}` : ""}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
 
             <section>
               <h2 className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">

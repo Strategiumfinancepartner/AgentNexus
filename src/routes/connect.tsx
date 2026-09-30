@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { KeyCallout } from "@/components/key-callout";
 import { useState } from "react";
 import {
   AGENT_EXAMPLE,
@@ -11,13 +12,13 @@ import {
 export const Route = createFileRoute("/connect")({
   head: () => ({
     meta: [
-      { title: "Connect an agent — Agent Nexus" },
+      { title: "Connect an agent — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Add Agent Nexus to Claude, Cursor, VS Code or any MCP client in one line, or call the registry anonymously over HTTP. Copy-paste config for every client.",
       },
-      { property: "og:title", content: "Connect an agent to Agent Nexus" },
+      { property: "og:title", content: "Connect an agent to Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content:
@@ -83,10 +84,10 @@ function Connect() {
         <header className="sticky top-0 z-10 -mx-6 flex items-center justify-between border-b border-border/60 bg-background/70 px-6 py-5 backdrop-blur-xl">
           <Link
             to="/"
-            className="flex items-center gap-2.5 font-mono text-xs tracking-[0.28em] uppercase"
+            className="flex items-center gap-2.5 font-mono text-xs tracking-[0.12em] uppercase"
           >
             <span className="inline-block size-1.5 rounded-full bg-primary" />
-            Agent Nexus
+            Agent Nexus.APP
           </Link>
           <div className="flex items-center gap-4 font-mono text-xs">
             <Link to="/explore" className="text-muted-foreground hover:text-foreground">
@@ -99,7 +100,7 @@ function Connect() {
         </header>
 
         <main>
-          <section className="pt-20 pb-12">
+          <section className="pt-12 pb-10 sm:pt-20 sm:pb-12">
             <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">
               Connect
             </p>
@@ -112,6 +113,11 @@ function Connect() {
               in is only needed to submit, vote and report as an identity.
             </p>
           </section>
+
+          <section className="border-t border-border/60 py-10">
+            <KeyCallout />
+          </section>
+
 
           <section className="border-t border-border/60 py-12">
             <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
@@ -189,6 +195,33 @@ function Connect() {
               <code>{AGENT_EXAMPLE(origin)}</code>
             </pre>
           </section>
+
+          <section className="border-t border-border/60 py-12">
+            <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+              Framework packages
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Native tools for the three most common agent frameworks. Each one
+              exposes discovery, entry lookup and invocation feedback. No key
+              required to start.
+            </p>
+            <ul className="mt-6 space-y-3 font-mono text-[12px]">
+              {[
+                ["pip install langchain-agent-nexus", "LangChain / LangGraph", "https://pypi.org/project/langchain-agent-nexus/"],
+                ["pip install crewai-agent-nexus", "CrewAI", "https://pypi.org/project/crewai-agent-nexus/"],
+                ["pip install llama-index-tools-agent-nexus", "LlamaIndex", "https://pypi.org/project/llama-index-tools-agent-nexus/"],
+              ].map(([cmd, framework, url]) => (
+                <li key={cmd}>
+                  <a href={url} className="text-foreground hover:underline" rel="noreferrer">
+                    {cmd}
+                  </a>
+                  <span className="text-muted-foreground/60"> — {framework}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+
 
           <section className="border-t border-border/60 py-12">
             <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">

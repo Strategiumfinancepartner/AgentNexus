@@ -28,6 +28,9 @@ export type CatalogEntry = {
 };
 
 import { EXTRA_CATALOG } from "./catalog-extended";
+import { WAVE3_CATALOG } from "./catalog-wave3";
+import { WAVE4_CATALOG } from "./catalog-wave4";
+import { WAVE5_CATALOG } from "./catalog-wave5";
 
 const bearer = [{ name: "Authorization", location: "header", required: true }];
 const apiKeyHeader = (name: string) => [{ name, location: "header", required: true }];
@@ -357,7 +360,7 @@ const BASE_CATALOG: CatalogEntry[] = [
     name: "Hugging Face Inference",
     category: "api",
     summary: "Serverless inference across thousands of hosted community models.",
-    endpoint: "https://api-inference.huggingface.co/models",
+    endpoint: "https://router.huggingface.co/v1/models",
     docs_url: "https://huggingface.co/docs/api-inference/index",
     auth_mode: "Bearer token",
     auth_params: bearer,
@@ -963,4 +966,10 @@ const BASE_CATALOG: CatalogEntry[] = [
   },
 ];
 
-export const CATALOG: CatalogEntry[] = [...BASE_CATALOG, ...EXTRA_CATALOG];
+export const CATALOG: CatalogEntry[] = [
+  ...BASE_CATALOG,
+  ...EXTRA_CATALOG,
+  ...WAVE3_CATALOG,
+  ...WAVE4_CATALOG,
+  ...WAVE5_CATALOG,
+];

@@ -4,7 +4,7 @@
  * The Publisher plan promises four things on the pricing page: a verified
  * badge earned by a real call test, continuous monitoring, downtime alerts and
  * higher placement. Nothing here is granted by hand — this module runs on every
- * scheduled probe pass (every 6 hours) and reconciles the registry with the
+ * scheduled probe pass (hourly) and reconciles the registry with the
  * live subscription state:
  *
  *  - featured  → true while the submitter has an active Publisher subscription,

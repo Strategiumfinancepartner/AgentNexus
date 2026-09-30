@@ -15,13 +15,13 @@ import { AppShell } from "@/components/app-shell";
 export const Route = createFileRoute("/_authenticated/submit")({
   head: () => ({
     meta: [
-      { title: "Submit a surface — Agent Nexus" },
+      { title: "Submit a surface — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Submit an API, MCP server or CLI to the Agent Nexus registry. Every submission is reviewed before publication.",
       },
-      { property: "og:title", content: "Submit a surface — Agent Nexus" },
+      { property: "og:title", content: "Submit a surface — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Propose a callable surface for the agent infrastructure registry.",

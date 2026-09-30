@@ -43,13 +43,13 @@ export const Route = createFileRoute("/auth")({
   },
   head: () => ({
     meta: [
-      { title: "Sign in — Agent Nexus" },
+      { title: "Sign in — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Sign in to Agent Nexus to browse the registry of APIs, MCP servers and CLIs that AI agents call.",
       },
-      { property: "og:title", content: "Sign in — Agent Nexus" },
+      { property: "og:title", content: "Sign in — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Access the registry of callable surfaces for AI agents.",
@@ -164,10 +164,10 @@ function AuthPage() {
       <div className="w-full max-w-sm">
         <Link
           to="/"
-          className="flex items-center gap-2.5 font-mono text-xs tracking-[0.28em] uppercase text-muted-foreground transition-colors hover:text-foreground"
+          className="flex items-center gap-2.5 font-mono text-xs tracking-[0.12em] uppercase text-muted-foreground transition-colors hover:text-foreground"
         >
           <span className="inline-block size-1.5 rounded-full bg-primary" />
-          Agent Nexus
+          Agent Nexus.APP
         </Link>
 
         <h1 className="mt-8 text-2xl font-medium tracking-tight">

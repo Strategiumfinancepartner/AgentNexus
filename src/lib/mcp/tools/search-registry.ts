@@ -6,19 +6,31 @@ export default defineTool({
   name: "search_registry",
   title: "Search registry",
   description:
-    "Search the Agent Nexus registry of approved APIs, MCP servers and CLIs by keyword and optional category.",
+    "Keyword lookup in the Agent Nexus registry when you already know what to look for: a product name, vendor, slug or endpoint fragment, optionally narrowed to one category. Matches literal text only — it does not interpret a goal. To go from a plain-language need to a callable interface, use discover_capabilities instead; to walk the whole catalogue in order use list_entries, and for the full record of one known slug use get_entry. Returns {count, results[]} in summary form, and an empty results[] when nothing matches — that is a valid answer, not an error.",
   inputSchema: {
     query: z
       .string()
       .trim()
       .max(120)
       .default("")
-      .describe("Keyword matched against name, summary, endpoint or slug."),
+      .describe(
+        "Literal substring, max 120 chars, matched case-insensitively against name, summary, endpoint and slug — a product name ('resend'), a vendor, a slug fragment or a host ('api.stripe.com'). Single terms work best: the whole string is matched as one substring, so 'send email' finds nothing unless those words appear together. The characters % , ( ) are stripped. An empty query (the default) returns the first entries in name order, which is a browse, not a search.",
+      ),
     category: z
       .enum(["api", "mcp", "cli"])
       .optional()
-      .describe("Restrict results to one interface category."),
-    limit: z.number().int().min(1).max(50).default(10),
+      .describe(
+        "Optional filter, exactly one of 'api', 'mcp' or 'cli' (see list_categories). Combined with query as AND. Omit to search all three layers.",
+      ),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(50)
+      .default(10)
+      .describe(
+        "Upper bound on entries returned, 1-50, default 10. Results are ordered by name, not by relevance, so a small limit on a broad keyword can hide better matches — raise it or use discover_capabilities when you are ranking candidates.",
+      ),
   },
   outputSchema: { count: z.number(), results: z.array(z.any()) },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },

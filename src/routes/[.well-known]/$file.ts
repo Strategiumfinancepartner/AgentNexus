@@ -12,6 +12,29 @@ export const Route = createFileRoute("/.well-known/$file")({
     handlers: {
       GET: async ({ request, params }) => {
         const name = params.file;
+
+        // Agents paste manifest URLs out of prose, so the name arrives with a
+        // trailing "&", ":" or "." glued on. Point those at the real file
+        // instead of answering a 404 for a call that was almost right.
+        let decoded = name;
+        try {
+          decoded = decodeURIComponent(name);
+        } catch {
+          /* keep raw */
+        }
+        // Also cut JSON copied along with the URL, e.g. agent-card.json","card":{...
+        const glued = /^([a-z0-9\-_]+\.(?:json|txt|xml))[^a-z0-9\-_.]/i.exec(decoded);
+        const trimmed = glued ? glued[1] : decoded.replace(/[&:;,.)\]"'`>]+$/, "");
+        if (trimmed && trimmed !== name && /^[a-z0-9.\-_]+$/i.test(trimmed)) {
+          return new Response(null, {
+            status: 308,
+            headers: {
+              Location: `/.well-known/${trimmed}`,
+              "Access-Control-Allow-Origin": "*",
+            },
+          });
+        }
+
         const match = CONTROL_FILE.exec(name);
         if (!match) {
           return new Response("Not Found", { status: 404 });

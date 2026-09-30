@@ -47,11 +47,13 @@ export type InvocationReport = {
   latencyMs?: number | null;
   source: "api" | "mcp";
   reportedBy?: string | null;
+  /** Quota identity to credit for closing the loop (see quota.server). */
+  creditActor?: string | null;
 };
 
 export async function recordInvocationReport(
   report: InvocationReport,
-): Promise<{ ok: boolean; error?: string }> {
+): Promise<{ ok: boolean; error?: string; bonusCalls?: number }> {
   const client = await admin();
   const slug = report.slug.trim().toLowerCase();
 
@@ -74,7 +76,21 @@ export async function recordInvocationReport(
     reported_by: report.reportedBy ?? null,
   });
   if (error) return { ok: false, error: error.message };
-  return { ok: true };
+
+  // Reciprocity: a real report buys a few extra calls today. Small on purpose —
+  // sustained volume is what Agent Pro is for.
+  let bonusCalls = 0;
+  if (report.creditActor) {
+    try {
+      const { REPORT_BONUS_CALLS, REPORT_BONUS_MAX } = await import("@/lib/quota.server");
+      const { data } = await client.rpc("grant_report_credit", { _actor: report.creditActor });
+      const reports = Number(data ?? 0);
+      bonusCalls = Math.min(reports * REPORT_BONUS_CALLS, REPORT_BONUS_MAX);
+    } catch {
+      bonusCalls = 0;
+    }
+  }
+  return { ok: true, bonusCalls };
 }
 
 /**

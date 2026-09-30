@@ -62,6 +62,9 @@ export const Route = createFileRoute("/api/public/report")({
           );
         }
 
+        const { quotaActor, REPORT_BONUS_CALLS, REPORT_BONUS_MAX } = await import(
+          "@/lib/quota.server"
+        );
         const result = await recordInvocationReport({
           slug: parsed.data.slug,
           outcome: parsed.data.outcome,
@@ -69,6 +72,7 @@ export const Route = createFileRoute("/api/public/report")({
           error: parsed.data.error ?? null,
           latencyMs: parsed.data.latency_ms ?? null,
           source: "api",
+          creditActor: await quotaActor(request),
         });
         if (!result.ok) {
           return new Response(JSON.stringify({ error: result.error }), {
@@ -76,7 +80,14 @@ export const Route = createFileRoute("/api/public/report")({
             headers: cors,
           });
         }
-        return new Response(JSON.stringify({ success: true }), { headers: cors });
+        return new Response(
+          JSON.stringify({
+            success: true,
+            bonus_calls_today: result.bonusCalls ?? 0,
+            note: `Thanks — reporting earns +${REPORT_BONUS_CALLS} calls today (max +${REPORT_BONUS_MAX}). For sustained volume (50,000 calls/day), see https://agentnexus.app/pricing.`,
+          }),
+          { headers: cors },
+        );
       },
     },
   },

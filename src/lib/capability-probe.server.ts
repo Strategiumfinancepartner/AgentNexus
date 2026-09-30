@@ -28,6 +28,79 @@ function isHttp(endpoint: string) {
   return /^https?:\/\//i.test(endpoint.trim());
 }
 
+/**
+ * A probe runs from our own server, so a listed endpoint pointing at a loopback,
+ * private, link-local or cloud-metadata address would turn the probe into an
+ * internal-network request (SSRF) whose response is echoed into a public entry.
+ * Only public, name-or-public-IP http(s) targets are probeable.
+ */
+export function isPublicHttpTarget(url: string): boolean {
+  let parsed: URL;
+  try {
+    parsed = new URL(url.trim());
+  } catch {
+    return false;
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+  // Embedded credentials are never needed for a probe and are a classic way to
+  // confuse host parsing.
+  if (parsed.username || parsed.password) return false;
+
+  let host = parsed.hostname.toLowerCase();
+  if (host.startsWith("[") && host.endsWith("]")) host = host.slice(1, -1);
+
+  if (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".local") ||
+    host.endsWith(".internal") ||
+    host.endsWith(".lan") ||
+    host.endsWith(".home.arpa") ||
+    host === "metadata.google.internal" ||
+    host === "instance-data"
+  ) {
+    return false;
+  }
+
+  // IPv4 literal
+  const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
+  if (v4) {
+    const [a, b] = [Number(v4[1]), Number(v4[2])];
+    if ([a, Number(v4[3]), Number(v4[4])].some((n) => n > 255) || b > 255) return false;
+    if (a === 0 || a === 10 || a === 127) return false; // this-network, private, loopback
+    if (a === 169 && b === 254) return false; // link-local incl. cloud metadata 169.254.169.254
+    if (a === 172 && b >= 16 && b <= 31) return false; // private
+    if (a === 192 && b === 168) return false; // private
+    if (a === 192 && b === 0) return false; // 192.0.0.0/24 protocol assignments
+    if (a === 100 && b >= 64 && b <= 127) return false; // carrier-grade NAT
+    if (a === 198 && (b === 18 || b === 19)) return false; // benchmarking
+    if (a >= 224) return false; // multicast + reserved
+    return true;
+  }
+
+  // Any other numeric / IPv6-ish literal: allow only clearly public IPv6.
+  if (host.includes(":")) {
+    if (
+      host === "::" ||
+      host === "::1" ||
+      host.startsWith("fe80") ||
+      host.startsWith("fc") ||
+      host.startsWith("fd") ||
+      host.startsWith("::ffff:") ||
+      host.startsWith("64:ff9b:")
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  // Decimal/octal/hex-encoded IPv4 forms (e.g. 2130706433) bypass the checks above.
+  if (/^[0-9]+$/.test(host) || /^0x[0-9a-f]+$/.test(host)) return false;
+
+  // Must look like a real DNS name.
+  return host.includes(".") && !host.endsWith(".");
+}
+
 /** `{baseId}` / `<project-ref>` style endpoints are templates, not callable URLs. */
 export function hasPlaceholder(endpoint: string) {
   return /[{<][^{}<>\s]+[}>]/.test(endpoint);
@@ -48,6 +121,8 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
   const call = (body: unknown, signal: AbortSignal) =>
     fetch(endpoint, {
       method: "POST",
+      // No redirect following: a hop could land on an internal address.
+      redirect: "manual",
       signal,
       headers: {
         "content-type": "application/json",
@@ -176,12 +251,34 @@ function extractToolNames(payload: unknown): string[] {
 async function probeHttpApi(endpoint: string): Promise<CapabilityProbe> {
   try {
     return await withTimeout(async (signal) => {
-      const response = await fetch(endpoint, {
-        method: "GET",
-        redirect: "follow",
-        signal,
-        headers: { accept: "application/json", "user-agent": "AgentNexus-CapabilityProbe/1.0" },
-      });
+      // Redirects are followed by hand so each hop is re-checked: `follow` would
+      // let a public host bounce the probe onto an internal address.
+      let current = endpoint;
+      let response: Response | null = null;
+      for (let hop = 0; hop < 5; hop += 1) {
+        if (!isPublicHttpTarget(current)) {
+          return {
+            probeable: false,
+            ok: null,
+            detail: "Endpoint resolves to a non-public address — not probed",
+            tools: [],
+          };
+        }
+        response = await fetch(current, {
+          method: "GET",
+          redirect: "manual",
+          signal,
+          headers: { accept: "application/json", "user-agent": "AgentNexus-CapabilityProbe/1.0" },
+        });
+        if (response.status < 300 || response.status >= 400) break;
+        const location = response.headers.get("location");
+        if (!location) break;
+        current = new URL(location, current).toString();
+        response = null;
+      }
+      if (!response) {
+        return { probeable: true, ok: null, detail: "Too many redirects to verify", tools: [] };
+      }
       const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
 
       if (response.status === 401 || response.status === 403) {
@@ -213,10 +310,25 @@ async function probeHttpApi(endpoint: string): Promise<CapabilityProbe> {
           tools: [],
         };
       }
+      // Plenty of legitimate machine interfaces answer XML, CSV, NDJSON or plain
+      // text (arXiv, Stack Exchange, GTFS feeds, OpenStreetMap...). Demanding
+      // JSON flagged them as broken while they served their documented contract,
+      // so any structured, non-HTML payload counts as a confirmed contract.
+      if (/(xml|csv|ndjson|jsonl|yaml|text\/plain|application\/x-ndjson|rss|atom|protobuf|octet-stream)/.test(contentType)) {
+        return {
+          probeable: true,
+          ok: true,
+          detail: `Non-JSON machine contract confirmed (HTTP ${response.status}, ${contentType.split(";")[0]})`,
+          tools: [],
+        };
+      }
+      // HTML (or an unlabelled body) is not a machine contract, but it does prove
+      // the host answers: unverified rather than failed, so the entry is not
+      // reported as an outage on a documentation or landing response.
       return {
         probeable: true,
-        ok: false,
-        detail: `Answered HTTP ${response.status} with ${contentType || "unknown content type"}, not JSON`,
+        ok: null,
+        detail: `Answered HTTP ${response.status} with ${contentType.split(";")[0] || "no content type"} — human-readable response, contract not machine-verified`,
         tools: [],
       };
     });
@@ -243,6 +355,11 @@ export async function probeCapabilities(entry: {
   }
   if (!isHttp(endpoint)) {
     return notProbeable("Locally launched interface (stdio) — not remotely probeable");
+  }
+  // Never let a listed endpoint aim our own server at loopback, private or
+  // cloud-metadata addresses.
+  if (!isPublicHttpTarget(endpoint)) {
+    return notProbeable("Non-public address (loopback/private/link-local) — not probed");
   }
   return entry.category === "mcp" ? probeMcp(endpoint) : probeHttpApi(endpoint);
 }

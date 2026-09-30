@@ -15,7 +15,16 @@ const serverEnv = loadEnv(process.env["NODE_ENV"] ?? "development", process.cwd(
 Object.assign(process.env, serverEnv);
 
 export default defineConfig({
-  plugins: [mcpPlugin()],
+  // The public MCP surface at /mcp is project-authored (anonymous handshake +
+  // read-only tools, OAuth for writes), so the codegen emits its own
+  // OAuth-protected route elsewhere and leaves our routes alone.
+  plugins: [
+    mcpPlugin({
+      path: "/api/mcp-oauth",
+      restRoutes: false,
+      protectedResourceMetadataRoute: false,
+    }),
+  ],
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

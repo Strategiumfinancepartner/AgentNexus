@@ -11,8 +11,9 @@ now, and how exactly do I call it?"* Every entry is probed over HTTP on a schedu
 answer carries a real reliability score instead of a stale README badge.
 
 Listed on the [official MCP registry](https://registry.modelcontextprotocol.io) as
-`app.agentnexus/agent-nexus`, on [Smithery](https://smithery.ai/server/ceo-2z03/agent-nexus)
-and on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus).
+`app.agentnexus/agent-nexus`, on [Smithery](https://smithery.ai/server/ceo-2z03/agent-nexus),
+on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus) and on the
+[M8ven Trust Index](https://m8ven.ai/mcp/strategiumfinancepartner-agentnexus-1icap4).
 
 ---
 

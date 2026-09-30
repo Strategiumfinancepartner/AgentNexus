@@ -249,10 +249,36 @@ export const listModerationQueue = createServerFn({ method: "POST" })
     const { data, error } = await context.supabase
       .from("entries")
       .select(ENTRY_COLUMNS)
-      .in("status", ["pending", "rejected"])
+      .eq("status", "pending")
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
     return (data ?? []) as Entry[];
+  });
+
+export type SpamBlock = {
+  id: string;
+  actor: string;
+  name: string;
+  category: string;
+  summary: string;
+  endpoint: string;
+  score: number;
+  reasons: string[];
+  created_at: string;
+};
+
+/** Reviewer-only: audit log of submissions refused by the automatic filter. */
+export const listSpamBlocks = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertReviewer(context);
+    const { data, error } = await (context.supabase as any)
+      .from("spam_blocks")
+      .select("id, actor, name, category, summary, endpoint, score, reasons, created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw new Error(error.message);
+    return (data ?? []) as SpamBlock[];
   });
 
 export const moderateEntry = createServerFn({ method: "POST" })
@@ -278,7 +304,13 @@ export const moderateEntry = createServerFn({ method: "POST" })
       })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
-    return { ok: true as const };
+
+    // Tell the submitter, when they left an address. Best-effort: a mail
+    // failure must never block moderation.
+    const { notifySubmissionDecision } = await import("@/lib/submission-notify.server");
+    const notified = await notifySubmissionDecision(data.id, data.decision);
+
+    return { ok: true as const, notified: notified.sent };
   });
 
 /** Reviewer-only: verified badge and sponsored placement. */

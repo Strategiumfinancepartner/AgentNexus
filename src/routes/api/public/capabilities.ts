@@ -6,7 +6,7 @@ const baseHeaders = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
-  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier",
+  "Access-Control-Expose-Headers": "X-RateLimit-Limit, X-RateLimit-Remaining, X-Nexus-Tier, X-Nexus-Quota-Warning, X-Nexus-Free-Key",
   "Cache-Control": "no-store",
 };
 
@@ -62,6 +62,7 @@ export const Route = createFileRoute("/api/public/capabilities")({
               categories,
               capabilities: count((r) => r.capabilities ?? []),
               tags: count((r) => r.tags ?? []),
+              ...(quota.warning ? { quota_notice: quota.warning } : {}),
               next: {
                 discover: `${origin}/api/public/discover?need=`,
                 search: `${origin}/api/public/registry?q=`,

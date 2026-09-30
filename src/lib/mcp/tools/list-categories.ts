@@ -24,7 +24,7 @@ export default defineTool({
   name: "list_categories",
   title: "List interface categories",
   description:
-    "List the three interface layers Agent Nexus indexes (APIs, MCPs, CLIs) with the number of approved entries in each.",
+    "Return the fixed taxonomy of Agent Nexus: the three interface layers it indexes ('api', 'mcp', 'cli'), each with a label, a one-line definition and its live count of approved entries. Read-only, idempotent and parameterless — call it once to learn the exact values accepted by the 'category' argument of search_registry, list_entries and discover_capabilities, and to size the catalogue before paging. It never returns entries themselves: use list_entries to enumerate a layer, search_registry for a keyword, discover_capabilities for a plain-language need.",
   inputSchema: {},
   outputSchema: { categories: z.array(z.any()) },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },

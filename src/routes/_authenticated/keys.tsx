@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -10,13 +10,13 @@ import { getMyAccess } from "@/lib/registry.functions";
 export const Route = createFileRoute("/_authenticated/keys")({
   head: () => ({
     meta: [
-      { title: "API keys — Agent Nexus" },
+      { title: "API keys — Agent Nexus (agentnexus.app)" },
       {
         name: "description",
         content:
           "Create a free Agent Nexus API key to raise your daily discovery quota, and track how many calls your agents made today.",
       },
-      { property: "og:title", content: "API keys — Agent Nexus" },
+      { property: "og:title", content: "API keys — Agent Nexus (agentnexus.app)" },
       {
         property: "og:description",
         content: "Free keys raise the daily quota on the Agent Nexus discovery API.",
@@ -74,6 +74,16 @@ function KeysPage() {
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
           The discovery API is open without a key, capped at 100 calls a day per address. A
           free key raises that to 1,000 calls a day. Agent Pro raises it to 50,000.
+        </p>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          Keys created here belong to this account: the day you subscribe to Agent Pro, every key
+          listed below jumps to 50,000 calls a day on its next call — nothing to recreate. A key
+          minted anonymously on{" "}
+          <Link to="/free-key" className="underline underline-offset-4 hover:text-foreground">
+            /free-key
+          </Link>{" "}
+          has no account attached and stays at 1,000: create a key here instead if you plan to
+          upgrade.
         </p>
 
         {quota && (

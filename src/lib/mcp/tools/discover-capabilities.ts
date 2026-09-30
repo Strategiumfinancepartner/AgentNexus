@@ -7,26 +7,32 @@ export default defineTool({
   name: "discover_capabilities",
   title: "Discover a callable interface for a need",
   description:
-    "Match a natural-language need (e.g. 'send a transactional email', 'query Postgres') to the interfaces that can do it, ranked by capability match and verified reliability. Returns everything needed to call them: endpoint, auth mode, auth parameters, formats, rate limit and cost. Always returns a payload: when nothing matches, `coverage` is 'none', `uncovered` is true and the entries returned are reliable starting points, not matches.",
+    "Map a plain-language goal (e.g. 'send a transactional email') to callable APIs, MCP servers or CLIs. Returns {need, coverage, count, uncovered, note, matches[]}; each match has slug, endpoint, auth, formats, rate limit, pricing and a 0-100 reliability score. Never empty on a valid need: if nothing fits, coverage='none' and matches[] lists reliable starting points. Errors: an invalid or too-short need fails input validation; a backend failure returns isError=true with the message. Rate limits: 100 calls/day anonymous, 1,000/day with a free key (POST /api/public/keys, no account), 50,000/day on Agent Pro. For a known keyword or slug, use search_registry.",
   inputSchema: {
     need: z
       .string()
       .trim()
       .min(3)
       .max(300)
-      .describe("What the agent is trying to accomplish, in plain language."),
+      .describe("What the agent is trying to accomplish, in plain language. 3-300 characters, required."),
     category: z
       .enum(["api", "mcp", "cli"])
       .optional()
-      .describe("Restrict to one interface layer."),
+      .describe("Restrict to one interface layer ('api', 'mcp' or 'cli' — see list_categories). Default: omitted, searches all three."),
     min_reliability: z
       .number()
       .int()
       .min(0)
       .max(100)
       .default(0)
-      .describe("Drop interfaces whose reliability score is below this value."),
-    limit: z.number().int().min(1).max(20).default(5),
+      .describe("Drop interfaces scoring below this 0-100 reliability value. Default 0 (no filter)."),
+    limit: z
+      .number()
+      .int()
+      .min(1)
+      .max(20)
+      .default(5)
+      .describe("Maximum number of matching interfaces to return, 1-20. Default 5."),
   },
   outputSchema: {
     need: z.string(),
@@ -38,6 +44,24 @@ export default defineTool({
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ need, category, min_reliability, limit }) => {
+    // Injection-style payload (no client IP available here, so no strike):
+    // answer with a benign empty result instead of serving or logging it.
+    const { looksLikeInjection } = await import("@/lib/abuse-guard.server");
+    if (looksLikeInjection(need)) {
+      const empty = {
+        need,
+        coverage: "none",
+        count: 0,
+        uncovered: true,
+        matches: [] as unknown[],
+        note: "No interface matches this need. Describe a task in plain language, e.g. 'send a transactional email'.",
+      };
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(empty, null, 2) }],
+        structuredContent: empty,
+      };
+    }
+
     const supabase = supabaseAnon();
     let request = supabase
       .from("entries")

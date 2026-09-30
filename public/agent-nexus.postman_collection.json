@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "Agent Nexus — public API",
+    "name": "Agent Nexus (agentnexus.app) — public API",
     "description": "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Read access is free and needs no login (100 calls/day per IP). A free API key raises this to 1,000/day: POST /api/public/keys.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },

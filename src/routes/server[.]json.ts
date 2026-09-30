@@ -15,9 +15,10 @@ export const Route = createFileRoute("/server.json")({
               $schema:
                 "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
               name: "app.agentnexus/agent-nexus",
+              title: "Agent Nexus",
               description:
-                "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Maps a natural-language need to a callable interface with its auth contract, formats, rate limits and live reliability score.",
-              version: "0.3.0",
+                "650+ tested APIs, MCP servers and CLIs your agent can call. Self-service key in one call.",
+              version: "1.1.0",
               websiteUrl: origin,
               remotes: [
                 {

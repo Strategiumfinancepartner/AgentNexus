@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * The matching private key is stored as the MCP_REGISTRY_PRIVATE_KEY secret and
  * only used by the mcp-publisher CLI at publish time.
  */
-const PROOF = "v=MCPv1; k=ed25519; p=zVaAO3syqfejfkLQ6y4uUK3DfkuDQDqU5RDlgTwcRP4=\n";
+const PROOF = "v=MCPv1; k=ed25519; p=QqEjfsTUgL7oMAi7QU2AHyroZoGXRxsMUO4Ap/m6/Ks=\n";
 
 export const Route = createFileRoute("/.well-known/mcp-registry-auth")({
   server: {
