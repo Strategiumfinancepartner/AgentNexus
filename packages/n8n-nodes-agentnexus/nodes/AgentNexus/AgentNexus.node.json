@@ -1,2 +1,2 @@
-{ "node": "n8n-nodes-agentnexus.agentNexus", "nodeVersion": "1.0", "codexVersion": "1.0", "categories": ["Development", "AI"],
+{ "node": "n8n-nodes-agentnexus.agentNexus", "nodeVersion": "1.0", "codexVersion": "1.0", "categories": ["Development"],
   "resources": { "primaryDocumentation": [{ "url": "https://agentnexus.app/connect" }] } }

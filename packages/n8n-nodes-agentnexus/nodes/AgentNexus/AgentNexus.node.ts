@@ -6,7 +6,7 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 } from 'n8n-workflow';
-import { NodeApiError, NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workflow';
 
 const BASE = 'https://agentnexus.app';
 
@@ -20,10 +20,10 @@ export class AgentNexus implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Find health-checked APIs, MCP servers and CLIs by plain-language need',
 		defaults: { name: 'Agent Nexus' },
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		usableAsTool: true,
-		credentials: [{ name: 'agentNexusApi', required: false }],
+		credentials: [{ name: 'agentNexusApi', required: true }],
 		properties: [
 			{
 				displayName: 'Operation',
@@ -71,8 +71,8 @@ export class AgentNexus implements INodeType {
 				displayName: 'Limit',
 				name: 'limit',
 				type: 'number',
-				typeOptions: { minValue: 1, maxValue: 20 },
-				default: 5,
+				typeOptions: { minValue: 1, maxValue: 50 },
+				default: 50,
 				description: 'Max number of results to return',
 				displayOptions: { show: { operation: ['discover'] } },
 			},
@@ -91,18 +91,11 @@ export class AgentNexus implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const out: INodeExecutionData[] = [];
-		let hasKey = false;
-		try {
-			const creds = await this.getCredentials('agentNexusApi');
-			hasKey = Boolean(creds?.apiKey);
-		} catch {
-			hasKey = false;
-		}
 
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const operation = this.getNodeParameter('operation', i) as string;
-				const req: IHttpRequestOptions = { method: 'GET', url: '', json: true, headers: { 'user-agent': 'n8n-nodes-agentnexus/0.1.1' } };
+				const req: IHttpRequestOptions = { method: 'GET', url: '', json: true, headers: { 'user-agent': 'n8n-nodes-agentnexus/0.1.5' } };
 				if (operation === 'discover') {
 					const qs: IDataObject = {
 						need: this.getNodeParameter('need', i) as string,
@@ -120,16 +113,14 @@ export class AgentNexus implements INodeType {
 				} else {
 					req.url = `${BASE}/api/public/status`;
 				}
-				const data = hasKey
-					? await this.helpers.httpRequestWithAuthentication.call(this, 'agentNexusApi', req)
-					: await this.helpers.httpRequest(req);
+				const data = await this.helpers.httpRequestWithAuthentication.call(this, 'agentNexusApi', req);
 				out.push({ json: data as IDataObject, pairedItem: { item: i } });
 			} catch (error) {
 				if (this.continueOnFail()) {
 					out.push({ json: { error: (error as Error).message }, pairedItem: { item: i } });
 					continue;
 				}
-				if (error instanceof NodeOperationError) throw error;
+				if (error instanceof NodeOperationError) throw new NodeOperationError(this.getNode(), error, { itemIndex: i });
 				throw new NodeApiError(this.getNode(), error as never, { itemIndex: i });
 			}
 		}

@@ -1,8 +1,9 @@
-import type { IAuthenticateGeneric, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { Icon, IAuthenticateGeneric, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class AgentNexusApi implements ICredentialType {
 	name = 'agentNexusApi';
 	displayName = 'Agent Nexus API';
+	icon: Icon = 'file:agentnexus.svg';
 	documentationUrl = 'https://agentnexus.app/connect';
 	properties: INodeProperties[] = [
 		{
