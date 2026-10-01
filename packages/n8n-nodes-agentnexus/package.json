@@ -1,0 +1,21 @@
+{
+  "name": "n8n-nodes-agentnexus",
+  "version": "0.1.0",
+  "description": "n8n node for Agent Nexus: find health-checked APIs, MCP servers and CLIs by plain-language need.",
+  "keywords": ["n8n-community-node-package", "mcp", "api-registry", "ai-agents", "agent-nexus"],
+  "license": "MIT",
+  "homepage": "https://agentnexus.app",
+  "author": { "name": "Agent Nexus", "url": "https://agentnexus.app" },
+  "repository": { "type": "git", "url": "https://github.com/Strategiumfinancepartner/AgentNexus.git", "directory": "packages/n8n-nodes-agentnexus" },
+  "main": "index.js",
+  "scripts": { "build": "tsc && cp nodes/AgentNexus/agentnexus.svg dist/nodes/AgentNexus/", "prepublishOnly": "npm run build" },
+  "files": ["dist"],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": ["dist/credentials/AgentNexusApi.credentials.js"],
+    "nodes": ["dist/nodes/AgentNexus/AgentNexus.node.js"]
+  },
+  "devDependencies": { "n8n-workflow": "*", "typescript": "^5.6.0" },
+  "peerDependencies": { "n8n-workflow": "*" }
+}
