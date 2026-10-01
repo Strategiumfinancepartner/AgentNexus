@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-agentnexus",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "n8n node for Agent Nexus: find health-checked APIs, MCP servers and CLIs by plain-language need.",
   "keywords": [
     "n8n-community-node-package",
