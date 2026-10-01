@@ -15,3 +15,5 @@
 - The site root accepts MCP JSON-RPC POSTs through the anonymous MCP handler as a compatibility fallback. Why: some directory checkers test the website URL instead of the declared endpoint.
 - Agent-key submissions are limited to 1 per key AND 1 per source address per 24h (src/lib/mcp/agent-submit.server.ts). Why: one operator minted 15 keys in 20h to bypass the per-key limit.
 - Reviewer analytics exclude command-injection probes from demand gaps and split MCP traffic by anonymous versus keyed calls; MCP handshakes are not discovery quota usage. Why: repeated scanner traffic must not be mistaken for customer demand or active keys.
+
+- After every code change, mirror the project to GitHub Strategiumfinancepartner/AgentNexus with `python3 scripts/github-sync.py` (needs LOVABLE_API_KEY + GITHUB_API_KEY). Why: M8ven Live re-scores the listing from that repo on each push, and Lovable sync does not target it.
