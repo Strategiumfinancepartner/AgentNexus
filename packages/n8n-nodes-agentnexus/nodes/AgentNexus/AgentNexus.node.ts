@@ -102,7 +102,7 @@ export class AgentNexus implements INodeType {
 		for (let i = 0; i < items.length; i++) {
 			try {
 				const operation = this.getNodeParameter('operation', i) as string;
-				const req: IHttpRequestOptions = { method: 'GET', url: '', json: true, headers: { 'user-agent': 'n8n-nodes-agentnexus/0.1.0' } };
+				const req: IHttpRequestOptions = { method: 'GET', url: '', json: true, headers: { 'user-agent': 'n8n-nodes-agentnexus/0.1.1' } };
 				if (operation === 'discover') {
 					const qs: IDataObject = {
 						need: this.getNodeParameter('need', i) as string,
