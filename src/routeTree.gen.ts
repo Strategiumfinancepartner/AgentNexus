@@ -103,6 +103,7 @@ import { Route as McpChar91DotwellKnownChar93McpChar91DotChar93jsonRouteImport }
 import { Route as McpChar91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/mcp/[.well-known]/oauth-authorization-server'
 import { Route as McpChar91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/mcp/[.well-known]/oauth-protected-resource'
 import { Route as McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/owners[.]json'
+import { Route as ApiPublicHealthCardSlugRouteImport } from './routes/api/public/health-card.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -627,6 +628,11 @@ const McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute =
     path: '/.well-known/owners.json',
     getParentRoute: () => McpRoute,
   } as any)
+const ApiPublicHealthCardSlugRoute = ApiPublicHealthCardSlugRouteImport.update({
+  id: '/api/public/health-card/$slug',
+  path: '/api/public/health-card/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -745,6 +751,7 @@ export interface FileRoutesByFullPath {
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -844,6 +851,7 @@ export interface FileRoutesByTo {
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -945,6 +953,7 @@ export interface FileRoutesById {
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -1046,6 +1055,7 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-authorization-server'
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
+    | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
     | '/lovable/email/transactional/preview'
@@ -1145,6 +1155,7 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-authorization-server'
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
+    | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
     | '/lovable/email/transactional/preview'
@@ -1245,6 +1256,7 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-authorization-server'
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
+    | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
     | '/lovable/email/transactional/preview'
@@ -1327,6 +1339,7 @@ export interface RootRouteChildren {
   ApiPublicReportRoute: typeof ApiPublicReportRoute
   ApiPublicStatusRoute: typeof ApiPublicStatusRoute
   ApiPublicSubmissionRoute: typeof ApiPublicSubmissionRoute
+  ApiPublicHealthCardSlugRoute: typeof ApiPublicHealthCardSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
@@ -1991,6 +2004,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport
       parentRoute: typeof McpRoute
     }
+    '/api/public/health-card/$slug': {
+      id: '/api/public/health-card/$slug'
+      path: '/api/public/health-card/$slug'
+      fullPath: '/api/public/health-card/$slug'
+      preLoaderRoute: typeof ApiPublicHealthCardSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -2228,6 +2248,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicReportRoute: ApiPublicReportRoute,
   ApiPublicStatusRoute: ApiPublicStatusRoute,
   ApiPublicSubmissionRoute: ApiPublicSubmissionRoute,
+  ApiPublicHealthCardSlugRoute: ApiPublicHealthCardSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
