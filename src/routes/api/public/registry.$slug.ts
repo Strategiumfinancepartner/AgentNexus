@@ -125,7 +125,7 @@ const serveEntry = async ({
           if (suffixed && suffixed.length === 1) {
             return new Response(null, {
               status: 301,
-              headers: { ...cors, Location: `/api/public/registry/${suffixed[0].slug}` },
+              headers: { ...cors, Location: `/api/public/registry/${suffixed[0]!.slug}` },
             });
           }
           // A miss is often a publisher looking for its own server. Answer with
