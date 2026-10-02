@@ -17,3 +17,4 @@
 - Reviewer analytics exclude command-injection probes from demand gaps and split MCP traffic by anonymous versus keyed calls; MCP handshakes are not discovery quota usage. Why: repeated scanner traffic must not be mistaken for customer demand or active keys.
 
 - After every code change, mirror the project to GitHub Strategiumfinancepartner/AgentNexus with `python3 scripts/github-sync.py` (needs LOVABLE_API_KEY + GITHUB_API_KEY). Why: M8ven Live re-scores the listing from that repo on each push, and Lovable sync does not target it.
+- Per-entry agent health cards live at /api/public/health-card/<slug> (probe, transport, auth shape, schema hash, proof, last failure, retry cost). Why: agents rank servers on live evidence, not READMEs.
