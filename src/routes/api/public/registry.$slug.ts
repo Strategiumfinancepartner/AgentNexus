@@ -114,6 +114,20 @@ const serveEntry = async ({
               headers: { ...cors, Location: `/api/public/registry/${alias.to_slug}` },
             });
           }
+          // Agents drop our type suffix ("smtp2go" for smtp2go-api). When exactly
+          // one entry is `<slug>-<suffix>`, send them there instead of a 404.
+          const { data: suffixed } = await client
+            .from("entries")
+            .select("slug")
+            .eq("status", "approved")
+            .like("slug", `${slug}-%`)
+            .limit(2);
+          if (suffixed && suffixed.length === 1) {
+            return new Response(null, {
+              status: 301,
+              headers: { ...cors, Location: `/api/public/registry/${suffixed[0].slug}` },
+            });
+          }
           // A miss is often a publisher looking for its own server. Answer with
           // near matches and the self-serve way in, not a bare 404.
           const needle = slug.split("-").filter((t) => t.length > 3)[0] ?? slug;

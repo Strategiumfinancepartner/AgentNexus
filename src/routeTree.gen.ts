@@ -75,6 +75,7 @@ import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as ApiMcpOauthRouteImport } from './routes/api/mcp-oauth'
+import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
 import { Route as McpServerCardRouteImport } from './routes/mcp/server-card'
 import { Route as McpServerCardDotjsonRouteImport } from './routes/mcp/server-card[.]json'
 import { Route as McpV1RouteImport } from './routes/mcp/v1'
@@ -476,6 +477,11 @@ const ApiMcpOauthRoute = ApiMcpOauthRouteImport.update({
   path: '/api/mcp-oauth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpSlugRoute = McpSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => McpRoute,
+} as any)
 const McpServerCardRoute = McpServerCardRouteImport.update({
   id: '/server-card',
   path: '/server-card',
@@ -711,6 +717,7 @@ export interface FileRoutesByFullPath {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
   '/mcp/v1': typeof McpV1Route
@@ -809,6 +816,7 @@ export interface FileRoutesByTo {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
   '/mcp/v1': typeof McpV1Route
@@ -909,6 +917,7 @@ export interface FileRoutesById {
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
   '/mcp/v1': typeof McpV1Route
@@ -1009,6 +1018,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
     | '/mcp/v1'
@@ -1107,6 +1117,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
     | '/mcp/v1'
@@ -1206,6 +1217,7 @@ export interface FileRouteTypes {
     | '/_authenticated/signals'
     | '/_authenticated/submit'
     | '/api/mcp-oauth'
+    | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
     | '/mcp/v1'
@@ -1783,6 +1795,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpOauthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp/$slug': {
+      id: '/mcp/$slug'
+      path: '/$slug'
+      fullPath: '/mcp/$slug'
+      preLoaderRoute: typeof McpSlugRouteImport
+      parentRoute: typeof McpRoute
+    }
     '/mcp/server-card': {
       id: '/mcp/server-card'
       path: '/server-card'
@@ -2027,6 +2046,7 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface McpRouteChildren {
+  McpSlugRoute: typeof McpSlugRoute
   McpServerCardRoute: typeof McpServerCardRoute
   McpServerCardDotjsonRoute: typeof McpServerCardDotjsonRoute
   McpV1Route: typeof McpV1Route
@@ -2038,6 +2058,7 @@ interface McpRouteChildren {
 }
 
 const McpRouteChildren: McpRouteChildren = {
+  McpSlugRoute: McpSlugRoute,
   McpServerCardRoute: McpServerCardRoute,
   McpServerCardDotjsonRoute: McpServerCardDotjsonRoute,
   McpV1Route: McpV1Route,
