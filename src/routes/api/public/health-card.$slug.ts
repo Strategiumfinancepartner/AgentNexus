@@ -67,10 +67,23 @@ async function serve({ params, request }: { params: { slug: string }; request: R
   const schemaHash = await sha256({ input: e.input_format, output: e.output_format, tools });
   const reliability = e.checks_total > 0 ? Math.round((e.checks_ok / e.checks_total) * 1000) / 10 : null;
 
+  const now = Date.now();
+  const EVIDENCE_TTL_MS = 24 * 60 * 60 * 1000;
+  const probedAt = e.health_checked_at ? Date.parse(e.health_checked_at) : null;
+  const evidenceExpires = probedAt ? probedAt + EVIDENCE_TTL_MS : null;
+
   return json({
     slug: e.slug,
     name: e.name,
-    generated_at: new Date().toISOString(),
+    generated_at: new Date(now).toISOString(),
+    expiry: {
+      card_expires_at: new Date(now + 120_000).toISOString(),
+      evidence_expires_at: evidenceExpires ? new Date(evidenceExpires).toISOString() : null,
+      evidence_age_s: probedAt ? Math.round((now - probedAt) / 1000) : null,
+      stale: evidenceExpires ? now > evidenceExpires : true,
+      rule: "Re-fetch this card after card_expires_at. Treat the evidence as untrusted after evidence_expires_at or when stale is true.",
+      refresh: `${origin}/api/public/health-card/${e.slug}`,
+    },
     last_probe: {
       at: e.health_checked_at,
       ok: e.health_ok,
