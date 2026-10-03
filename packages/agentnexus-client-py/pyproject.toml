@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentnexus-client"
+version = "0.1.0"
+description = "Find a working API, MCP server or CLI for any need, with live health evidence. Official Agent Nexus client, zero dependencies."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Agent Nexus", email = "support@agentnexus.app" }]
+keywords = ["agents", "mcp", "api", "registry", "discovery", "health", "llm", "tools"]
+classifiers = [
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.scripts]
+agentnexus = "agentnexus_client.__main__:main"
+
+[project.urls]
+Homepage = "https://agentnexus.app"
+Documentation = "https://agentnexus.app/llms.txt"
+Source = "https://github.com/Strategiumfinancepartner/AgentNexus"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agentnexus_client"]

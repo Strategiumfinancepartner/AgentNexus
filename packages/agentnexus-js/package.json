@@ -1,0 +1,24 @@
+{
+  "name": "agentnexus-client",
+  "version": "0.1.0",
+  "description": "Find a working API, MCP server or CLI for any need, with live health evidence. Official Agent Nexus client, zero dependencies.",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "bin": {
+    "agentnexus": "./cli.js"
+  },
+  "files": ["index.js", "index.d.ts", "cli.js", "README.md", "LICENSE"],
+  "engines": { "node": ">=18" },
+  "keywords": ["agents", "ai-agents", "mcp", "model-context-protocol", "api", "registry", "discovery", "health", "llm", "tools"],
+  "homepage": "https://agentnexus.app",
+  "repository": { "type": "git", "url": "git+https://github.com/Strategiumfinancepartner/AgentNexus.git", "directory": "packages/agentnexus-js" },
+  "license": "MIT",
+  "author": "Agent Nexus <support@agentnexus.app>"
+}
