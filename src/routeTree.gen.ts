@@ -78,7 +78,6 @@ import { Route as ApiMcpOauthRouteImport } from './routes/api/mcp-oauth'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
 import { Route as McpServerCardRouteImport } from './routes/mcp/server-card'
 import { Route as McpServerCardDotjsonRouteImport } from './routes/mcp/server-card[.]json'
-import { Route as McpV1RouteImport } from './routes/mcp/v1'
 import { Route as RegistrySlugRouteImport } from './routes/registry.$slug'
 import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -103,6 +102,8 @@ import { Route as McpChar91DotwellKnownChar93McpChar91DotChar93jsonRouteImport }
 import { Route as McpChar91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/mcp/[.well-known]/oauth-authorization-server'
 import { Route as McpChar91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/mcp/[.well-known]/oauth-protected-resource'
 import { Route as McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/owners[.]json'
+import { Route as McpV1IndexRouteImport } from './routes/mcp/v1/index'
+import { Route as McpV1ActionRouteImport } from './routes/mcp/v1/$action'
 import { Route as ApiPublicHealthCardSlugRouteImport } from './routes/api/public/health-card.$slug'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicRegistrySlugRouteImport } from './routes/api/public/registry.$slug'
@@ -493,11 +494,6 @@ const McpServerCardDotjsonRoute = McpServerCardDotjsonRouteImport.update({
   path: '/server-card.json',
   getParentRoute: () => McpRoute,
 } as any)
-const McpV1Route = McpV1RouteImport.update({
-  id: '/v1',
-  path: '/v1',
-  getParentRoute: () => McpRoute,
-} as any)
 const RegistrySlugRoute = RegistrySlugRouteImport.update({
   id: '/registry/$slug',
   path: '/registry/$slug',
@@ -628,6 +624,16 @@ const McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute =
     path: '/.well-known/owners.json',
     getParentRoute: () => McpRoute,
   } as any)
+const McpV1IndexRoute = McpV1IndexRouteImport.update({
+  id: '/v1/',
+  path: '/v1/',
+  getParentRoute: () => McpRoute,
+} as any)
+const McpV1ActionRoute = McpV1ActionRouteImport.update({
+  id: '/v1/$action',
+  path: '/v1/$action',
+  getParentRoute: () => McpRoute,
+} as any)
 const ApiPublicHealthCardSlugRoute = ApiPublicHealthCardSlugRouteImport.update({
   id: '/api/public/health-card/$slug',
   path: '/api/public/health-card/$slug',
@@ -726,7 +732,6 @@ export interface FileRoutesByFullPath {
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
-  '/mcp/v1': typeof McpV1Route
   '/registry/$slug': typeof RegistrySlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -751,6 +756,8 @@ export interface FileRoutesByFullPath {
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  '/mcp/v1/$action': typeof McpV1ActionRoute
+  '/mcp/v1/': typeof McpV1IndexRoute
   '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
@@ -826,7 +833,6 @@ export interface FileRoutesByTo {
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
-  '/mcp/v1': typeof McpV1Route
   '/registry/$slug': typeof RegistrySlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -851,6 +857,8 @@ export interface FileRoutesByTo {
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  '/mcp/v1/$action': typeof McpV1ActionRoute
+  '/mcp/v1': typeof McpV1IndexRoute
   '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
@@ -928,7 +936,6 @@ export interface FileRoutesById {
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
-  '/mcp/v1': typeof McpV1Route
   '/registry/$slug': typeof RegistrySlugRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -953,6 +960,8 @@ export interface FileRoutesById {
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  '/mcp/v1/$action': typeof McpV1ActionRoute
+  '/mcp/v1/': typeof McpV1IndexRoute
   '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/registry/$slug': typeof ApiPublicRegistrySlugRoute
@@ -1030,7 +1039,6 @@ export interface FileRouteTypes {
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
-    | '/mcp/v1'
     | '/registry/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -1055,6 +1063,8 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-authorization-server'
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
+    | '/mcp/v1/$action'
+    | '/mcp/v1/'
     | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
@@ -1130,7 +1140,6 @@ export interface FileRouteTypes {
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
-    | '/mcp/v1'
     | '/registry/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -1155,6 +1164,8 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-authorization-server'
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
+    | '/mcp/v1/$action'
+    | '/mcp/v1'
     | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
@@ -1231,7 +1242,6 @@ export interface FileRouteTypes {
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
-    | '/mcp/v1'
     | '/registry/$slug'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
@@ -1256,6 +1266,8 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-authorization-server'
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
+    | '/mcp/v1/$action'
+    | '/mcp/v1/'
     | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
     | '/api/public/registry/$slug'
@@ -1829,13 +1841,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpServerCardDotjsonRouteImport
       parentRoute: typeof McpRoute
     }
-    '/mcp/v1': {
-      id: '/mcp/v1'
-      path: '/v1'
-      fullPath: '/mcp/v1'
-      preLoaderRoute: typeof McpV1RouteImport
-      parentRoute: typeof McpRoute
-    }
     '/registry/$slug': {
       id: '/registry/$slug'
       path: '/registry/$slug'
@@ -2004,6 +2009,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport
       parentRoute: typeof McpRoute
     }
+    '/mcp/v1/': {
+      id: '/mcp/v1/'
+      path: '/v1'
+      fullPath: '/mcp/v1/'
+      preLoaderRoute: typeof McpV1IndexRouteImport
+      parentRoute: typeof McpRoute
+    }
+    '/mcp/v1/$action': {
+      id: '/mcp/v1/$action'
+      path: '/v1/$action'
+      fullPath: '/mcp/v1/$action'
+      preLoaderRoute: typeof McpV1ActionRouteImport
+      parentRoute: typeof McpRoute
+    }
     '/api/public/health-card/$slug': {
       id: '/api/public/health-card/$slug'
       path: '/api/public/health-card/$slug'
@@ -2069,19 +2088,19 @@ interface McpRouteChildren {
   McpSlugRoute: typeof McpSlugRoute
   McpServerCardRoute: typeof McpServerCardRoute
   McpServerCardDotjsonRoute: typeof McpServerCardDotjsonRoute
-  McpV1Route: typeof McpV1Route
   McpChar91DotwellKnownChar93McpRoute: typeof McpChar91DotwellKnownChar93McpRoute
   McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute: typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   McpChar91DotwellKnownChar93OauthAuthorizationServerRoute: typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
   McpChar91DotwellKnownChar93OauthProtectedResourceRoute: typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute: typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
+  McpV1ActionRoute: typeof McpV1ActionRoute
+  McpV1IndexRoute: typeof McpV1IndexRoute
 }
 
 const McpRouteChildren: McpRouteChildren = {
   McpSlugRoute: McpSlugRoute,
   McpServerCardRoute: McpServerCardRoute,
   McpServerCardDotjsonRoute: McpServerCardDotjsonRoute,
-  McpV1Route: McpV1Route,
   McpChar91DotwellKnownChar93McpRoute: McpChar91DotwellKnownChar93McpRoute,
   McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute:
     McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute,
@@ -2091,6 +2110,8 @@ const McpRouteChildren: McpRouteChildren = {
     McpChar91DotwellKnownChar93OauthProtectedResourceRoute,
   McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute:
     McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute,
+  McpV1ActionRoute: McpV1ActionRoute,
+  McpV1IndexRoute: McpV1IndexRoute,
 }
 
 const McpRouteWithChildren = McpRoute._addFileChildren(McpRouteChildren)
