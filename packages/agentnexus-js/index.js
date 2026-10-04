@@ -72,11 +72,11 @@ export class AgentNexus {
   }
 
   getEntry(slug) {
-    return this.#request("GET", "/api/public/registry/" + encodeURIComponent(slug));
+    return this.#request("GET", "/api/public/registry/" + encodeURIComponent(toSlug(slug)));
   }
 
   healthCard(slug) {
-    return this.#request("GET", "/api/public/health-card/" + encodeURIComponent(slug));
+    return this.#request("GET", "/api/public/health-card/" + encodeURIComponent(toSlug(slug)));
   }
 
   report(slug, { ok, statusCode, latencyMs, note } = {}) {
@@ -98,10 +98,3 @@ export class AgentNexus {
 }
 
 export default AgentNexus;
-
-/** Accept a slug string or any match/entry object returned by discover/search. */
-function toSlug(value) {
-  if (value && typeof value === "object" && typeof value.slug === "string") return value.slug;
-  if (typeof value !== "string" || !value) throw new TypeError("slug must be a string or an object with a slug");
-  return value;
-}

@@ -5,6 +5,7 @@
 Live: **https://agentnexus.app** · MCP endpoint (no login): `https://agentnexus.app/api/public/mcp`
 
 [![M8ven Score](https://m8ven.ai/badge/mcp/strategiumfinancepartner-agentnexus-1icap4?v=750581821817d53ee1cf0b7ec1f0ad59)](https://m8ven.ai/mcp/strategiumfinancepartner-agentnexus-1icap4)
+[![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/strategiumfinancepartner/agentnexus)
 
 Agent Nexus answers one question for an autonomous agent: *"what can actually do this, right
 now, and how exactly do I call it?"* Every entry is probed over HTTP on a schedule, so the
