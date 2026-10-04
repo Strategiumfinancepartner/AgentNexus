@@ -98,3 +98,10 @@ export class AgentNexus {
 }
 
 export default AgentNexus;
+
+/** Accept a slug string or any match/entry object returned by discover/search. */
+function toSlug(value) {
+  if (value && typeof value === "object" && typeof value.slug === "string") return value.slug;
+  if (typeof value !== "string" || !value) throw new TypeError("slug must be a string or an object with a slug");
+  return value;
+}
