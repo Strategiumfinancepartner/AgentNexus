@@ -209,17 +209,21 @@ async function discover(
     source,
   });
 
+  // Pre-exhaustion notice (90% of daily quota) in the body too, not only the
+  // header, so callers that ignore headers still learn the upgrade path.
+  const notice = extraHeaders["X-Nexus-Quota-Warning"];
+  const withNotice = notice ? { ...result, quota_notice: notice } : result;
   const body =
     extraHeaders["X-Nexus-Tier"] === "anon"
       ? {
-          ...result,
+          ...withNotice,
           free_key: {
             why: "You are on 100 calls/day. A free key gives 1,000/day — no account, no email, 10 seconds.",
             call: 'curl -s -X POST https://agentnexus.app/api/public/keys -H "content-type: application/json" -d \'{"agent":"my-agent"}\'',
             human_page: "https://agentnexus.app/free-key",
           },
         }
-      : result;
+      : withNotice;
   return new Response(JSON.stringify(body, null, 2), { headers: cors });
 }
 
