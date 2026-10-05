@@ -253,10 +253,15 @@ export const getAudience = createServerFn({ method: "POST" })
       createdAt: e.created_at,
     }));
 
-    // Lifetime call counter: counted server-side so it is never capped by row paging.
+    // Lifetime and 30-day call counters: counted server-side so they are never
+    // capped by row paging (the paged fetch above stops at MAX_ROWS).
     const { count: hitsAllTimeCount } = await client
       .from("access_events")
       .select("id", { count: "exact", head: true });
+    const { count: hits30dCount } = await client
+      .from("access_events")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", since);
     const { data: firstRow } = await client
       .from("access_events")
       .select("created_at")
@@ -321,7 +326,7 @@ export const getAudience = createServerFn({ method: "POST" })
         members: members.length,
         signupsLast7d,
         activeLast7d,
-        hits30d: events.length,
+        hits30d: Number(hits30dCount ?? events.length),
         hitsLast24h,
         mcpCalls24h: mcp24h.length,
         anonMcpCalls24h: mcp24h.filter((e) => e.tier === "anon").length,
