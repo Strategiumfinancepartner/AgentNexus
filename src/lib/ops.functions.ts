@@ -91,6 +91,7 @@ export const getOpsInsights = createServerFn({ method: "POST" })
       (context.supabase as any)
         .from("error_events")
         .select("surface, path, method, status_code, tier, actor, user_agent, detail, created_at")
+        .gte("created_at", new Date(Date.now() - 24 * 3600 * 1000).toISOString())
         .order("created_at", { ascending: false })
         .limit(200),
     ]);
