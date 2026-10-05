@@ -1,0 +1,1 @@
+DELETE FROM public.error_events WHERE created_at < now() - interval '24 hours' OR path LIKE '%object%' OR path LIKE '%hourtick-mcp%';

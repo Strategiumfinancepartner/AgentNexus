@@ -39,6 +39,7 @@ import { Route as Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport }
 import { Route as Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-catalog[.]json'
 import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-plugin[.]json'
 import { Route as Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ard[.]json'
+import { Route as Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRouteImport } from './routes/[.well-known]/brick-blue[.]json'
 import { Route as Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport } from './routes/[.well-known]/glama[.]json'
 import { Route as Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRouteImport } from './routes/[.well-known]/http-message-signatures-directory'
 import { Route as Char91DotwellKnownChar93JwksChar91DotChar93jsonRouteImport } from './routes/[.well-known]/jwks[.]json'
@@ -266,6 +267,12 @@ const Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/ard.json',
     path: '/.well-known/ard.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute =
+  Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/brick-blue.json',
+    path: '/.well-known/brick-blue.json',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute =
@@ -693,6 +700,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
+  '/.well-known/brick-blue.json': typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/jwks.json': typeof Char91DotwellKnownChar93JwksChar91DotChar93jsonRoute
@@ -794,6 +802,7 @@ export interface FileRoutesByTo {
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
+  '/.well-known/brick-blue.json': typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/jwks.json': typeof Char91DotwellKnownChar93JwksChar91DotChar93jsonRoute
@@ -897,6 +906,7 @@ export interface FileRoutesById {
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
+  '/.well-known/brick-blue.json': typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   '/.well-known/http-message-signatures-directory': typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   '/.well-known/jwks.json': typeof Char91DotwellKnownChar93JwksChar91DotChar93jsonRoute
@@ -1000,6 +1010,7 @@ export interface FileRouteTypes {
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/ard.json'
+    | '/.well-known/brick-blue.json'
     | '/.well-known/glama.json'
     | '/.well-known/http-message-signatures-directory'
     | '/.well-known/jwks.json'
@@ -1101,6 +1112,7 @@ export interface FileRouteTypes {
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/ard.json'
+    | '/.well-known/brick-blue.json'
     | '/.well-known/glama.json'
     | '/.well-known/http-message-signatures-directory'
     | '/.well-known/jwks.json'
@@ -1203,6 +1215,7 @@ export interface FileRouteTypes {
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
     | '/.well-known/ard.json'
+    | '/.well-known/brick-blue.json'
     | '/.well-known/glama.json'
     | '/.well-known/http-message-signatures-directory'
     | '/.well-known/jwks.json'
@@ -1306,6 +1319,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
   Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
   Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute: typeof Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute
   Char91DotwellKnownChar93JwksChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93JwksChar91DotChar93jsonRoute
@@ -1566,6 +1580,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/ard.json'
       fullPath: '/.well-known/ard.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/brick-blue.json': {
+      id: '/.well-known/brick-blue.json'
+      path: '/.well-known/brick-blue.json'
+      fullPath: '/.well-known/brick-blue.json'
+      preLoaderRoute: typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/glama.json': {
@@ -2201,6 +2222,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute:
+    Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93HttpMessageSignaturesDirectoryRoute:
