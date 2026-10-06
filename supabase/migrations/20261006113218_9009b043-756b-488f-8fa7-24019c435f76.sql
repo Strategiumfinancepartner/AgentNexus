@@ -1,0 +1,1 @@
+DELETE FROM public.entries WHERE slug = 'freeastroapi-mcp';
