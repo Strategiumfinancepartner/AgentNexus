@@ -1,0 +1,30 @@
+INSERT INTO public.entries (slug,name,category,summary,auth_mode,endpoint,tags,capabilities,status,source,input_format,output_format)
+SELECT v.s,v.n,'mcp',v.sm,'none',v.e,ARRAY['mcp','brickblue'],v.c::text[],'approved','brickblue','JSON-RPC 2.0 (Streamable HTTP)','JSON-RPC 2.0'
+FROM (VALUES
+('dajsve-mcp','dajsve','Search current offers on dajsve.com. Use Croatian search terms. Present detailsUrl for more information and clickUrl when the user wants to open or buy an offer.','https://www.dajsve.com/mcp',ARRAY['search-offers','get-similar-offers','get-offer']),
+('freeastroapi-mcp','FreeAstroAPI MCP','Astrology and astronomy data MCP server from FreeAstroAPI.','https://api.freeastroapi.com/mcp','{}'),
+('helm-mcp-server-mcp','Helm MCP Server','MCP server for working with Helm charts and Kubernetes packages.','https://mcp-helm.zekker.dev/mcp','{}'),
+('autoposting-mcp','Autoposting MCP','Social media autoposting MCP server from autoposting.ai.','https://app.autoposting.ai/mcp','{}'),
+('uwear-mcp','Uwear','Uwear is the photoshoot MCP server: garments, avatars and outfits for AI fashion photoshoots.','https://api.uwear.ai/mcp',ARRAY['get-garment','search-uwear-library','upload-garment-from-public-url','list-avatars','generate-avatar','list-outfits','get-outfit']),
+('goai-moat-ai-visibility-audit-mcp','GoAI Moat AI Visibility Audit','Diagnose a brand''s visibility in AI answers (ChatGPT, Perplexity, Google AI Overviews, Amazon Rufus).','https://mcp.goaimoat.com/mcp',ARRAY['get-usage','audit-ai-visibility','get-checklist','get-fix-priority','check-license','get-category-leaders']),
+('trends-seo-mcp','Trends MCP (seo)','Trend data MCP server for seo: search interest and popularity over time','https://seo.api.trendsapi.ai/mcp','{}'),
+('trends-reddit-mcp','Trends MCP (reddit)','Trend data MCP server for reddit: search interest and popularity over time','https://reddit.api.trendsapi.ai/mcp','{}'),
+('trends-steam-mcp','Trends MCP (steam)','Trend data MCP server for steam: search interest and popularity over time','https://steam.api.trendsapi.ai/mcp','{}'),
+('trends-x-twitter-mcp','Trends MCP (x-twitter)','Trend data MCP server for x-twitter: search interest and popularity over time','https://x-twitter.api.trendsapi.ai/mcp','{}'),
+('trends-amazon-mcp','Trends MCP (amazon)','Trend data MCP server for amazon: search interest and popularity over time','https://amazon.api.trendsmcp.ai/mcp','{}'),
+('trends-wikipedia-mcp','Trends MCP (wikipedia)','Trend data MCP server for wikipedia: search interest and popularity over time','https://wikipedia.api.trendsapi.ai/mcp','{}'),
+('trends-ecommerce-mcp','Trends MCP (ecommerce)','Trend data MCP server for ecommerce: search interest and popularity over time','https://ecommerce.api.trendsmcp.ai/mcp','{}'),
+('trends-spotify-mcp','Trends MCP (spotify)','Trend data MCP server for spotify: search interest and popularity over time','https://spotify.api.trendsmcp.ai/mcp','{}'),
+('latzerus-mcp','Latzerus','Over 100 free 5-minute learning modules on sales and communication (German), from latzerus.ch.','https://mcp.latzerus.ch/mcp',ARRAY['lernmodul-lesen','lernmodule-suchen','lernmodule-uebersicht','ueber-latzerus']),
+('md-share-mcp','md-share','Share Markdown documents as public links, update or delete them.','https://docs-md.com/api/mcp',ARRAY['update-share','share-markdown','delete-share']),
+('stringer-synthesizer-mcp','Stringer Synthesizer','Synthesizes intelligence briefs from multiple sources.','https://synthesis.getstringer.app/mcp',ARRAY['synthesize-intelligence']),
+('x402-formatter-mcp','x402 Formatter','Data format conversion: CSV, XML or Markdown to JSON or HTML, with optional structural validation.','https://project-formatter-production.up.railway.app/mcp',ARRAY['format-data','convert']),
+('x402-classifier-mcp','x402 Classifier','Classify text or JSON into categories: sentiment, topic, intent, urgency.','https://web-production-2d1051.up.railway.app/mcp',ARRAY['classify-content']),
+('compliance-evidence-mcp','Compliance Evidence','Build and verify compliance evidence packs, ground claims and screen entities.','https://evidence.dropwatchhq.com/mcp',ARRAY['verify-pack','build-evidence-pack','ground-claim','screen-entity']),
+('doc-convert-mcp','Doc Convert MCP','Document conversion: PDF to Markdown, OCR on images, spreadsheet parsing, URL to clean text.','https://doc-convert-mcp.onrender.com/mcp/',ARRAY['pdf-to-markdown','parse-spreadsheet','ocr-image','url-to-clean-text']),
+('morpha-mcp','Morpha','Short-form social video editor driven through MCP tools (sign-in required for tool calls).','https://morphareels.ai/mcp',ARRAY['transcribe-clip','freeze-frame','list-projects','create-project']),
+('openings-avagama-co-mcp','Avagama Openings','Job openings MCP server from avagama.co.','https://openings.avagama.co/mcp','{}'),
+('social-pulse-mcp','Social Pulse','Social listening: trending topics, what is being said, emerging terms, mention pulse.','https://social.dropwatchhq.com/mcp',ARRAY['trending-topics','whats-being-said','emerging-terms','mention-pulse']),
+('ao-payload-rescue-mcp','AO Payload Rescue','Repairs a JSON payload that failed its JSON Schema. Structural repairs only; ambiguous cases refused with a reason code.','https://ao-payload-rescue-production.up.railway.app/mcp',ARRAY['rescue-payload']),
+('just-publish-mcp','Just Publish','Publish the website you built with AI to a live public URL, straight from chat, with no setup.','https://mcp.justpublish.ai/',ARRAY['deploy','get-site-files','update-site-file'])
+) AS v(s,n,sm,e,c) ON CONFLICT (slug) DO NOTHING;
