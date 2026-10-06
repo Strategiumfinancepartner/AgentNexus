@@ -59,8 +59,15 @@ export const Route = createFileRoute("/registry/$slug")({
     const entry = loaderData as PublicEntryDetail | undefined;
     if (!entry) return {};
     const kind = KIND[entry.category] ?? entry.category;
-    const title = `${entry.name} — ${kind} for AI agents | Agent Nexus (agentnexus.app)`;
-    const description = `${entry.summary} Auth: ${entry.auth_mode}. Endpoint, capabilities and live health status for ${entry.name}, callable by agents through the Agent Nexus registry and MCP.`.slice(
+    // Searchers type "<tool> api" or "<tool> api down": answer status + how to call.
+    const uptime =
+      entry.checks_total > 0 ? Math.round((entry.checks_ok / entry.checks_total) * 100) : null;
+    const title = `Is ${entry.name} up? Live status, uptime & how to call it | Agent Nexus`;
+    const statusBit =
+      uptime !== null
+        ? `${entry.name} status: ${uptime}% uptime over ${entry.checks_total} live checks.`
+        : `${entry.name} live status and health checks.`;
+    const description = `${statusBit} Endpoint, auth (${entry.auth_mode}) and a copy-paste call example. ${entry.summary}`.slice(
       0,
       158,
     );

@@ -1,0 +1,1 @@
+UPDATE public.entries SET status='approved', verified=true WHERE slug='agentcheck-mcp';
