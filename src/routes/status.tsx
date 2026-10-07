@@ -295,6 +295,15 @@ function Status() {
                   a particular assistant.”
                 </p>
               </li>
+              <li className="py-4">
+                <span className="font-medium">AgentWares</span>{" "}
+                <span className="text-muted-foreground">(agentwares.com)</span>
+                <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+                  “In our October cross-check, 23 of 23 verdicts agreed with Agent Nexus's
+                  independent probes.” AgentWares watches ~25,000 endpoints from the outside and
+                  compares them with the registry's health checks.
+                </p>
+              </li>
             </ul>
           </section>
 
