@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-route
 import { getPublicEntry, type PublicEntryDetail } from "@/lib/public-registry.functions";
 import { CopyExample } from "@/components/copy-example";
 import { KeyCallout } from "@/components/key-callout";
+import { FollowTool } from "@/components/follow-tool";
 
 const ORIGIN = "https://agentnexus.app";
 
@@ -202,6 +203,8 @@ function EntryPage() {
               </a>
             </Field>
           </dl>
+
+          <FollowTool slug={entry.slug} name={entry.name} />
 
           <KeyCallout compact />
 

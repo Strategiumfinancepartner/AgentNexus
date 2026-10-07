@@ -1,3 +1,4 @@
+import { notifyWatchers } from "@/lib/watch.server";
 /** Server-only health + capability probing for registry entries. */
 
 import { hasPlaceholder, probeCapabilities } from "@/lib/capability-probe.server";
@@ -206,7 +207,7 @@ export async function runHealthChecks(
 }> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, endpoint, category, probe_url, docs_url")
+    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, discovered_tools")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -319,6 +320,12 @@ export async function runHealthChecks(
       update['schema_checked_at'] = checkedAt;
     }
     await supabaseAdmin.from("entries").update(update).eq("id", row.id);
+    const r = row as any;
+    await notifyWatchers(supabaseAdmin, { id: row.id, slug: row.slug, name: r.name ?? row.slug }, {
+      up: result.ok,
+      schema_ok: schema ? schema.ok : r.schema_ok ?? null,
+      tools: capability.probeable && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
+    });
   }
 
   return {

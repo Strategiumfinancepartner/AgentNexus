@@ -98,6 +98,7 @@ import { Route as ApiPublicRegistryRouteImport } from './routes/api/public/regis
 import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
 import { Route as ApiPublicSubmissionRouteImport } from './routes/api/public/submission'
+import { Route as ApiPublicWatchRouteImport } from './routes/api/public/watch'
 import { Route as McpChar91DotwellKnownChar93McpRouteImport } from './routes/mcp/[.well-known]/mcp'
 import { Route as McpChar91DotwellKnownChar93McpChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/mcp[.]json'
 import { Route as McpChar91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/mcp/[.well-known]/oauth-authorization-server'
@@ -601,6 +602,11 @@ const ApiPublicSubmissionRoute = ApiPublicSubmissionRouteImport.update({
   path: '/api/public/submission',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWatchRoute = ApiPublicWatchRouteImport.update({
+  id: '/api/public/watch',
+  path: '/api/public/watch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpChar91DotwellKnownChar93McpRoute =
   McpChar91DotwellKnownChar93McpRouteImport.update({
     id: '/.well-known/mcp',
@@ -759,6 +765,7 @@ export interface FileRoutesByFullPath {
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
+  '/api/public/watch': typeof ApiPublicWatchRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
   '/mcp/.well-known/mcp.json': typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -861,6 +868,7 @@ export interface FileRoutesByTo {
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
+  '/api/public/watch': typeof ApiPublicWatchRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
   '/mcp/.well-known/mcp.json': typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -965,6 +973,7 @@ export interface FileRoutesById {
   '/api/public/report': typeof ApiPublicReportRoute
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
+  '/api/public/watch': typeof ApiPublicWatchRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
   '/mcp/.well-known/mcp.json': typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -1069,6 +1078,7 @@ export interface FileRouteTypes {
     | '/api/public/report'
     | '/api/public/status'
     | '/api/public/submission'
+    | '/api/public/watch'
     | '/mcp/.well-known/mcp'
     | '/mcp/.well-known/mcp.json'
     | '/mcp/.well-known/oauth-authorization-server'
@@ -1171,6 +1181,7 @@ export interface FileRouteTypes {
     | '/api/public/report'
     | '/api/public/status'
     | '/api/public/submission'
+    | '/api/public/watch'
     | '/mcp/.well-known/mcp'
     | '/mcp/.well-known/mcp.json'
     | '/mcp/.well-known/oauth-authorization-server'
@@ -1274,6 +1285,7 @@ export interface FileRouteTypes {
     | '/api/public/report'
     | '/api/public/status'
     | '/api/public/submission'
+    | '/api/public/watch'
     | '/mcp/.well-known/mcp'
     | '/mcp/.well-known/mcp.json'
     | '/mcp/.well-known/oauth-authorization-server'
@@ -1365,6 +1377,7 @@ export interface RootRouteChildren {
   ApiPublicReportRoute: typeof ApiPublicReportRoute
   ApiPublicStatusRoute: typeof ApiPublicStatusRoute
   ApiPublicSubmissionRoute: typeof ApiPublicSubmissionRoute
+  ApiPublicWatchRoute: typeof ApiPublicWatchRoute
   ApiPublicHealthCardSlugRoute: typeof ApiPublicHealthCardSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -1995,6 +2008,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSubmissionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/watch': {
+      id: '/api/public/watch'
+      path: '/api/public/watch'
+      fullPath: '/api/public/watch'
+      preLoaderRoute: typeof ApiPublicWatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp/.well-known/mcp': {
       id: '/mcp/.well-known/mcp'
       path: '/.well-known/mcp'
@@ -2292,6 +2312,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicReportRoute: ApiPublicReportRoute,
   ApiPublicStatusRoute: ApiPublicStatusRoute,
   ApiPublicSubmissionRoute: ApiPublicSubmissionRoute,
+  ApiPublicWatchRoute: ApiPublicWatchRoute,
   ApiPublicHealthCardSlugRoute: ApiPublicHealthCardSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

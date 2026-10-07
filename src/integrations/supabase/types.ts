@@ -745,6 +745,67 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_watches: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          email: string | null
+          entry_id: string
+          id: string
+          last_notified_at: string | null
+          last_state: string | null
+          owner: string
+          unsubscribe_token: string
+          webhook_url: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          email?: string | null
+          entry_id: string
+          id?: string
+          last_notified_at?: string | null
+          last_state?: string | null
+          owner: string
+          unsubscribe_token?: string
+          webhook_url?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          email?: string | null
+          entry_id?: string
+          id?: string
+          last_notified_at?: string | null
+          last_state?: string | null
+          owner?: string
+          unsubscribe_token?: string
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_watches_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tool_watches_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tool_watches_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
