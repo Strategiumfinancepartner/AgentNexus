@@ -36,7 +36,7 @@ export function ToolChangeAlert({ entryName, changes = [], entryUrl, unsubscribe
 
 export const template = {
   component: ToolChangeAlert,
-  subject: (d: Record<string, any>) => `${d.entryName ?? 'A tool you follow'} changed`,
+  subject: (d: Record<string, any>) => `${d['entryName'] ?? 'A tool you follow'} changed`,
   displayName: 'Tool change alert',
   previewData: { entryName: 'Groq API', changes: ['went down'], entryUrl: 'https://agentnexus.app', unsubscribeUrl: 'https://agentnexus.app' },
 } satisfies TemplateEntry
