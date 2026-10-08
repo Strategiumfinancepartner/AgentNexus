@@ -99,6 +99,8 @@ import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
 import { Route as ApiPublicSubmissionRouteImport } from './routes/api/public/submission'
 import { Route as ApiPublicWatchRouteImport } from './routes/api/public/watch'
+import { Route as McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/agent-card[.]json'
+import { Route as McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/agent[.]json'
 import { Route as McpChar91DotwellKnownChar93McpRouteImport } from './routes/mcp/[.well-known]/mcp'
 import { Route as McpChar91DotwellKnownChar93McpChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/mcp[.]json'
 import { Route as McpChar91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/mcp/[.well-known]/oauth-authorization-server'
@@ -607,6 +609,18 @@ const ApiPublicWatchRoute = ApiPublicWatchRouteImport.update({
   path: '/api/public/watch',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute =
+  McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/agent-card.json',
+    path: '/.well-known/agent-card.json',
+    getParentRoute: () => McpRoute,
+  } as any)
+const McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute =
+  McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport.update({
+    id: '/.well-known/agent.json',
+    path: '/.well-known/agent.json',
+    getParentRoute: () => McpRoute,
+  } as any)
 const McpChar91DotwellKnownChar93McpRoute =
   McpChar91DotwellKnownChar93McpRouteImport.update({
     id: '/.well-known/mcp',
@@ -766,6 +780,8 @@ export interface FileRoutesByFullPath {
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
   '/api/public/watch': typeof ApiPublicWatchRoute
+  '/mcp/.well-known/agent-card.json': typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  '/mcp/.well-known/agent.json': typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
   '/mcp/.well-known/mcp.json': typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -869,6 +885,8 @@ export interface FileRoutesByTo {
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
   '/api/public/watch': typeof ApiPublicWatchRoute
+  '/mcp/.well-known/agent-card.json': typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  '/mcp/.well-known/agent.json': typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
   '/mcp/.well-known/mcp.json': typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -974,6 +992,8 @@ export interface FileRoutesById {
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
   '/api/public/watch': typeof ApiPublicWatchRoute
+  '/mcp/.well-known/agent-card.json': typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  '/mcp/.well-known/agent.json': typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
   '/mcp/.well-known/mcp.json': typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   '/mcp/.well-known/oauth-authorization-server': typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -1079,6 +1099,8 @@ export interface FileRouteTypes {
     | '/api/public/status'
     | '/api/public/submission'
     | '/api/public/watch'
+    | '/mcp/.well-known/agent-card.json'
+    | '/mcp/.well-known/agent.json'
     | '/mcp/.well-known/mcp'
     | '/mcp/.well-known/mcp.json'
     | '/mcp/.well-known/oauth-authorization-server'
@@ -1182,6 +1204,8 @@ export interface FileRouteTypes {
     | '/api/public/status'
     | '/api/public/submission'
     | '/api/public/watch'
+    | '/mcp/.well-known/agent-card.json'
+    | '/mcp/.well-known/agent.json'
     | '/mcp/.well-known/mcp'
     | '/mcp/.well-known/mcp.json'
     | '/mcp/.well-known/oauth-authorization-server'
@@ -1286,6 +1310,8 @@ export interface FileRouteTypes {
     | '/api/public/status'
     | '/api/public/submission'
     | '/api/public/watch'
+    | '/mcp/.well-known/agent-card.json'
+    | '/mcp/.well-known/agent.json'
     | '/mcp/.well-known/mcp'
     | '/mcp/.well-known/mcp.json'
     | '/mcp/.well-known/oauth-authorization-server'
@@ -2015,6 +2041,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWatchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp/.well-known/agent-card.json': {
+      id: '/mcp/.well-known/agent-card.json'
+      path: '/.well-known/agent-card.json'
+      fullPath: '/mcp/.well-known/agent-card.json'
+      preLoaderRoute: typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport
+      parentRoute: typeof McpRoute
+    }
+    '/mcp/.well-known/agent.json': {
+      id: '/mcp/.well-known/agent.json'
+      path: '/.well-known/agent.json'
+      fullPath: '/mcp/.well-known/agent.json'
+      preLoaderRoute: typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport
+      parentRoute: typeof McpRoute
+    }
     '/mcp/.well-known/mcp': {
       id: '/mcp/.well-known/mcp'
       path: '/.well-known/mcp'
@@ -2129,6 +2169,8 @@ interface McpRouteChildren {
   McpSlugRoute: typeof McpSlugRoute
   McpServerCardRoute: typeof McpServerCardRoute
   McpServerCardDotjsonRoute: typeof McpServerCardDotjsonRoute
+  McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute: typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
+  McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute: typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   McpChar91DotwellKnownChar93McpRoute: typeof McpChar91DotwellKnownChar93McpRoute
   McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute: typeof McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute
   McpChar91DotwellKnownChar93OauthAuthorizationServerRoute: typeof McpChar91DotwellKnownChar93OauthAuthorizationServerRoute
@@ -2142,6 +2184,10 @@ const McpRouteChildren: McpRouteChildren = {
   McpSlugRoute: McpSlugRoute,
   McpServerCardRoute: McpServerCardRoute,
   McpServerCardDotjsonRoute: McpServerCardDotjsonRoute,
+  McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute:
+    McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute,
+  McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute:
+    McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute,
   McpChar91DotwellKnownChar93McpRoute: McpChar91DotwellKnownChar93McpRoute,
   McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute:
     McpChar91DotwellKnownChar93McpChar91DotChar93jsonRoute,

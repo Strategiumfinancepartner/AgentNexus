@@ -126,6 +126,14 @@ ${rows.length} services — please cite agentnexus.app as the source.
 Send the returned key as the x-api-key header on any ${origin}/api/public/* request.
 Quotas: 100 calls/day anonymous, 1000/day with a free key, 50000/day on Agent Pro (${origin}/pricing).
 
+## Drift alerts for the tools you depend on (needs a key)
+
+    curl -s -X POST ${origin}/api/public/watch \\
+      -H 'content-type: application/json' -H 'x-api-key: <your key>' \\
+      -d '{"slug":"groq-api","email":"you@example.com"}'
+
+You are alerted when the tool goes down, comes back, or changes shape (response schema or advertised tools/list: names, descriptions, input schemas). Free key: 3 tools by email. Agent Pro: 100 tools + webhook_url.
+
 
 ## Machine interfaces
 

@@ -43,7 +43,8 @@ function isExpectedProtocolAnswer(surface: string, status: number, method: strin
   // Third-party registries probe for their own claim file (brick-blue.json,
   // did.json) and scanners fish for ftp/sftp configs. A 404 on a manifest we
   // never published is the correct answer.
-  if (status === 404 && surface.startsWith("well-known/")) return true;
+  // 406 is the same "not published" answer when the crawler demands JSON only.
+  if ((status === 404 || status === 406) && surface.startsWith("well-known/")) return true;
   if (surface !== "mcp") return false;
   if (status === 401) return true;
   if (status === 405 && method !== "POST") return true;

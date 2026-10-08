@@ -24,7 +24,8 @@ export function KeyCallout({ compact = false }: { compact?: boolean }) {
       <p className="mt-2 text-sm text-muted-foreground">
         100 calls/day anonymous · 1,000/day with this free key · 50,000/day on Agent Pro. The key is
         returned instantly in the response — send it as the <code className="font-mono">x-api-key</code>{" "}
-        header on any <code className="font-mono">/api/public/*</code> request.
+        header on any <code className="font-mono">/api/public/*</code> request. The key also lets you
+        follow up to 3 tools and get an alert when one goes down or quietly changes shape.
       </p>
       <div className="mt-4">
         <CopyExample command={CURL} />

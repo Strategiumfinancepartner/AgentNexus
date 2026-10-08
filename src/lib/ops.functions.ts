@@ -8,6 +8,9 @@ const NOISE_NEEDS = new Set(["test", "ping", "healthcheck", "health check"]);
 function isRealNeed(need: string): boolean {
   const normalized = need.trim().toLowerCase();
   if (NOISE_NEEDS.has(normalized) || needTokens(need).length === 0) return false;
+  // Onboarding probes ("reply with the single word READY") and JSON blobs
+  // pasted into the need field (7 Oct) are handshakes, not capability demand.
+  if (/^\s*[{[]/.test(need) || /\breply with\b|\bsingle word\b/i.test(need)) return false;
   // Historical scanner traffic (including 28 September) must not create
   // artificial catalogue gaps. Restrict this to command syntax, not words
   // like "shell" or "terminal" that can be genuine capability requests.
