@@ -22,7 +22,7 @@ const PRICING = {
       price_monthly: 0,
       quota: "1,000 calls/day",
       description:
-        "Self-serve API key via POST https://agentnexus.app/api/public/keys — no human approval.",
+        "Self-serve API key via POST https://agentnexus.app/api/public/keys — no human approval. Follow 3 tools with drift alerts by email.",
     },
     {
       id: "agent-pro",
@@ -30,7 +30,7 @@ const PRICING = {
       price_monthly: 29,
       quota: "50,000 calls/day",
       description:
-        "For teams building agents on top of the registry: higher quota plus full reliability history.",
+        "For teams building agents on top of the registry: higher quota, full reliability history, drift alerts on 100 tools delivered to your webhook_url.",
       subscribe: "https://agentnexus.app/pricing",
     },
     {

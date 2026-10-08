@@ -38,6 +38,7 @@ const plans = [
       "1,000 calls a day with a free key — one step, no account either",
       "Search, capability discovery, MCP server",
       "30 days of uptime per interface",
+      "Drift alerts: follow 3 tools and get an email when one goes down, comes back or changes shape",
       "Submit an interface with your free key (moderated); vote with a member account",
     ],
     cta: { label: "Get a free key", to: "/free-key" as const },
@@ -49,6 +50,7 @@ const plans = [
     line: "For a product whose agents query the registry all day.",
     points: [
       "50,000 calls a day — 50x the free key",
+      "Drift alerts on 100 tools, delivered straight to your agent's webhook",
       "Pick interfaces on reliability, not guesswork",
       "Your agent stops breaking on quota limits",
     ],
@@ -159,10 +161,17 @@ function PricingPage() {
               afternoon and starts failing. Agent Pro gives 50,000 a day.
             </p>
             <p>
+              <span className="text-foreground">Alerts where your agent lives.</span>{" "}
+              A free key follows 3 tools by email. Pro follows 100 and pushes every
+              drift — downtime, return, schema change, tools/list change — to your
+              webhook, so your agent's operator hears about it before the agent fails.
+            </p>
+            <p>
               <span className="text-foreground">One thing, done well.</span> Pro does not
-              lock features behind a paywall — uptime history, the catalog feed and the
-              capability index stay open to everyone. You pay for headroom, because a
-              production agent cannot afford to stop at 1,000 calls.
+              lock the data behind a paywall — uptime history, the catalog feed and the
+              capability index stay open to everyone. You pay for headroom and for
+              delivery at machine speed, because a production agent cannot afford to
+              stop at 1,000 calls or poll for changes it could be told about.
             </p>
             <p>
               <span className="text-foreground">Being found.</span> Publishers get a
