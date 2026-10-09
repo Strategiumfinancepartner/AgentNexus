@@ -7,7 +7,7 @@ export default defineTool({
   name: "discover_capabilities",
   title: "Discover a callable interface for a need",
   description:
-    "Map a plain-language goal (e.g. 'send a transactional email') to callable APIs, MCP servers or CLIs. Returns {need, coverage, count, uncovered, note, matches[]}; each match has slug, endpoint, auth, formats, rate limit, pricing and a 0-100 reliability score. Never empty on a valid need: if nothing fits, coverage='none' and matches[] lists reliable starting points. Errors: an invalid or too-short need fails input validation; a backend failure returns isError=true with the message. Rate limits: 100 calls/day anonymous, 1,000/day with a free key (POST /api/public/keys, no account), 50,000/day on Agent Pro. For a known keyword or slug, use search_registry.",
+    "Map a plain-language goal (e.g. 'send a transactional email') to callable APIs, MCP servers or CLIs. Returns matches[] with slug, endpoint, auth, formats, rate limit, pricing and a 0-100 reliability score; if nothing fits, coverage='none' and matches[] lists reliable starting points. Rate limits: 100 calls/day anonymous, 1,000/day with a free key, 50,000/day on Agent Pro. For a known keyword or slug, use search_registry.",
   inputSchema: {
     need: z
       .string()
