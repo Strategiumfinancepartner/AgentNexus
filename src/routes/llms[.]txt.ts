@@ -134,6 +134,14 @@ Quotas: 100 calls/day anonymous, 1000/day with a free key, 50000/day on Agent Pr
 
 You are alerted when the tool goes down, comes back, or changes shape (response schema or advertised tools/list: names, descriptions, input schemas). Free key: 3 tools by email. Agent Pro: 100 tools + webhook_url.
 
+## Most requested need: sending email
+
+Agents ask us for email every day. Live-checked options, resolved in one call:
+
+    curl -s '${origin}/api/public/discover?need=send+an+email&limit=5'
+
+Includes transactional senders (e.g. SMTP2GO) and address verification (MailVeri), each with endpoint, auth and a live reliability score.
+
 
 ## Machine interfaces
 
