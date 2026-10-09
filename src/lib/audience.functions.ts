@@ -26,6 +26,8 @@ export type KeyRow = {
   createdAt: string;
   lastUsedAt: string | null;
   revoked: boolean;
+  /** Daily call ceiling this key grants: 1 000 (free) or 50 000 (Agent Pro). */
+  quota: number;
   calls: number;
   lastCallAt: string | null;
   userAgent: string;
@@ -313,6 +315,7 @@ export const getAudience = createServerFn({ method: "POST" })
           createdAt: k.created_at,
           lastUsedAt: k.last_used_at,
           revoked: Boolean(k.revoked_at),
+          quota: k.user_id && planById.get(k.user_id) === "Agent Pro" ? 50_000 : 1_000,
           calls: usage?.hits ?? 0,
           lastCallAt: usage?.lastSeen ?? null,
           userAgent: usage?.userAgent ?? "",

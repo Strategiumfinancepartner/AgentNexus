@@ -237,12 +237,24 @@ function AudiencePage() {
               <TabsContent value="keys">
             <Section
               title="API keys"
-              hint="Every key ever issued. Agent keys are minted self-service by machines with no signup: no email, no dashboard, 1 000 calls/day. Account keys belong to a member."
+              hint="Every key ever issued. No key = 100 calls/day (anonymous). Free key = 1 000/day. Agent Pro key = 50 000/day."
             >
+              <div className="mb-3 flex flex-wrap gap-2 font-mono text-[11px]">
+                <span className="rounded border border-border px-2 py-1 text-muted-foreground">
+                  100/day · no key · {data.totals.anonMcpCalls24h} MCP calls 24h
+                </span>
+                <span className="rounded border border-primary/40 px-2 py-1 text-primary">
+                  1K/day · {data.keys.filter((k) => !k.revoked && k.quota === 1_000).length} keys
+                </span>
+                <span className="rounded border border-accent px-2 py-1 text-accent-foreground bg-accent/30">
+                  50K/day · {data.keys.filter((k) => !k.revoked && k.quota === 50_000).length} keys
+                </span>
+              </div>
               <table className="w-full text-left font-mono text-xs">
                 <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
                   <tr>
                     <th className="px-3 py-2">Key</th>
+                    <th className="px-3 py-2">Quota</th>
                     <th className="px-3 py-2">Type</th>
                     <th className="px-3 py-2">Label</th>
                     <th className="px-3 py-2">Owner</th>
@@ -255,7 +267,7 @@ function AudiencePage() {
                 <tbody>
                   {data.keys.length === 0 && (
                     <tr>
-                      <td className="px-3 py-3 text-muted-foreground" colSpan={8}>
+                      <td className="px-3 py-3 text-muted-foreground" colSpan={9}>
                         No key issued yet.
                       </td>
                     </tr>
@@ -263,6 +275,17 @@ function AudiencePage() {
                   {data.keys.map((k) => (
                     <tr key={k.keyId} className="border-t border-border/40">
                       <td className="px-3 py-2">{k.prefix}</td>
+                      <td className="px-3 py-2">
+                        <span
+                          className={
+                            k.quota === 50_000
+                              ? "rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground"
+                              : "rounded border border-primary/40 px-1.5 py-0.5 text-[10px] text-primary"
+                          }
+                        >
+                          {k.quota === 50_000 ? "50K Pro" : "1K Free"}
+                        </span>
+                      </td>
                       <td className="px-3 py-2">
                         <span
                           className={
