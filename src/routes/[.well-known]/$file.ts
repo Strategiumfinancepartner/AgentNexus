@@ -53,7 +53,7 @@ export const Route = createFileRoute("/.well-known/$file")({
             auth: "none",
           },
           owner: {
-            name: "BrainPath.io",
+            name: "Agent Nexus",
             contact: "mailto:support@agentnexus.app",
             owners: `${origin}/.well-known/owners.json`,
           },

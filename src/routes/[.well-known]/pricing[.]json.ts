@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 const PRICING = {
-  provider: "BrainPath.io",
+  provider: "Agent Nexus",
   product: "Agent Nexus",
   url: "https://agentnexus.app/pricing",
   currency: "USD",

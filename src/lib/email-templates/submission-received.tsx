@@ -61,7 +61,7 @@ export function SubmissionReceived({
 
           <Hr style={hr} />
           <Text style={footer}>
-            Agent Nexus — operated by BrainPath.io. Questions? Reply to this email or write to{' '}
+            Agent Nexus. Questions? Reply to this email or write to{' '}
             <Link href="mailto:support@agentnexus.app" style={link}>
               support@agentnexus.app
             </Link>

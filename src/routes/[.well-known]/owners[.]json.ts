@@ -14,7 +14,7 @@ export const Route = createFileRoute("/.well-known/owners.json")({
               server: "app.agentnexus/agent-nexus",
               operators: [
                 {
-                  name: "BrainPath.io",
+                  name: "Agent Nexus",
                   role: "owner",
                   email: "support@agentnexus.app",
                   url: "https://agentnexus.app",

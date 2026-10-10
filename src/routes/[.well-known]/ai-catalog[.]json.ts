@@ -18,7 +18,7 @@ export const Route = createFileRoute("/.well-known/ai-catalog.json")({
               "Verified registry of APIs, MCP servers and CLIs that AI agents can discover and call, with real health probes and machine-readable contracts.",
             url: origin,
             contact: "mailto:support@agentnexus.app",
-            legal_entity: "BrainPath.io",
+            legal_entity: "Agent Nexus",
           },
           resources: [
             {

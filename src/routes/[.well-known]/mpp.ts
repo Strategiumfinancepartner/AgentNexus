@@ -9,7 +9,7 @@ export const Route = createFileRoute("/.well-known/mpp")({
         const body = {
           mpp: {
             version: "0.1",
-            provider: "BrainPath.io",
+            provider: "Agent Nexus",
             product: "Agent Nexus",
             free_access: {
               anonymous: "100 calls/day",

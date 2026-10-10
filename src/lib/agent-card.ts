@@ -10,8 +10,6 @@ export function agentCard(origin: string) {
     version: "1.0.0",
     provider: {
       organization: "Agent Nexus (agentnexus.app)",
-      legalEntity: "BrainPath.io",
-      legalName: "BrainPath.io",
       url: "https://agentnexus.app",
       domain: "agentnexus.app",
       contact: "mailto:support@agentnexus.app",

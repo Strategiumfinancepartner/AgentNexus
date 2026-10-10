@@ -14,7 +14,7 @@ export const Route = createFileRoute("/.well-known/ard.json")({
           updated: new Date().toISOString().slice(0, 10),
           host: {
             name: "Agent Nexus",
-            operator: "BrainPath.io",
+            operator: "Agent Nexus",
             description:
               "Verified registry of APIs, MCP servers and CLIs that AI agents can discover and call, with real health probes and machine-readable contracts.",
             url: origin,
