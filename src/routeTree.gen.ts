@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AgentsDottxtRouteImport } from './routes/agents[.]txt'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BestEmailApisRouteImport } from './routes/best-email-apis'
 import { Route as CapabilitiesRouteImport } from './routes/capabilities'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as EntriesDotndjsonRouteImport } from './routes/entries[.]ndjson'
@@ -131,6 +132,11 @@ const AgentsDottxtRoute = AgentsDottxtRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BestEmailApisRoute = BestEmailApisRouteImport.update({
+  id: '/best-email-apis',
+  path: '/best-email-apis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CapabilitiesRoute = CapabilitiesRouteImport.update({
@@ -694,6 +700,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
+  '/best-email-apis': typeof BestEmailApisRoute
   '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
   '/entries.ndjson': typeof EntriesDotndjsonRoute
@@ -799,6 +806,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
+  '/best-email-apis': typeof BestEmailApisRoute
   '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
   '/entries.ndjson': typeof EntriesDotndjsonRoute
@@ -906,6 +914,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
+  '/best-email-apis': typeof BestEmailApisRoute
   '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
   '/entries.ndjson': typeof EntriesDotndjsonRoute
@@ -1013,6 +1022,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agents.txt'
     | '/auth'
+    | '/best-email-apis'
     | '/capabilities'
     | '/connect'
     | '/entries.ndjson'
@@ -1118,6 +1128,7 @@ export interface FileRouteTypes {
     | '/'
     | '/agents.txt'
     | '/auth'
+    | '/best-email-apis'
     | '/capabilities'
     | '/connect'
     | '/entries.ndjson'
@@ -1224,6 +1235,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/agents.txt'
     | '/auth'
+    | '/best-email-apis'
     | '/capabilities'
     | '/connect'
     | '/entries.ndjson'
@@ -1331,6 +1343,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AgentsDottxtRoute: typeof AgentsDottxtRoute
   AuthRoute: typeof AuthRoute
+  BestEmailApisRoute: typeof BestEmailApisRoute
   CapabilitiesRoute: typeof CapabilitiesRoute
   ConnectRoute: typeof ConnectRoute
   EntriesDotndjsonRoute: typeof EntriesDotndjsonRoute
@@ -1437,6 +1450,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/best-email-apis': {
+      id: '/best-email-apis'
+      path: '/best-email-apis'
+      fullPath: '/best-email-apis'
+      preLoaderRoute: typeof BestEmailApisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/capabilities': {
@@ -2255,6 +2275,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AgentsDottxtRoute: AgentsDottxtRoute,
   AuthRoute: AuthRoute,
+  BestEmailApisRoute: BestEmailApisRoute,
   CapabilitiesRoute: CapabilitiesRoute,
   ConnectRoute: ConnectRoute,
   EntriesDotndjsonRoute: EntriesDotndjsonRoute,

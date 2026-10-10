@@ -292,6 +292,9 @@ function Index() {
         <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border/60 py-8 font-mono text-[11px] text-muted-foreground">
           <span>Callable surfaces indexed</span>
           <nav className="flex flex-wrap items-center gap-5">
+            <Link to="/best-email-apis" className="transition-colors hover:text-foreground">
+              Best email APIs
+            </Link>
             <Link to="/pricing" className="transition-colors hover:text-foreground">
               pricing
             </Link>

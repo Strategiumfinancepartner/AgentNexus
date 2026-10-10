@@ -16,6 +16,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/",
           "/explore",
           "/status",
+          "/best-email-apis",
           "/connect",
           "/pricing",
           "/free-key",
