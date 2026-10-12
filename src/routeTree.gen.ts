@@ -14,12 +14,14 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AgentsDottxtRouteImport } from './routes/agents[.]txt'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BestEmailApisRouteImport } from './routes/best-email-apis'
+import { Route as BestLinkedinApisRouteImport } from './routes/best-linkedin-apis'
 import { Route as CapabilitiesRouteImport } from './routes/capabilities'
 import { Route as ConnectRouteImport } from './routes/connect'
 import { Route as EntriesDotndjsonRouteImport } from './routes/entries[.]ndjson'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as FreeKeyRouteImport } from './routes/free-key'
+import { Route as IsDownRouteImport } from './routes/is-down'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as OpenapiDotjsonRouteImport } from './routes/openapi[.]json'
@@ -77,6 +79,7 @@ import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as ApiMcpOauthRouteImport } from './routes/api/mcp-oauth'
+import { Route as IsDownSlugRouteImport } from './routes/is-down.$slug'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
 import { Route as McpServerCardRouteImport } from './routes/mcp/server-card'
 import { Route as McpServerCardDotjsonRouteImport } from './routes/mcp/server-card[.]json'
@@ -139,6 +142,11 @@ const BestEmailApisRoute = BestEmailApisRouteImport.update({
   path: '/best-email-apis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BestLinkedinApisRoute = BestLinkedinApisRouteImport.update({
+  id: '/best-linkedin-apis',
+  path: '/best-linkedin-apis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CapabilitiesRoute = CapabilitiesRouteImport.update({
   id: '/capabilities',
   path: '/capabilities',
@@ -167,6 +175,11 @@ const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
 const FreeKeyRoute = FreeKeyRouteImport.update({
   id: '/free-key',
   path: '/free-key',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IsDownRoute = IsDownRouteImport.update({
+  id: '/is-down',
+  path: '/is-down',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LlmsDottxtRoute = LlmsDottxtRouteImport.update({
@@ -495,6 +508,11 @@ const ApiMcpOauthRoute = ApiMcpOauthRouteImport.update({
   path: '/api/mcp-oauth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IsDownSlugRoute = IsDownSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => IsDownRoute,
+} as any)
 const McpSlugRoute = McpSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -701,12 +719,14 @@ export interface FileRoutesByFullPath {
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
   '/best-email-apis': typeof BestEmailApisRoute
+  '/best-linkedin-apis': typeof BestLinkedinApisRoute
   '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
   '/entries.ndjson': typeof EntriesDotndjsonRoute
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/free-key': typeof FreeKeyRoute
+  '/is-down': typeof IsDownRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRouteWithChildren
   '/openapi.json': typeof OpenapiDotjsonRoute
@@ -764,6 +784,7 @@ export interface FileRoutesByFullPath {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
@@ -807,12 +828,14 @@ export interface FileRoutesByTo {
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
   '/best-email-apis': typeof BestEmailApisRoute
+  '/best-linkedin-apis': typeof BestLinkedinApisRoute
   '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
   '/entries.ndjson': typeof EntriesDotndjsonRoute
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/free-key': typeof FreeKeyRoute
+  '/is-down': typeof IsDownRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRouteWithChildren
   '/openapi.json': typeof OpenapiDotjsonRoute
@@ -870,6 +893,7 @@ export interface FileRoutesByTo {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
@@ -915,12 +939,14 @@ export interface FileRoutesById {
   '/agents.txt': typeof AgentsDottxtRoute
   '/auth': typeof AuthRoute
   '/best-email-apis': typeof BestEmailApisRoute
+  '/best-linkedin-apis': typeof BestLinkedinApisRoute
   '/capabilities': typeof CapabilitiesRoute
   '/connect': typeof ConnectRoute
   '/entries.ndjson': typeof EntriesDotndjsonRoute
   '/explore': typeof ExploreRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/free-key': typeof FreeKeyRoute
+  '/is-down': typeof IsDownRouteWithChildren
   '/llms.txt': typeof LlmsDottxtRoute
   '/mcp': typeof McpRouteWithChildren
   '/openapi.json': typeof OpenapiDotjsonRoute
@@ -978,6 +1004,7 @@ export interface FileRoutesById {
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
@@ -1023,12 +1050,14 @@ export interface FileRouteTypes {
     | '/agents.txt'
     | '/auth'
     | '/best-email-apis'
+    | '/best-linkedin-apis'
     | '/capabilities'
     | '/connect'
     | '/entries.ndjson'
     | '/explore'
     | '/feed.xml'
     | '/free-key'
+    | '/is-down'
     | '/llms.txt'
     | '/mcp'
     | '/openapi.json'
@@ -1086,6 +1115,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
@@ -1129,12 +1159,14 @@ export interface FileRouteTypes {
     | '/agents.txt'
     | '/auth'
     | '/best-email-apis'
+    | '/best-linkedin-apis'
     | '/capabilities'
     | '/connect'
     | '/entries.ndjson'
     | '/explore'
     | '/feed.xml'
     | '/free-key'
+    | '/is-down'
     | '/llms.txt'
     | '/mcp'
     | '/openapi.json'
@@ -1192,6 +1224,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
@@ -1236,12 +1269,14 @@ export interface FileRouteTypes {
     | '/agents.txt'
     | '/auth'
     | '/best-email-apis'
+    | '/best-linkedin-apis'
     | '/capabilities'
     | '/connect'
     | '/entries.ndjson'
     | '/explore'
     | '/feed.xml'
     | '/free-key'
+    | '/is-down'
     | '/llms.txt'
     | '/mcp'
     | '/openapi.json'
@@ -1299,6 +1334,7 @@ export interface FileRouteTypes {
     | '/_authenticated/signals'
     | '/_authenticated/submit'
     | '/api/mcp-oauth'
+    | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
@@ -1344,12 +1380,14 @@ export interface RootRouteChildren {
   AgentsDottxtRoute: typeof AgentsDottxtRoute
   AuthRoute: typeof AuthRoute
   BestEmailApisRoute: typeof BestEmailApisRoute
+  BestLinkedinApisRoute: typeof BestLinkedinApisRoute
   CapabilitiesRoute: typeof CapabilitiesRoute
   ConnectRoute: typeof ConnectRoute
   EntriesDotndjsonRoute: typeof EntriesDotndjsonRoute
   ExploreRoute: typeof ExploreRoute
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   FreeKeyRoute: typeof FreeKeyRoute
+  IsDownRoute: typeof IsDownRouteWithChildren
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   McpRoute: typeof McpRouteWithChildren
   OpenapiDotjsonRoute: typeof OpenapiDotjsonRoute
@@ -1459,6 +1497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BestEmailApisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/best-linkedin-apis': {
+      id: '/best-linkedin-apis'
+      path: '/best-linkedin-apis'
+      fullPath: '/best-linkedin-apis'
+      preLoaderRoute: typeof BestLinkedinApisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/capabilities': {
       id: '/capabilities'
       path: '/capabilities'
@@ -1499,6 +1544,13 @@ declare module '@tanstack/react-router' {
       path: '/free-key'
       fullPath: '/free-key'
       preLoaderRoute: typeof FreeKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/is-down': {
+      id: '/is-down'
+      path: '/is-down'
+      fullPath: '/is-down'
+      preLoaderRoute: typeof IsDownRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/llms.txt': {
@@ -1900,6 +1952,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpOauthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/is-down/$slug': {
+      id: '/is-down/$slug'
+      path: '/$slug'
+      fullPath: '/is-down/$slug'
+      preLoaderRoute: typeof IsDownSlugRouteImport
+      parentRoute: typeof IsDownRoute
+    }
     '/mcp/$slug': {
       id: '/mcp/$slug'
       path: '/$slug'
@@ -2185,6 +2244,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface IsDownRouteChildren {
+  IsDownSlugRoute: typeof IsDownSlugRoute
+}
+
+const IsDownRouteChildren: IsDownRouteChildren = {
+  IsDownSlugRoute: IsDownSlugRoute,
+}
+
+const IsDownRouteWithChildren =
+  IsDownRoute._addFileChildren(IsDownRouteChildren)
+
 interface McpRouteChildren {
   McpSlugRoute: typeof McpSlugRoute
   McpServerCardRoute: typeof McpServerCardRoute
@@ -2276,12 +2346,14 @@ const rootRouteChildren: RootRouteChildren = {
   AgentsDottxtRoute: AgentsDottxtRoute,
   AuthRoute: AuthRoute,
   BestEmailApisRoute: BestEmailApisRoute,
+  BestLinkedinApisRoute: BestLinkedinApisRoute,
   CapabilitiesRoute: CapabilitiesRoute,
   ConnectRoute: ConnectRoute,
   EntriesDotndjsonRoute: EntriesDotndjsonRoute,
   ExploreRoute: ExploreRoute,
   FeedDotxmlRoute: FeedDotxmlRoute,
   FreeKeyRoute: FreeKeyRoute,
+  IsDownRoute: IsDownRouteWithChildren,
   LlmsDottxtRoute: LlmsDottxtRoute,
   McpRoute: McpRouteWithChildren,
   OpenapiDotjsonRoute: OpenapiDotjsonRoute,

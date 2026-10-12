@@ -295,6 +295,12 @@ function Index() {
             <Link to="/best-email-apis" className="transition-colors hover:text-foreground">
               Best email APIs
             </Link>
+            <Link to="/best-linkedin-apis" className="transition-colors hover:text-foreground">
+              Best LinkedIn APIs
+            </Link>
+            <Link to="/is-down" className="transition-colors hover:text-foreground">
+              Is it down?
+            </Link>
             <Link to="/pricing" className="transition-colors hover:text-foreground">
               pricing
             </Link>
