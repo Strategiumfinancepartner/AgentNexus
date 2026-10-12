@@ -31,9 +31,14 @@ export const Route = createFileRoute("/sitemap.xml")({
             (p) =>
               `<url><loc>${origin}${p}</loc><changefreq>daily</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`,
           ),
-          ...((data ?? []) as { slug: string; created_at: string; updated_at: string | null }[]).map(
-            (e) =>
-              `<url><loc>${origin}/registry/${e.slug}</loc><lastmod>${new Date(e.updated_at ?? e.created_at).toISOString()}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`,
+          ...((data ?? []) as { slug: string; created_at: string; updated_at: string | null }[]).flatMap(
+            (e) => {
+              const lastmod = new Date(e.updated_at ?? e.created_at).toISOString();
+              return [
+                `<url><loc>${origin}/registry/${e.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`,
+                `<url><loc>${origin}/is-down/${e.slug}</loc><lastmod>${lastmod}</lastmod><changefreq>daily</changefreq><priority>0.6</priority></url>`,
+              ];
+            },
           ),
         ].join("");
 
