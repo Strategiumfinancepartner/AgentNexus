@@ -309,6 +309,12 @@ export async function runHealthChecks(
     }
 
     const checkedAt = new Date().toISOString();
+    // A locally-run command (`npx -y pkg`, `uvx pkg`, `docker run image`) has
+    // no HTTP status: the probe above only proves the package artifact is still
+    // obtainable. Publishing health_ok=true there would claim the server itself
+    // answers, which we never measured — record the package signal in
+    // health_checks (probe_kind 'package') but leave the entry's health unknown.
+    const isLocalCommand = !/^https?:\/\//i.test(row.endpoint.trim());
     await supabaseAdmin.from("health_checks").insert({
       entry_id: row.id,
       ok: result.ok,
@@ -316,13 +322,13 @@ export async function runHealthChecks(
       latency_ms: result.latency_ms,
       error: result.error,
       checked_at: checkedAt,
-      probe_kind: viaReference ? "reference" : row.category === "mcp" ? "mcp" : "http",
+      probe_kind: isLocalCommand ? "package" : viaReference ? "reference" : row.category === "mcp" ? "mcp" : "http",
     });
 
     const update: Record<string, unknown> = {
-      health_ok: result.ok,
-      health_status_code: result.status_code,
-      health_latency_ms: result.latency_ms,
+      health_ok: isLocalCommand ? null : result.ok,
+      health_status_code: isLocalCommand ? null : result.status_code,
+      health_latency_ms: isLocalCommand ? null : result.latency_ms,
       health_checked_at: checkedAt,
     };
     if (capability.probeable) {
@@ -337,12 +343,17 @@ export async function runHealthChecks(
       update['schema_checked_at'] = checkedAt;
     }
     await supabaseAdmin.from("entries").update(update).eq("id", row.id);
-    const r = row as any;
-    await notifyWatchers(supabaseAdmin, { id: row.id, slug: row.slug, name: r.name ?? row.slug }, {
-      up: result.ok,
-      schema_ok: schema ? schema.ok : r.schema_ok ?? null,
-      tools: capability.probeable && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
-    });
+    // Watchers subscribed to a service's uptime must never be alerted by a
+    // package-registry probe of a local command — that signal is not the
+    // server's health.
+    if (!isLocalCommand) {
+      const r = row as any;
+      await notifyWatchers(supabaseAdmin, { id: row.id, slug: row.slug, name: r.name ?? row.slug }, {
+        up: result.ok,
+        schema_ok: schema ? schema.ok : r.schema_ok ?? null,
+        tools: capability.probeable && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
+      });
+    }
   }
 
   return {
