@@ -56,6 +56,7 @@ import { Route as Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRouteIm
 import { Route as Char91DotwellKnownChar93MppRouteImport } from './routes/[.well-known]/mpp'
 import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } from './routes/[.well-known]/oauth-authorization-server'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as Char91DotwellKnownChar93OpenaiAppsChallengeRouteImport } from './routes/[.well-known]/openai-apps-challenge'
 import { Route as Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRouteImport } from './routes/[.well-known]/openapi[.]json'
 import { Route as Char91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport } from './routes/[.well-known]/owners[.]json'
 import { Route as Char91DotwellKnownChar93PaymentRouteImport } from './routes/[.well-known]/payment'
@@ -373,6 +374,12 @@ const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
     id: '/.well-known/oauth-protected-resource',
     path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OpenaiAppsChallengeRoute =
+  Char91DotwellKnownChar93OpenaiAppsChallengeRouteImport.update({
+    id: '/.well-known/openai-apps-challenge',
+    path: '/.well-known/openai-apps-challenge',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute =
@@ -761,6 +768,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
+  '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/.well-known/openapi.json': typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
@@ -870,6 +878,7 @@ export interface FileRoutesByTo {
   '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
+  '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/.well-known/openapi.json': typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
@@ -981,6 +990,7 @@ export interface FileRoutesById {
   '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
   '/.well-known/oauth-authorization-server': typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
+  '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/.well-known/openapi.json': typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
@@ -1092,6 +1102,7 @@ export interface FileRouteTypes {
     | '/.well-known/mpp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
+    | '/.well-known/openai-apps-challenge'
     | '/.well-known/openapi.json'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
@@ -1201,6 +1212,7 @@ export interface FileRouteTypes {
     | '/.well-known/mpp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
+    | '/.well-known/openai-apps-challenge'
     | '/.well-known/openapi.json'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
@@ -1311,6 +1323,7 @@ export interface FileRouteTypes {
     | '/.well-known/mpp'
     | '/.well-known/oauth-authorization-server'
     | '/.well-known/oauth-protected-resource'
+    | '/.well-known/openai-apps-challenge'
     | '/.well-known/openapi.json'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
@@ -1422,6 +1435,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93MppRoute: typeof Char91DotwellKnownChar93MppRoute
   Char91DotwellKnownChar93OauthAuthorizationServerRoute: typeof Char91DotwellKnownChar93OauthAuthorizationServerRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
+  Char91DotwellKnownChar93OpenaiAppsChallengeRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
   Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   Char91DotwellKnownChar93PaymentRoute: typeof Char91DotwellKnownChar93PaymentRoute
@@ -1789,6 +1803,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/oauth-protected-resource'
       fullPath: '/.well-known/oauth-protected-resource'
       preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/openai-apps-challenge': {
+      id: '/.well-known/openai-apps-challenge'
+      path: '/.well-known/openai-apps-challenge'
+      fullPath: '/.well-known/openai-apps-challenge'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/openapi.json': {
@@ -2408,6 +2429,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthAuthorizationServerRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren,
+  Char91DotwellKnownChar93OpenaiAppsChallengeRoute:
+    Char91DotwellKnownChar93OpenaiAppsChallengeRoute,
   Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute:

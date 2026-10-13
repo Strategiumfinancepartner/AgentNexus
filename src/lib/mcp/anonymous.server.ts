@@ -99,6 +99,7 @@ function toolsList(): { tools: unknown[] } {
         ...(output ? { outputSchema: output } : {}),
         annotations: {
           ...(t.annotations ?? {}),
+          title: t.title,
           readOnlyHint: (t.annotations as any)?.readOnlyHint ?? true,
         },
       };
