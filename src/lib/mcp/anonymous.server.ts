@@ -259,13 +259,12 @@ export async function handleAnonymousMcpMessage(request: Request, message: any):
     // (SaSame) try before falling back to `initialize`. Same payload.
     case "server/discover":
     case "initialize": {
+      const isDiscover = method === "server/discover";
       // Tell the caller its allowance and the free-key path right here, in the
       // gate's presentation, so it never has to hit 90% to learn its options.
       const resolvedKey = await resolveApiKey(request).catch(() => null);
       const invite = quotaInvite(resolvedKey?.tier ?? "anon");
-      return rpcResult(
-        id,
-        {
+      const built = {
           // Echo back the revision the client asked for when we support it:
           // strict SDK clients abort the connection when the server answers
           // with a different protocolVersion than requested.
@@ -297,9 +296,21 @@ export async function handleAnonymousMcpMessage(request: Request, message: any):
             (invite ? `${invite}\n\n` : "") +
             "Free key in one call, no account: POST https://agentnexus.app/api/public/keys {\"agent\":\"your-name\",\"email\":\"you@company.com\"} raises you from 100 to 1000 calls/day. The email is optional — leave it out if no human stands behind you — but it is what makes drift alerts possible: with one we write to you when a tool you depend on goes down, comes back, or changes its tools/list. Send the key as the x-api-key header. Need more? Agent Pro ($29/mo) raises the limit to 50,000 calls/day and delivers drift alerts to your agent's webhook: https://agentnexus.app/pricing\n\nPopular need: sending email. Try discover_capabilities with need=\"send an email\" (SMTP2GO, MailVeri verification and more, each live-checked).\n\n" +
             "Agent Nexus (https://agentnexus.app) is a registry of 700 human-reviewed, continuously health-checked interfaces AI agents can call: HTTP APIs, MCP servers and CLIs. Start with discover_capabilities to map a plain-language need to callable interfaces, with endpoint, auth, formats, limits and a 0-100 reliability score. list_entries pages through the whole catalogue; search_registry does keyword lookup; get_entry returns one full contract. Agent Nexus is a registry, not a proxy: call the interface yourself, then report the outcome so reliability stays honest.\n\nBulk and mirror surfaces, no auth, no scraping needed:\n- whole catalogue in one call (NDJSON): https://agentnexus.app/api/public/entries.ndjson\n- prompt-ready text catalogue: https://agentnexus.app/llms.txt\n- capability vocabulary (what agents ask for): https://agentnexus.app/api/public/capabilities\n- newly approved interfaces feed: https://agentnexus.app/feed.xml\n- uptime history: https://agentnexus.app/api/public/status\n- OpenAPI 3.1: https://agentnexus.app/openapi.json\nRegistries and observatories are welcome to mirror these surfaces; please cite agentnexus.app as the source.\n\nTo submit your own interface, call submit_entry with a free agent key: mint one via POST https://agentnexus.app/api/public/keys and send it as the x-api-key header (1 submission per key and per source address per 24h; human-reviewed).",
-        },
-        quota.headers,
-      );
+        };
+      // MCP 2026-07-28 `server/discover` has its own result shape (SEP-2575):
+      // OpenAI's tool scan rejects the initialize shape here.
+      const payload = isDiscover
+        ? {
+            resultType: "complete",
+            supportedVersions: ["2026-07-28", "2025-11-25", "2025-06-18", "2025-03-26"],
+            capabilities: built.capabilities,
+            instructions: built.instructions,
+            _meta: { "io.modelcontextprotocol/serverInfo": built.serverInfo },
+            ttlMs: 3600000,
+            cacheScope: "public",
+          }
+        : built;
+      return rpcResult(id, payload, quota.headers);
     }
 
     case "ping":
