@@ -8,7 +8,7 @@ export const Route = createFileRoute("/.well-known/glama.json")({
         new Response(
           JSON.stringify({
             $schema: "https://glama.ai/mcp/schemas/connector.json",
-            claim: "glama_claim_zyj4JJpWWMdut8yPIlp7gBzVtDUj7q_6",
+            claim: "glama_claim_TaDNfPrcVoBxkEqssFA-fqU6FezFZ722",
           }),
           {
             headers: {

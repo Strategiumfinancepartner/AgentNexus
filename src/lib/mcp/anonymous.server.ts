@@ -100,7 +100,11 @@ function toolsList(): { tools: unknown[] } {
         annotations: {
           ...(t.annotations ?? {}),
           title: t.title,
+          // OpenAI's app review requires all three hints as explicit booleans.
           readOnlyHint: (t.annotations as any)?.readOnlyHint ?? true,
+          destructiveHint: (t.annotations as any)?.destructiveHint ?? false,
+          openWorldHint:
+            (t.annotations as any)?.openWorldHint ?? t.name === "submit_entry",
         },
       };
     }),

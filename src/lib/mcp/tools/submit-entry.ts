@@ -156,7 +156,7 @@ export default defineTool({
       ),
   },
   outputSchema: { slug: z.string(), status: z.string() },
-  annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: false },
+  annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
   handler: async (input, ctx) => {
     if (!ctx.isAuthenticated()) {
       throw new ToolError("Sign in to Agent Nexus to submit an interface.");
