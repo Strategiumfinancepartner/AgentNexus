@@ -21,7 +21,24 @@ const TIMEOUT_MS = 8000;
  */
 export function isProbeable(endpoint: string): boolean {
   const url = endpoint.trim();
-  return /^https?:\/\//i.test(url) && !hasPlaceholder(url);
+  if (!/^https?:\/\//i.test(url) || hasPlaceholder(url)) return false;
+  // A loopback/private address only exists on the user's own machine: any
+  // answer we get for it comes from our own network and says nothing.
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (
+      host === "localhost" ||
+      host.endsWith(".local") ||
+      /^127\./.test(host) ||
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^0\./.test(host)
+    )
+      return false;
+  } catch {
+    return false;
+  }
+  return true;
 }
 
 async function probeOnce(url: string): Promise<ProbeResult> {
