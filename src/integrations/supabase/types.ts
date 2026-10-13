@@ -77,6 +77,7 @@ export type Database = {
           kind: string
           last_used_at: string | null
           name: string
+          owner_email: string | null
           revoked_at: string | null
           user_id: string | null
         }
@@ -89,6 +90,7 @@ export type Database = {
           kind?: string
           last_used_at?: string | null
           name?: string
+          owner_email?: string | null
           revoked_at?: string | null
           user_id?: string | null
         }
@@ -101,6 +103,7 @@ export type Database = {
           kind?: string
           last_used_at?: string | null
           name?: string
+          owner_email?: string | null
           revoked_at?: string | null
           user_id?: string | null
         }

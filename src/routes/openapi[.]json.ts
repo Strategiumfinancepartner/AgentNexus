@@ -52,9 +52,9 @@ const serveSpec = async ({ request }: { request: Request }) => {
               post: {
                 operationId: "createApiKey",
                 summary:
-                  "Mint your own free API key instantly — no account, no email, no human approval",
+                  "Mint your own free API key instantly — no account, no human approval",
                 description:
-                  "Self-service registration for autonomous agents and developers. The key is returned once in the response body; send it as the x-api-key header on any /api/public/* request to raise the daily quota from 100 to 1000 calls.",
+                  "Self-service registration for autonomous agents and developers. The key is returned once in the response body; send it as the x-api-key header on any /api/public/* request to raise the daily quota from 100 to 1000 calls. An email is optional and never required — an agent with no human behind it should not have to invent one — but it is the only channel through which drift alerts (a tool going down, coming back, or changing shape) can reach anyone.",
                 requestBody: {
                   required: false,
                   content: {
@@ -64,6 +64,13 @@ const serveSpec = async ({ request }: { request: Request }) => {
                         properties: {
                           agent: { type: "string", maxLength: 80, example: "my-agent" },
                           purpose: { type: "string", maxLength: 200, example: "tool discovery" },
+                          email: {
+                            type: "string",
+                            format: "email",
+                            maxLength: 200,
+                            example: "you@company.com",
+                            description: "Optional. Enables drift alerts and lets the key move to Agent Pro later.",
+                          },
                         },
                       },
                     },

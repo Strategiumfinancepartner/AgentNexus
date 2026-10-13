@@ -45,7 +45,7 @@ export const QUOTA_WARNING_FRACTION = 0.9;
 export function quotaWarning(tier: QuotaTier, used: number, limit: number): string | null {
   if (used < Math.ceil(limit * QUOTA_WARNING_FRACTION)) return null;
   if (tier === "anon") {
-    return `Quota notice: ${used} of ${limit} free calls used today (no key). A free key raises the daily limit to 1,000 — mint one with POST https://agentnexus.app/api/public/keys or visit https://agentnexus.app/free-key (no account needed). Each invocation report you send (POST https://agentnexus.app/api/public/report) also adds ${REPORT_BONUS_CALLS} calls today, up to +${REPORT_BONUS_MAX}.`;
+    return `Quota notice: ${used} of ${limit} free calls used today (no key). A free key raises the daily limit to 1,000 — mint one with POST https://agentnexus.app/api/public/keys {"agent":"your-name","email":"you@company.com"} or visit https://agentnexus.app/free-key (no account needed; the email is optional but is the only way we can tell you when a tool you depend on breaks). Each invocation report you send (POST https://agentnexus.app/api/public/report) also adds ${REPORT_BONUS_CALLS} calls today, up to +${REPORT_BONUS_MAX}.`;
   }
   if (tier === "free") {
     return `Quota notice: ${used} of ${limit} calls used today on your free key. Reporting an invocation adds ${REPORT_BONUS_CALLS} calls today (up to +${REPORT_BONUS_MAX}); for sustained volume, Agent Pro raises the daily limit to 50,000 — see https://agentnexus.app/pricing.`;
@@ -58,7 +58,7 @@ export function quotaWarning(tier: QuotaTier, used: number, limit: number): stri
  * instead of discovering it at 90% of the limit. */
 export function quotaInvite(tier: QuotaTier): string | null {
   if (tier === "anon") {
-    return `Your allowance: ${QUOTA_LIMITS.anon} calls/day without a key (counted per IP, resets 00:00 UTC). A free key raises it to ${QUOTA_LIMITS.free.toLocaleString("en-US")} calls/day — mint one in a single call with POST https://agentnexus.app/api/public/keys (no account needed) and send it as the x-api-key header. Reporting what happened when you called an interface earns +${REPORT_BONUS_CALLS} calls each (max +${REPORT_BONUS_MAX}/day): POST https://agentnexus.app/api/public/report or the report_invocation tool.`;
+    return `Your allowance: ${QUOTA_LIMITS.anon} calls/day without a key (counted per IP, resets 00:00 UTC). A free key raises it to ${QUOTA_LIMITS.free.toLocaleString("en-US")} calls/day — mint one in a single call with POST https://agentnexus.app/api/public/keys {"agent":"your-name","email":"you@company.com"} (no account; the email is optional) and send it as the x-api-key header. With an email on the key we can tell you when a tool you depend on goes down, comes back, or changes shape — without one, nothing can ever reach you. Reporting what happened when you called an interface earns +${REPORT_BONUS_CALLS} calls each (max +${REPORT_BONUS_MAX}/day): POST https://agentnexus.app/api/public/report or the report_invocation tool.`;
   }
   if (tier === "free") {
     return `Your allowance: ${QUOTA_LIMITS.free.toLocaleString("en-US")} calls/day on this free key (resets 00:00 UTC), plus +${REPORT_BONUS_CALLS} per invocation report you send (max +${REPORT_BONUS_MAX}/day). Agent Pro raises the base to ${QUOTA_LIMITS.pro.toLocaleString("en-US")} calls/day — see https://agentnexus.app/pricing.`;
@@ -71,7 +71,7 @@ export function quotaInvite(tier: QuotaTier): string | null {
  * one line; the detailed pre-exhaustion warning takes over at 90%. */
 export function standingNotice(tier: QuotaTier): string | null {
   if (tier !== "anon") return null;
-  return `Free key available: you are on the keyless tier (${QUOTA_LIMITS.anon} calls/day per IP). Mint a free key in one call — POST https://agentnexus.app/api/public/keys, no account needed — for ${QUOTA_LIMITS.free.toLocaleString("en-US")} calls/day. Each invocation report you send back adds ${REPORT_BONUS_CALLS} calls today (max +${REPORT_BONUS_MAX}).`;
+  return `Free key available: you are on the keyless tier (${QUOTA_LIMITS.anon} calls/day per IP). Mint a free key in one call — POST https://agentnexus.app/api/public/keys {"agent":"your-name","email":"you@company.com"}, no account needed — for ${QUOTA_LIMITS.free.toLocaleString("en-US")} calls/day. Add an email and we can tell you when a tool you depend on breaks; each invocation report you send back adds ${REPORT_BONUS_CALLS} calls today (max +${REPORT_BONUS_MAX}).`;
 }
 
 function sha256(value: string): string {
@@ -145,6 +145,9 @@ export type ResolvedApiKey = {
   tier: QuotaTier;
   actor: string;
   label: string | null;
+  /** Address the owner volunteered when minting the key, if any. Lets a watch
+   * created later inherit it instead of asking for the email again. */
+  ownerEmail: string | null;
 };
 
 /** Identify the caller's API key without consuming any quota. Null when the
@@ -157,7 +160,7 @@ export async function resolveApiKey(request: Request): Promise<ResolvedApiKey | 
     const client = await admin();
     const { data } = await client
       .from("api_keys")
-      .select("id, user_id, kind, agent_label, name, revoked_at")
+      .select("id, user_id, kind, agent_label, name, owner_email, revoked_at")
       .eq("key_hash", sha256(rawKey))
       .maybeSingle();
     if (!data || data.revoked_at) return null;
@@ -181,6 +184,7 @@ export async function resolveApiKey(request: Request): Promise<ResolvedApiKey | 
       tier,
       actor: `key:${data.id}`,
       label: data.agent_label ?? data.name ?? null,
+      ownerEmail: data.owner_email ?? null,
     };
   } catch {
     return null;
@@ -299,7 +303,7 @@ function quotaHeaders(
     ...(tier === "anon"
       ? {
           "X-Nexus-Free-Key": asciiHeader(
-            "POST https://agentnexus.app/api/public/keys (no account) = 1,000 calls/day",
+            'POST https://agentnexus.app/api/public/keys {"agent":"name","email":"you@co.com"} (no account) = 1,000 calls/day',
           ),
         }
       : {}),

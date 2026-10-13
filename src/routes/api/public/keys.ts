@@ -8,7 +8,11 @@ import { QUOTA_LIMITS } from "@/lib/quota.server";
  * Machine self-registration.
  *
  * An autonomous agent can mint its own free key with a single POST — no human,
- * no email, no dashboard. Abuse is bounded by an IP rate limit (a handful of
+ * no account, no dashboard. An `email` is optional and never required: an agent
+ * with no human standing behind it should not be forced to invent one. But the
+ * field is what separates a key anyone can talk to from a key we can talk to,
+ * so every surface that advertises this endpoint offers the email in the same
+ * breath as the key itself. Abuse is bounded by an IP rate limit (a handful of
  * keys per day) and by the free tier's daily call quota; the key carries no
  * write capability beyond what an anonymous caller already has.
  */
@@ -24,6 +28,9 @@ const cors = {
 const bodySchema = z.object({
   agent: z.string().trim().max(80).optional(),
   purpose: z.string().trim().max(200).optional(),
+  /** Optional by design — see the file header. Stored lowercase so a watch
+   * created later from the same address lines up with the key that owns it. */
+  email: z.string().trim().email().max(200).optional(),
 });
 
 function json(payload: unknown, status = 200): Response {
@@ -39,7 +46,11 @@ export const Route = createFileRoute("/api/public/keys")({
         json({
           endpoint: `${new URL(request.url).origin}/api/public/keys`,
           method: "POST",
-          body: { agent: "your-agent-name", purpose: "what you plan to use the registry for" },
+          body: {
+            agent: "your-agent-name",
+            purpose: "what you plan to use the registry for",
+            email: "optional — you@yourcompany.com, never required",
+          },
           returns: {
             key: "nx_… (shown once, store it)",
             tier: "free",
@@ -47,6 +58,8 @@ export const Route = createFileRoute("/api/public/keys")({
           },
           usage: "Send the key as the x-api-key header on any /api/public/* request.",
           limits: `Anonymous: ${QUOTA_LIMITS.anon} calls/day. Free key: ${QUOTA_LIMITS.free}. Agent Pro: ${QUOTA_LIMITS.pro}.`,
+          why_email:
+            "With an email we can tell you when a tool you depend on goes down or changes shape (POST /api/public/watch {slug} with this key), and you can move the key to Agent Pro later. Without one the key still works, but nothing can ever reach you.",
         }),
 
       POST: async ({ request }) => {
@@ -81,6 +94,7 @@ export const Route = createFileRoute("/api/public/keys")({
 
         const key = `nx_${randomBytes(24).toString("hex")}`;
         const label = [parsed.data.agent, parsed.data.purpose].filter(Boolean).join(" — ").slice(0, 200);
+        const email = parsed.data.email ? parsed.data.email.toLowerCase() : null;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { error } = await (supabaseAdmin as any).from("api_keys").insert({
@@ -88,6 +102,7 @@ export const Route = createFileRoute("/api/public/keys")({
           kind: "agent",
           name: parsed.data.agent?.slice(0, 60) || "autonomous agent",
           agent_label: label,
+          owner_email: email,
           key_prefix: key.slice(0, 11),
           key_hash: createHash("sha256").update(key).digest("hex"),
         });
@@ -105,7 +120,11 @@ export const Route = createFileRoute("/api/public/keys")({
             mcp_read_only: `${origin}/api/public/mcp`,
             catalog: `${origin}/api/public/entries.ndjson`,
             report_back: `${origin}/api/public/report`,
+            watch_a_tool: `${origin}/api/public/watch {slug} — get told when it breaks`,
           },
+          watch: email
+            ? `We will write to ${email} when a tool you follow goes down, comes back, or changes shape — add {slug} to POST ${origin}/api/public/watch with this key and the email is carried over automatically.`
+            : `No email on this key, so drift alerts cannot reach you: add "email" to POST ${origin}/api/public/watch with each {slug} you follow, or mint a key with an email to keep them all in one place.`,
           upgrade: `${origin}/pricing`,
         });
       },

@@ -1,0 +1,2 @@
+ALTER TABLE public.api_keys ADD COLUMN IF NOT EXISTS owner_email text;
+COMMENT ON COLUMN public.api_keys.owner_email IS 'Optional contact email supplied when a key was minted; lets us send drift alerts and reach the owner. Null for anonymous machine keys.';

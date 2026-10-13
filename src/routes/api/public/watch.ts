@@ -50,13 +50,18 @@ export const Route = createFileRoute("/api/public/watch")({
         }
         if (!parsed.success) return json({ error: "Provide slug and an email or an https webhook_url." }, 400);
         const { slug, email, webhook_url } = parsed.data;
-        if (!email && !webhook_url) return json({ error: "Provide an email or a webhook_url." }, 400);
 
         const key = await resolveApiKey(request);
+        // A key minted with an email already knows who to write to: don't make
+        // the caller repeat the address on every single watch.
+        const notifyEmail = email ?? key?.ownerEmail ?? null;
+        if (!notifyEmail && !webhook_url) {
+          return json({ error: "Provide an email or a webhook_url." }, 400);
+        }
         if (webhook_url && key?.tier !== "pro") {
           return json({ error: "Webhooks are a Pro feature. Free accounts can follow by email.", upgrade: "https://agentnexus.app/pricing" }, 402);
         }
-        const owner = key ? `key:${key.keyId}` : `email:${email!.toLowerCase()}`;
+        const owner = key ? `key:${key.keyId}` : `email:${notifyEmail!.toLowerCase()}`;
         const limit = key?.tier === "pro" ? PRO_WATCH_LIMIT : FREE_WATCH_LIMIT;
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -82,7 +87,7 @@ export const Route = createFileRoute("/api/public/watch")({
           {
             entry_id: entry.id,
             owner,
-            email: email?.toLowerCase() ?? null,
+            email: notifyEmail,
             webhook_url: webhook_url ?? null,
             api_key_id: key?.keyId ?? null,
             last_state: state,
@@ -90,7 +95,7 @@ export const Route = createFileRoute("/api/public/watch")({
           { onConflict: "entry_id,owner" },
         );
         if (error) return json({ error: "Could not save" }, 500);
-        return json({ ok: true, following: entry.slug, alerts_on: ["down", "back up", "schema drift", "tools/list change"], plan_limit: limit });
+        return json({ ok: true, following: entry.slug, alerts_to: notifyEmail ?? webhook_url, alerts_on: ["down", "back up", "schema drift", "tools/list change"], plan_limit: limit });
       },
     },
   },
