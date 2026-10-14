@@ -290,7 +290,12 @@ function Index() {
         </main>
 
         <footer className="flex flex-wrap items-center justify-between gap-4 border-t border-border/60 py-8 font-mono text-[11px] text-muted-foreground">
-          <span>Callable surfaces indexed</span>
+          <span className="flex items-center gap-3">
+            Callable surfaces indexed
+            <a href="https://openforallofus.com/tools/app.agentnexus/agent-nexus" target="_blank" rel="noopener noreferrer">
+              <img src="https://openforallofus.com/badge/app.agentnexus/agent-nexus.svg" alt="Agora: MCP handshake check" height={20} style={{ height: 20 }} />
+            </a>
+          </span>
           <nav className="flex flex-wrap items-center gap-5">
             <Link to="/best-email-apis" className="transition-colors hover:text-foreground">
               Best email APIs
