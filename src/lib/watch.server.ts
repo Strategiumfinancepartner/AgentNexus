@@ -45,7 +45,10 @@ export async function notifyWatchers(
     const { data: watches } = await admin
       .from("tool_watches")
       .select("id, email, webhook_url, unsubscribe_token, last_state")
-      .eq("entry_id", entry.id);
+      .eq("entry_id", entry.id)
+      // Double opt-in: email watches only fire once their address confirmed.
+      // Webhook watches are saved already-confirmed by the watch route.
+      .not("confirmed_at", "is", null);
     if (!watches?.length) return;
     const state = await watchState(snap);
     for (const w of watches) {

@@ -32,7 +32,7 @@ export default defineTool({
       );
     }
     const watch = {
-      hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape (schema or tool list). Free, 3 tools per key.`,
+      hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape (schema or tool list). Free, 3 tools per key. Email follows are confirmed by a one-click email before alerts start.`,
       how: `POST https://agentnexus.app/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
     };
     return {

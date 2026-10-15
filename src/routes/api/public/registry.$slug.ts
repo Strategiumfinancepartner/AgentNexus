@@ -162,8 +162,8 @@ const serveEntry = async ({
           JSON.stringify({
             entry: data,
             watch: {
-              hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape. Free, 3 tools per key.`,
-              how: `POST ${origin}/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
+              hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape. Free, 3 tools per key. Email follows are confirmed by a one-click email before alerts start.`,
+              how: `POST ${origin}/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url". Email follows must be confirmed from the inbox before alerts start.`,
             },
           }),
           { headers: cors },

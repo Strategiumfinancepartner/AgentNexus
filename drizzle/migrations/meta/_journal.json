@@ -15,6 +15,13 @@
       "when": 1791864937681,
       "tag": "0001_add_owner_email_to_api_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792051243902,
+      "tag": "0002_watch_confirm_optin",
+      "breakpoints": true
     }
   ]
 }

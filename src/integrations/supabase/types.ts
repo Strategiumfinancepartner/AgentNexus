@@ -751,6 +751,8 @@ export type Database = {
       tool_watches: {
         Row: {
           api_key_id: string | null
+          confirm_token: string | null
+          confirmed_at: string | null
           created_at: string
           email: string | null
           entry_id: string
@@ -763,6 +765,8 @@ export type Database = {
         }
         Insert: {
           api_key_id?: string | null
+          confirm_token?: string | null
+          confirmed_at?: string | null
           created_at?: string
           email?: string | null
           entry_id: string
@@ -775,6 +779,8 @@ export type Database = {
         }
         Update: {
           api_key_id?: string | null
+          confirm_token?: string | null
+          confirmed_at?: string | null
           created_at?: string
           email?: string | null
           entry_id?: string
