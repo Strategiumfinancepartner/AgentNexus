@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "agent-nexus": {
+      "type": "http",
+      "url": "https://agentnexus.app/api/public/mcp",
+      "note": "Agent Nexus — live-probed registry of 700+ APIs, MCP servers and CLIs. Anonymous tier: 100 calls/day. For unlimited access, get a free key with one POST to https://agentnexus.app/api/public/keys and use the keyed endpoint https://agentnexus.app/mcp with header x-api-key."
+    }
+  }
+}
