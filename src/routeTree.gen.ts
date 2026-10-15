@@ -58,6 +58,7 @@ import { Route as Char91DotwellKnownChar93OauthAuthorizationServerRouteImport } 
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotwellKnownChar93OpenaiAppsChallengeRouteImport } from './routes/[.well-known]/openai-apps-challenge'
 import { Route as Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRouteImport } from './routes/[.well-known]/openapi[.]json'
+import { Route as Char91DotwellKnownChar93OpencodeRouteImport } from './routes/[.well-known]/opencode'
 import { Route as Char91DotwellKnownChar93OwnersChar91DotChar93jsonRouteImport } from './routes/[.well-known]/owners[.]json'
 import { Route as Char91DotwellKnownChar93PaymentRouteImport } from './routes/[.well-known]/payment'
 import { Route as Char91DotwellKnownChar93PaymentManifestRouteImport } from './routes/[.well-known]/payment-manifest'
@@ -386,6 +387,12 @@ const Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/openapi.json',
     path: '/.well-known/openapi.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OpencodeRoute =
+  Char91DotwellKnownChar93OpencodeRouteImport.update({
+    id: '/.well-known/opencode',
+    path: '/.well-known/opencode',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute =
@@ -770,6 +777,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/.well-known/openapi.json': typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
+  '/.well-known/opencode': typeof Char91DotwellKnownChar93OpencodeRoute
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
   '/.well-known/payment-manifest': typeof Char91DotwellKnownChar93PaymentManifestRoute
@@ -880,6 +888,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/.well-known/openapi.json': typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
+  '/.well-known/opencode': typeof Char91DotwellKnownChar93OpencodeRoute
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
   '/.well-known/payment-manifest': typeof Char91DotwellKnownChar93PaymentManifestRoute
@@ -992,6 +1001,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   '/.well-known/openai-apps-challenge': typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   '/.well-known/openapi.json': typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
+  '/.well-known/opencode': typeof Char91DotwellKnownChar93OpencodeRoute
   '/.well-known/owners.json': typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/.well-known/payment': typeof Char91DotwellKnownChar93PaymentRoute
   '/.well-known/payment-manifest': typeof Char91DotwellKnownChar93PaymentManifestRoute
@@ -1104,6 +1114,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/.well-known/openai-apps-challenge'
     | '/.well-known/openapi.json'
+    | '/.well-known/opencode'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
     | '/.well-known/payment-manifest'
@@ -1214,6 +1225,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/.well-known/openai-apps-challenge'
     | '/.well-known/openapi.json'
+    | '/.well-known/opencode'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
     | '/.well-known/payment-manifest'
@@ -1325,6 +1337,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/.well-known/openai-apps-challenge'
     | '/.well-known/openapi.json'
+    | '/.well-known/opencode'
     | '/.well-known/owners.json'
     | '/.well-known/payment'
     | '/.well-known/payment-manifest'
@@ -1437,6 +1450,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteWithChildren
   Char91DotwellKnownChar93OpenaiAppsChallengeRoute: typeof Char91DotwellKnownChar93OpenaiAppsChallengeRoute
   Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93OpencodeRoute: typeof Char91DotwellKnownChar93OpencodeRoute
   Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   Char91DotwellKnownChar93PaymentRoute: typeof Char91DotwellKnownChar93PaymentRoute
   Char91DotwellKnownChar93PaymentManifestRoute: typeof Char91DotwellKnownChar93PaymentManifestRoute
@@ -1817,6 +1831,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/openapi.json'
       fullPath: '/.well-known/openapi.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/opencode': {
+      id: '/.well-known/opencode'
+      path: '/.well-known/opencode'
+      fullPath: '/.well-known/opencode'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OpencodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/owners.json': {
@@ -2433,6 +2454,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OpenaiAppsChallengeRoute,
   Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93OpenapiChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93OpencodeRoute: Char91DotwellKnownChar93OpencodeRoute,
   Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93OwnersChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93PaymentRoute: Char91DotwellKnownChar93PaymentRoute,
