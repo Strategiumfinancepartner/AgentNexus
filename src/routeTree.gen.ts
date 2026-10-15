@@ -51,6 +51,7 @@ import { Route as Char91DotwellKnownChar93McpProbingChar91DotChar93jsonRouteImpo
 import { Route as Char91DotwellKnownChar93McpReadyClaimChar91DotChar93txtRouteImport } from './routes/[.well-known]/mcp-ready-claim[.]txt'
 import { Route as Char91DotwellKnownChar93McpRegistryAuthRouteImport } from './routes/[.well-known]/mcp-registry-auth'
 import { Route as Char91DotwellKnownChar93McpChar91DotChar93jsonRouteImport } from './routes/[.well-known]/mcp[.]json'
+import { Route as Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRouteImport } from './routes/[.well-known]/mcprush[.]com-claim[.]txt'
 import { Route as Char91DotwellKnownChar93MonetizationRouteImport } from './routes/[.well-known]/monetization'
 import { Route as Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRouteImport } from './routes/[.well-known]/monetization[.]json'
 import { Route as Char91DotwellKnownChar93MppRouteImport } from './routes/[.well-known]/mpp'
@@ -347,6 +348,14 @@ const Char91DotwellKnownChar93McpChar91DotChar93jsonRoute =
     path: '/.well-known/mcp.json',
     getParentRoute: () => rootRouteImport,
   } as any)
+const Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute =
+  Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRouteImport.update(
+    {
+      id: '/.well-known/mcprush.com-claim.txt',
+      path: '/.well-known/mcprush.com-claim.txt',
+      getParentRoute: () => rootRouteImport,
+    } as any,
+  )
 const Char91DotwellKnownChar93MonetizationRoute =
   Char91DotwellKnownChar93MonetizationRouteImport.update({
     id: '/.well-known/monetization',
@@ -770,6 +779,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/mcp-ready-claim.txt': typeof Char91DotwellKnownChar93McpReadyClaimChar91DotChar93txtRoute
   '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
+  '/.well-known/mcprush.com-claim.txt': typeof Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute
   '/.well-known/monetization': typeof Char91DotwellKnownChar93MonetizationRoute
   '/.well-known/monetization.json': typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
   '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
@@ -881,6 +891,7 @@ export interface FileRoutesByTo {
   '/.well-known/mcp-ready-claim.txt': typeof Char91DotwellKnownChar93McpReadyClaimChar91DotChar93txtRoute
   '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
+  '/.well-known/mcprush.com-claim.txt': typeof Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute
   '/.well-known/monetization': typeof Char91DotwellKnownChar93MonetizationRoute
   '/.well-known/monetization.json': typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
   '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
@@ -994,6 +1005,7 @@ export interface FileRoutesById {
   '/.well-known/mcp-ready-claim.txt': typeof Char91DotwellKnownChar93McpReadyClaimChar91DotChar93txtRoute
   '/.well-known/mcp-registry-auth': typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   '/.well-known/mcp.json': typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
+  '/.well-known/mcprush.com-claim.txt': typeof Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute
   '/.well-known/monetization': typeof Char91DotwellKnownChar93MonetizationRoute
   '/.well-known/monetization.json': typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
   '/.well-known/mpp': typeof Char91DotwellKnownChar93MppRoute
@@ -1107,6 +1119,7 @@ export interface FileRouteTypes {
     | '/.well-known/mcp-ready-claim.txt'
     | '/.well-known/mcp-registry-auth'
     | '/.well-known/mcp.json'
+    | '/.well-known/mcprush.com-claim.txt'
     | '/.well-known/monetization'
     | '/.well-known/monetization.json'
     | '/.well-known/mpp'
@@ -1218,6 +1231,7 @@ export interface FileRouteTypes {
     | '/.well-known/mcp-ready-claim.txt'
     | '/.well-known/mcp-registry-auth'
     | '/.well-known/mcp.json'
+    | '/.well-known/mcprush.com-claim.txt'
     | '/.well-known/monetization'
     | '/.well-known/monetization.json'
     | '/.well-known/mpp'
@@ -1330,6 +1344,7 @@ export interface FileRouteTypes {
     | '/.well-known/mcp-ready-claim.txt'
     | '/.well-known/mcp-registry-auth'
     | '/.well-known/mcp.json'
+    | '/.well-known/mcprush.com-claim.txt'
     | '/.well-known/monetization'
     | '/.well-known/monetization.json'
     | '/.well-known/mpp'
@@ -1443,6 +1458,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93McpReadyClaimChar91DotChar93txtRoute: typeof Char91DotwellKnownChar93McpReadyClaimChar91DotChar93txtRoute
   Char91DotwellKnownChar93McpRegistryAuthRoute: typeof Char91DotwellKnownChar93McpRegistryAuthRoute
   Char91DotwellKnownChar93McpChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute: typeof Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute
   Char91DotwellKnownChar93MonetizationRoute: typeof Char91DotwellKnownChar93MonetizationRoute
   Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute
   Char91DotwellKnownChar93MppRoute: typeof Char91DotwellKnownChar93MppRoute
@@ -1782,6 +1798,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/mcp.json'
       fullPath: '/.well-known/mcp.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93McpChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/mcprush.com-claim.txt': {
+      id: '/.well-known/mcprush.com-claim.txt'
+      path: '/.well-known/mcprush.com-claim.txt'
+      fullPath: '/.well-known/mcprush.com-claim.txt'
+      preLoaderRoute: typeof Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/monetization': {
@@ -2441,6 +2464,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93McpRegistryAuthRoute,
   Char91DotwellKnownChar93McpChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93McpChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute:
+    Char91DotwellKnownChar93McprushChar91DotChar93comClaimChar91DotChar93txtRoute,
   Char91DotwellKnownChar93MonetizationRoute:
     Char91DotwellKnownChar93MonetizationRoute,
   Char91DotwellKnownChar93MonetizationChar91DotChar93jsonRoute:
