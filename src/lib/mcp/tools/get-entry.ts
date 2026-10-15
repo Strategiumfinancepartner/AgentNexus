@@ -31,9 +31,13 @@ export default defineTool({
         `No approved entry with slug "${slug}". Use search_registry to list available slugs.`,
       );
     }
+    const watch = {
+      hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape (schema or tool list). Free, 3 tools per key.`,
+      how: `POST https://agentnexus.app/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
+    };
     return {
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
-      structuredContent: { entry: data },
+      content: [{ type: "text", text: JSON.stringify({ entry: data, watch }, null, 2) }],
+      structuredContent: { entry: data, watch },
     };
   },
 });

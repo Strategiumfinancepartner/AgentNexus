@@ -158,7 +158,16 @@ const serveEntry = async ({
             { status: 404, headers: cors },
           );
         }
-        return new Response(JSON.stringify({ entry: data }), { headers: cors });
+        return new Response(
+          JSON.stringify({
+            entry: data,
+            watch: {
+              hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape. Free, 3 tools per key.`,
+              how: `POST ${origin}/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
+            },
+          }),
+          { headers: cors },
+        );
 };
 
 export const Route = createFileRoute("/api/public/registry/$slug")({
