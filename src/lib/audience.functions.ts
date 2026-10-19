@@ -402,12 +402,12 @@ export const getSegments = createServerFn({ method: "POST" })
       s.callers++;
       if (a.days.size >= 2) s.returning++;
       s.calls += a.calls;
-      s.mcp += a.acts.mcp ?? 0;
-      s.searches += a.acts.search ?? 0;
-      s.entries += a.acts.entry ?? 0;
-      s.health += a.acts.health ?? 0;
-      s.reports += a.acts.report ?? 0;
-      s.submits += a.acts.submit ?? 0;
+      s.mcp += a.acts["mcp"] ?? 0;
+      s.searches += a.acts["search"] ?? 0;
+      s.entries += a.acts["entry"] ?? 0;
+      s.health += a.acts["health"] ?? 0;
+      s.reports += a.acts["report"] ?? 0;
+      s.submits += a.acts["submit"] ?? 0;
       s.keyed += a.keyed;
     }
     const { count: watches } = await client.from("tool_watches").select("id", { count: "exact", head: true }).not("confirmed_at", "is", null);
