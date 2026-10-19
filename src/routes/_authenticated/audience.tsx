@@ -462,6 +462,29 @@ function SegmentsPanel() {
           ))}
         </tbody>
       </table>
+      <div className="border-t border-border/60 bg-card/40 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        MCP actions — {q.data.mcpTrackingSince ? `measured since ${new Date(q.data.mcpTrackingSince).toISOString().slice(0, 16).replace("T", " ")} UTC` : "measurement starts with the next MCP call"} · not comparable with the Searches column above
+      </div>
+      <table className="w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2">Segment</th>
+            {["Connections", "Tool lists", "MCP searches", "Callers who searched", "Entries opened", "Other tools"].map((c) => (
+              <th key={c} className="px-3 py-2 text-right">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {q.data.rows.map((r) => (
+            <tr key={r.segment} className="border-t border-border/40">
+              <td className="px-3 py-2">{r.label}</td>
+              {[r.mcpConnect, r.mcpToolsList, r.mcpSearches, r.mcpSearchers, r.mcpEntries, r.mcpOtherTools].map((v, i) => (
+                <td key={i} className="px-3 py-2 text-right">{v.toLocaleString("en-US")}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Section>
   );
 }

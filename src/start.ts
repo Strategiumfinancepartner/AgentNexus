@@ -53,12 +53,22 @@ const accessLogMiddleware = createMiddleware().server(async (ctx: any) => {
     }
   }
 
+  let mcpOp: string | null = null;
+  if (request && surface === "mcp") {
+    try {
+      const { mcpOpOf } = await import("./lib/access-log.server");
+      mcpOp = await mcpOpOf(request);
+    } catch {
+      mcpOp = null;
+    }
+  }
+
   const result = await ctx.next();
 
   if (request && surface) {
     try {
       const { logAccess } = await import("./lib/access-log.server");
-      await logAccess(request, surface);
+      await logAccess(request, surface, mcpOp);
     } catch {
       // swallow
     }

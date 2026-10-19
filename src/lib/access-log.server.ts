@@ -63,8 +63,30 @@ function rawKey(request: Request, url: URL): string | null {
   return url.searchParams.get("key")?.trim() || null;
 }
 
+/**
+ * Reads the JSON-RPC method (and tool name for tools/call) of an MCP POST,
+ * e.g. "initialize", "tools/list", "tools/call:search_registry". Only the
+ * method and tool name are kept, never arguments. Never throws.
+ */
+export async function mcpOpOf(request: Request): Promise<string | null> {
+  try {
+    if (request.method !== "POST") return null;
+    const body = JSON.parse(await request.clone().text());
+    const first = Array.isArray(body) ? body[0] : body;
+    const method = typeof first?.method === "string" ? first.method.slice(0, 60) : null;
+    if (!method) return null;
+    if (method === "tools/call") {
+      const name = String(first?.params?.name ?? "unknown").replace(/[^a-z0-9_.-]/gi, "").slice(0, 60);
+      return `tools/call:${name}`;
+    }
+    return method.replace(/[^a-z0-9_/.-]/gi, "");
+  } catch {
+    return null;
+  }
+}
+
 /** Records one hit on a machine-facing surface. Never throws. */
-export async function logAccess(request: Request, surface: string): Promise<void> {
+export async function logAccess(request: Request, surface: string, mcpOp?: string | null): Promise<void> {
   try {
     const url = new URL(request.url);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -105,7 +127,7 @@ export async function logAccess(request: Request, surface: string): Promise<void
 
     await client.rpc("record_access_event", {
       _surface: surface,
-      _path: url.pathname,
+      _path: mcpOp ? `${url.pathname}#${mcpOp}` : url.pathname,
       _method: request.method,
       _tier: tier,
       _actor: actor,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { actionOf, classifyCaller } from "./segments";
+import { actionOf, classifyCaller, mcpActionOf } from "./segments";
 
 describe("classifyCaller", () => {
   it("a caller who submitted is a publisher, whatever its signature", () => {
@@ -33,5 +33,19 @@ describe("actionOf", () => {
     expect(actionOf("registry.entry")).toBe("entry");
     expect(actionOf("report")).toBe("report");
     expect(actionOf("mcp")).toBe("mcp");
+  });
+});
+
+describe("mcpActionOf", () => {
+  it("a connection is not a search", () => {
+    expect(mcpActionOf("/mcp#initialize")).toBe("connect");
+    expect(mcpActionOf("/mcp#tools/list")).toBe("tools_list");
+  });
+  it("search_registry is a search, get_entry opens an entry", () => {
+    expect(mcpActionOf("/mcp#tools/call:search_registry")).toBe("search");
+    expect(mcpActionOf("/mcp#tools/call:get_entry")).toBe("entry");
+  });
+  it("old calls without detail stay unknown", () => {
+    expect(mcpActionOf("/mcp")).toBe("unknown");
   });
 });

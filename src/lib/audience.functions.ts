@@ -360,6 +360,12 @@ export type SegmentRow = {
   reports: number;
   submits: number;
   keyed: number;
+  mcpConnect: number;
+  mcpToolsList: number;
+  mcpSearches: number;
+  mcpEntries: number;
+  mcpOtherTools: number;
+  mcpSearchers: number;
 };
 
 /** Reviewer-only: 30-day traffic split by caller segment (monitors never mixed with users). */
@@ -368,15 +374,16 @@ export const getSegments = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     await assertReviewer(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { classifyCaller, actionOf, SEGMENT_LABELS } = await import("@/lib/segments");
+    const { classifyCaller, actionOf, mcpActionOf, SEGMENT_LABELS } = await import("@/lib/segments");
     const client = supabaseAdmin as any;
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number };
     const actors = new Map<string, Agg>();
+    let firstMcpOpAt: string | null = null;
     for (let from = 0; from < 300000; from += 1000) {
       const { data } = await client
         .from("access_events")
-        .select("actor, surface, user_agent, api_key_id, created_at")
+        .select("actor, surface, path, user_agent, api_key_id, created_at")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .range(from, from + 999);
@@ -388,6 +395,11 @@ export const getSegments = createServerFn({ method: "POST" })
         a.days.add(String(r.created_at).slice(0, 10));
         const act = actionOf(r.surface);
         a.acts[act] = (a.acts[act] ?? 0) + 1;
+        if (act === "mcp") {
+          const m = `mcp_${mcpActionOf(r.path)}`;
+          a.acts[m] = (a.acts[m] ?? 0) + 1;
+          if (String(r.path ?? "").includes("#") && (!firstMcpOpAt || r.created_at < firstMcpOpAt)) firstMcpOpAt = r.created_at;
+        }
         a.calls++;
         if (r.api_key_id) a.keyed++;
       }
@@ -398,7 +410,7 @@ export const getSegments = createServerFn({ method: "POST" })
       const seg = classifyCaller(a.ua, a.surfaces);
       let s = out.get(seg);
       if (!s)
-        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, keyed: 0 }));
+        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, keyed: 0, mcpConnect: 0, mcpToolsList: 0, mcpSearches: 0, mcpEntries: 0, mcpOtherTools: 0, mcpSearchers: 0 }));
       s.callers++;
       if (a.days.size >= 2) s.returning++;
       s.calls += a.calls;
@@ -409,7 +421,13 @@ export const getSegments = createServerFn({ method: "POST" })
       s.reports += a.acts["report"] ?? 0;
       s.submits += a.acts["submit"] ?? 0;
       s.keyed += a.keyed;
+      s.mcpConnect += a.acts["mcp_connect"] ?? 0;
+      s.mcpToolsList += a.acts["mcp_tools_list"] ?? 0;
+      s.mcpSearches += a.acts["mcp_search"] ?? 0;
+      s.mcpEntries += a.acts["mcp_entry"] ?? 0;
+      s.mcpOtherTools += (a.acts["mcp_other_tool"] ?? 0) + (a.acts["mcp_submit"] ?? 0);
+      if ((a.acts["mcp_search"] ?? 0) > 0) s.mcpSearchers++;
     }
     const { count: watches } = await client.from("tool_watches").select("id", { count: "exact", head: true }).not("confirmed_at", "is", null);
-    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches ?? 0 };
+    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches ?? 0, mcpTrackingSince: firstMcpOpAt };
   });

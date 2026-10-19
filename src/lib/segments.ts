@@ -39,3 +39,20 @@ export function actionOf(surface: string): Action {
   if (surface === "mcp") return "mcp";
   return "other";
 }
+
+/** Business meaning of one MCP call, from the "#op" suffix recorded on its path. */
+export type McpAction = "connect" | "tools_list" | "search" | "entry" | "submit" | "other_tool" | "technical" | "unknown";
+export function mcpActionOf(path: string | null | undefined): McpAction {
+  const op = (path ?? "").split("#")[1];
+  if (!op) return "unknown";
+  if (op === "initialize" || op === "notifications/initialized") return "connect";
+  if (op === "tools/list") return "tools_list";
+  if (op.startsWith("tools/call:")) {
+    const tool = op.slice("tools/call:".length);
+    if (tool === "search_registry" || tool === "discover_capabilities" || tool === "list_entries" || tool === "list_categories") return "search";
+    if (tool === "get_entry") return "entry";
+    if (tool === "submit_entry") return "submit";
+    return "other_tool";
+  }
+  return "technical";
+}
