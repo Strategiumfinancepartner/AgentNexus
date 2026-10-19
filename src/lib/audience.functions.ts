@@ -346,3 +346,70 @@ export const getAudience = createServerFn({ method: "POST" })
       recent,
     };
   });
+
+export type SegmentRow = {
+  segment: string;
+  label: string;
+  callers: number;
+  returning: number;
+  calls: number;
+  mcp: number;
+  searches: number;
+  entries: number;
+  health: number;
+  reports: number;
+  submits: number;
+  keyed: number;
+};
+
+/** Reviewer-only: 30-day traffic split by caller segment (monitors never mixed with users). */
+export const getSegments = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertReviewer(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { classifyCaller, actionOf, SEGMENT_LABELS } = await import("@/lib/segments");
+    const client = supabaseAdmin as any;
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number };
+    const actors = new Map<string, Agg>();
+    for (let from = 0; from < 300000; from += 1000) {
+      const { data } = await client
+        .from("access_events")
+        .select("actor, surface, user_agent, api_key_id, created_at")
+        .gte("created_at", since)
+        .order("created_at", { ascending: false })
+        .range(from, from + 999);
+      const rows = (data ?? []) as any[];
+      for (const r of rows) {
+        let a = actors.get(r.actor);
+        if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0 }));
+        a.surfaces.add(r.surface);
+        a.days.add(String(r.created_at).slice(0, 10));
+        const act = actionOf(r.surface);
+        a.acts[act] = (a.acts[act] ?? 0) + 1;
+        a.calls++;
+        if (r.api_key_id) a.keyed++;
+      }
+      if (rows.length < 1000) break;
+    }
+    const out = new Map<string, SegmentRow>();
+    for (const a of actors.values()) {
+      const seg = classifyCaller(a.ua, a.surfaces);
+      let s = out.get(seg);
+      if (!s)
+        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, keyed: 0 }));
+      s.callers++;
+      if (a.days.size >= 2) s.returning++;
+      s.calls += a.calls;
+      s.mcp += a.acts.mcp ?? 0;
+      s.searches += a.acts.search ?? 0;
+      s.entries += a.acts.entry ?? 0;
+      s.health += a.acts.health ?? 0;
+      s.reports += a.acts.report ?? 0;
+      s.submits += a.acts.submit ?? 0;
+      s.keyed += a.keyed;
+    }
+    const { count: watches } = await client.from("tool_watches").select("id", { count: "exact", head: true }).not("confirmed_at", "is", null);
+    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches ?? 0 };
+  });

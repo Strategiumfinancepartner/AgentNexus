@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyAccess } from "@/lib/registry.functions";
-import { getAudience } from "@/lib/audience.functions";
+import { getAudience, getSegments } from "@/lib/audience.functions";
 import { AppShell } from "@/components/app-shell";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -144,6 +144,9 @@ function AudiencePage() {
                 <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="entry-points">
                   Entry points
                 </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="segments">
+                  Segments
+                </TabsTrigger>
                 <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="members">
                   Members
                 </TabsTrigger>
@@ -194,6 +197,10 @@ function AudiencePage() {
                 </tbody>
               </table>
             </Section>
+              </TabsContent>
+
+              <TabsContent value="segments">
+                <SegmentsPanel />
               </TabsContent>
 
               <TabsContent value="members">
@@ -421,5 +428,40 @@ function AudiencePage() {
         )}
       </main>
     </AppShell>
+  );
+}
+
+function SegmentsPanel() {
+  const fetchSegments = useServerFn(getSegments);
+  const q = useQuery({ queryKey: ["segments"], queryFn: () => fetchSegments() });
+  if (q.isLoading) return <p className="mt-6 font-mono text-xs text-muted-foreground">Loading segments…</p>;
+  if (!q.data) return <p className="mt-6 font-mono text-xs text-destructive">Could not load segments.</p>;
+  const cols = ["Callers", "Returning (2+ days)", "Calls", "MCP", "Searches", "Entries read", "Health", "Reports", "Submits", "Keyed"] as const;
+  return (
+    <Section
+      title="Traffic by segment (30 days)"
+      hint={`Monitors and crawlers are never mixed with users. MCP calls do not reveal which tool was used. Confirmed watches: ${q.data.confirmedWatches}.`}
+    >
+      <table className="w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2">Segment</th>
+            {cols.map((c) => (
+              <th key={c} className="px-3 py-2 text-right">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {q.data.rows.map((r) => (
+            <tr key={r.segment} className="border-t border-border/40">
+              <td className="px-3 py-2">{r.label}</td>
+              {[r.callers, r.returning, r.calls, r.mcp, r.searches, r.entries, r.health, r.reports, r.submits, r.keyed].map((v, i) => (
+                <td key={i} className="px-3 py-2 text-right">{v.toLocaleString("en-US")}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Section>
   );
 }

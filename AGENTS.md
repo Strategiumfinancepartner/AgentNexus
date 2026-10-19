@@ -18,3 +18,4 @@
 
 - After every code change, mirror the project to GitHub Strategiumfinancepartner/AgentNexus with `python3 scripts/github-sync.py` (needs LOVABLE_API_KEY + GITHUB_API_KEY). Why: M8ven Live re-scores the listing from that repo on each push, and Lovable sync does not target it.
 - Per-entry agent health cards live at /api/public/health-card/<slug> (probe, transport, auth shape, schema hash, proof, last failure, retry cost). Why: agents rank servers on live evidence, not READMEs.
+- Caller segmentation (publisher > crawler > ai_agent > monitor > developer) lives in src/lib/segments.ts and feeds the Audience 'Segments' tab. Why: monitor recurrence must never be read as user retention.
