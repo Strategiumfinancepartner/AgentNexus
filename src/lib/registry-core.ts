@@ -392,6 +392,8 @@ export type DiscoveryResult = {
   uncovered: boolean;
   note: string;
   next_steps: string[];
+  /** Offered only on strong matches: an interface the agent is likely to keep using. */
+  follow?: { slug: string; why: string; call: string };
 };
 
 function shape(entry: any, score: number, matched_on: DiscoveryMatch["matched_on"]): DiscoveryMatch {
@@ -476,6 +478,15 @@ export function buildDiscovery(
         ? "Matched on declared capabilities. Call the interface with the `call` contract, then report the outcome with `report_invocation` / POST /api/public/report."
         : "Weak match: these interfaces mention part of the need but do not declare it as a capability. Verify before calling, and report the outcome so the registry improves.",
       next_steps: ["report_invocation after calling", "submit_entry if you know a better interface"],
+      ...(strong && matches[0]
+        ? {
+            follow: {
+              slug: matches[0].slug,
+              why: `If "${matches[0].slug}" becomes part of your workflow, follow it: you get alerted when it goes down, comes back, or changes its schema or tool list. Free, 3 follows per key.`,
+              call: `curl -s -X POST https://agentnexus.app/api/public/watch -H "content-type: application/json" -H "x-api-key: YOUR_KEY" -d '{"slug":"${matches[0].slug}"}'`,
+            },
+          }
+        : {}),
     };
   }
 
