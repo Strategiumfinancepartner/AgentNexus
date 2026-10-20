@@ -25,14 +25,21 @@ export type PublicCatalog = {
 export const getPublicCatalog = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicCatalog> => {
     const { PUBLIC_COLUMNS, supabaseAnon } = await import("@/lib/mcp/supabase");
-    const { data, error } = await supabaseAnon()
-      .from("entries")
-      .select(PUBLIC_COLUMNS)
-      .eq("status", "approved")
-      .order("name", { ascending: true })
-      .limit(2000);
-
-    const entries = (error ? [] : ((data ?? []) as unknown as PublicEntry[])) as PublicEntry[];
+    const client = supabaseAnon();
+    const entries: PublicEntry[] = [];
+    const pageSize = 500;
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await client.from("entries")
+        .select(PUBLIC_COLUMNS)
+        .eq("status", "approved")
+        .order("name", { ascending: true })
+        .order("slug", { ascending: true })
+        .range(from, from + pageSize - 1);
+      if (error) throw new Error(`Catalog read failed: ${error.message}`);
+      const page = (data ?? []) as unknown as PublicEntry[];
+      entries.push(...page);
+      if (page.length < pageSize) break;
+    }
     const counts = {
       all: entries.length,
       api: entries.filter((e) => e.category === "api").length,
