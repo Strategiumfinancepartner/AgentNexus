@@ -21,3 +21,4 @@
 - Caller segmentation (publisher > crawler > ai_agent > monitor > developer) lives in src/lib/segments.ts and feeds the Audience 'Segments' tab. Why: monitor recurrence must never be read as user retention.
 - Segment searches exclude catalog listing; publisher attribution requires entry ownership, and explicit probe signatures remain monitors. Why: status lookups, handshakes, and tool enumeration are not customer intent.
 - Liveness HTTP attempts have independent timeouts and outage confirmation uses GET directly. Why: a timed-out HEAD must not make a working MCP endpoint appear offline.
+- Each API key records its minting channel in api_keys.origin, guessed from the user-agent by src/lib/key-origin.ts. Why: to know which distribution channel (SDKs, npm, n8n, AI clients, site) produces keys; it is an unverified signal.

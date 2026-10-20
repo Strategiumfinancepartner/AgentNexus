@@ -91,6 +91,7 @@ export const createApiKey = createServerFn({ method: "POST" })
     const { error } = await client.from("api_keys").insert({
       user_id: context.userId,
       name: data.name,
+      origin: "site",
       key_prefix: prefix,
       key_hash: createHash("sha256").update(key).digest("hex"),
     });

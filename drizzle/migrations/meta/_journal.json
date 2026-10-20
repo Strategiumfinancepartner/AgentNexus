@@ -22,6 +22,13 @@
       "when": 1792051243902,
       "tag": "0002_watch_confirm_optin",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792528445486,
+      "tag": "0003_api_keys_origin",
+      "breakpoints": true
     }
   ]
 }

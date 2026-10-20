@@ -103,6 +103,7 @@ export const Route = createFileRoute("/api/public/keys")({
           name: parsed.data.agent?.slice(0, 60) || "autonomous agent",
           agent_label: label,
           owner_email: email,
+          origin: (await import("@/lib/key-origin")).keyOrigin(request.headers.get("user-agent")),
           key_prefix: key.slice(0, 11),
           key_hash: createHash("sha256").update(key).digest("hex"),
         });
