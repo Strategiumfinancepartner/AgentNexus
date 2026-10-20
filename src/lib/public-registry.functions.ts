@@ -30,7 +30,7 @@ export const getPublicCatalog = createServerFn({ method: "GET" }).handler(
       .select(PUBLIC_COLUMNS)
       .eq("status", "approved")
       .order("name", { ascending: true })
-      .limit(200);
+      .limit(2000);
 
     const entries = (error ? [] : ((data ?? []) as unknown as PublicEntry[])) as PublicEntry[];
     const counts = {

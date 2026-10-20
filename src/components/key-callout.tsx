@@ -2,7 +2,7 @@ import { CopyExample } from "@/components/copy-example";
 
 const CURL = `curl -s -X POST https://agentnexus.app/api/public/keys \\
   -H 'content-type: application/json' \\
-  -d '{"agent":"my-agent","purpose":"tool discovery"}'`;
+  -d '{"agent":"my-agent","purpose":"tool discovery","email":"you@example.com"}'`;
 
 /**
  * The conversion block for the "openapi.json → catalog" visitor: a developer
@@ -19,13 +19,14 @@ export function KeyCallout({ compact = false }: { compact?: boolean }) {
         Get a key in one call
       </p>
       <h2 className="mt-2 text-lg font-medium tracking-tight">
-        No account, no email, no dashboard
+        No account, no card
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
         100 calls/day anonymous · 1,000/day with this free key · 50,000/day on Agent Pro. The key is
         returned instantly in the response — send it as the <code className="font-mono">x-api-key</code>{" "}
         header on any <code className="font-mono">/api/public/*</code> request. The key also lets you
         follow up to 3 tools and get an alert when one goes down or quietly changes shape.
+        {" "}Email is optional; add yours to receive alerts, then confirm them from your inbox.
       </p>
       <div className="mt-4">
         <CopyExample command={CURL} />

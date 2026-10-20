@@ -20,3 +20,4 @@
 - Per-entry agent health cards live at /api/public/health-card/<slug> (probe, transport, auth shape, schema hash, proof, last failure, retry cost). Why: agents rank servers on live evidence, not READMEs.
 - Caller segmentation (publisher > crawler > ai_agent > monitor > developer) lives in src/lib/segments.ts and feeds the Audience 'Segments' tab. Why: monitor recurrence must never be read as user retention.
 - Segment searches exclude catalog listing; publisher attribution requires entry ownership, and explicit probe signatures remain monitors. Why: status lookups, handshakes, and tool enumeration are not customer intent.
+- Liveness HTTP attempts have independent timeouts and outage confirmation uses GET directly. Why: a timed-out HEAD must not make a working MCP endpoint appear offline.

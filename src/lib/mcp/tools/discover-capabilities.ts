@@ -67,7 +67,7 @@ export default defineTool({
       .from("entries")
       .select(PUBLIC_COLUMNS)
       .eq("status", "approved")
-      .limit(500);
+      .limit(2000);
     if (category) request = request.eq("category", category);
 
     const { data, error } = await request;

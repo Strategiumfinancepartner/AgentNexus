@@ -218,7 +218,7 @@ async function discover(
       ? {
           ...withNotice,
           free_key: {
-            why: "You are on 100 calls/day. A free key gives 1,000/day — no account, no email, 10 seconds.",
+            why: "You are on 100 calls/day. A free key gives 1,000/day — no account, no card. Email is optional; add it to receive alerts, confirmed from your inbox.",
             call: 'curl -s -X POST https://agentnexus.app/api/public/keys -H "content-type: application/json" -d \'{"agent":"my-agent"}\'',
             human_page: "https://agentnexus.app/free-key",
           },

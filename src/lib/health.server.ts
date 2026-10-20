@@ -1,4 +1,5 @@
 import { notifyWatchers } from "@/lib/watch.server";
+import { probeLivenessOnce as probeOnce } from "@/lib/liveness-probe.server";
 /** Server-only health + capability probing for registry entries. */
 
 import { hasPlaceholder, probeCapabilities } from "@/lib/capability-probe.server";
@@ -12,7 +13,6 @@ export type ProbeResult = {
   error: string | null;
 };
 
-const TIMEOUT_MS = 8000;
 
 /**
  * Only concrete http(s) endpoints are probeable. CLI entries are not network
@@ -41,49 +41,6 @@ export function isProbeable(endpoint: string): boolean {
   return true;
 }
 
-async function probeOnce(url: string): Promise<ProbeResult> {
-  const started = Date.now();
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-  const attempt = async (method: "HEAD" | "GET") =>
-    fetch(url, {
-      method,
-      redirect: "follow",
-      signal: controller.signal,
-      headers: { "user-agent": "AgentNexus-HealthCheck/1.0" },
-    });
-
-  try {
-    let response: Response;
-    try {
-      response = await attempt("HEAD");
-      if (response.status === 405 || response.status === 501) response = await attempt("GET");
-    } catch {
-      response = await attempt("GET");
-    }
-    const latency = Date.now() - started;
-    // Any answer below 500 proves the host is alive: 401/403 are correct gating,
-    // and 404/405 on a REST base path simply means no handler at the root.
-    const ok = response.status < 500;
-    return {
-      ok,
-      status_code: response.status,
-      latency_ms: latency,
-      error: ok ? null : `HTTP ${response.status}`,
-    };
-  } catch (error) {
-    return {
-      ok: false,
-      status_code: null,
-      latency_ms: Date.now() - started,
-      error: error instanceof Error ? error.message.slice(0, 200) : "Request failed",
-    };
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
 /**
  * One reported outage must mean a real outage. A single timeout or a one-off
  * 5xx from a busy public API flipped entries to "down" and made the registry
@@ -100,7 +57,7 @@ export async function probeEndpoint(endpoint: string): Promise<ProbeResult> {
   if (first.ok) return first;
 
   await new Promise((resolve) => setTimeout(resolve, 1500));
-  const second = await probeOnce(url);
+  const second = await probeOnce(url, "GET");
   if (second.ok) return second;
 
   return {

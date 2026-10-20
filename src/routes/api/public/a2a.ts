@@ -160,7 +160,7 @@ async function handleSend(id: unknown, params: any, version: string, contextId: 
     .from("entries")
     .select(PUBLIC_COLUMNS)
     .eq("status", "approved")
-    .limit(500);
+    .limit(2000);
 
   if (error) {
     return rpcError(id, -32003, "Registry temporarily unavailable", version);
