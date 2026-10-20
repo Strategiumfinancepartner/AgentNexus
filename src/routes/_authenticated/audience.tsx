@@ -436,11 +436,11 @@ function SegmentsPanel() {
   const q = useQuery({ queryKey: ["segments"], queryFn: () => fetchSegments() });
   if (q.isLoading) return <p className="mt-6 font-mono text-xs text-muted-foreground">Loading segments…</p>;
   if (!q.data) return <p className="mt-6 font-mono text-xs text-destructive">Could not load segments.</p>;
-  const cols = ["Callers", "Returning (2+ days)", "Calls", "MCP", "Searches", "Entries read", "Health", "Reports", "Submits", "Keyed"] as const;
+  const cols = ["Callers", "Returning (2+ days)", "Calls", "MCP", "HTTP discovery", "Catalog reads", "Entries read", "Health", "Reports", "Submission status", "Keyed"] as const;
   return (
     <Section
       title="Traffic by segment (30 days)"
-      hint={`Monitors and crawlers are never mixed with users. MCP calls do not reveal which tool was used. Confirmed watches: ${q.data.confirmedWatches}.`}
+      hint={`30-day request observations · signatures do not verify people · confirmed watches: ${q.data.confirmedWatches}.`}
     >
       <table className="w-full text-left font-mono text-xs">
         <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -455,7 +455,7 @@ function SegmentsPanel() {
           {q.data.rows.map((r) => (
             <tr key={r.segment} className="border-t border-border/40">
               <td className="px-3 py-2">{r.label}</td>
-              {[r.callers, r.returning, r.calls, r.mcp, r.searches, r.entries, r.health, r.reports, r.submits, r.keyed].map((v, i) => (
+              {[r.callers, r.returning, r.calls, r.mcp, r.searches, r.catalog, r.entries, r.health, r.reports, r.submissionStatus, r.keyed].map((v, i) => (
                 <td key={i} className="px-3 py-2 text-right">{v.toLocaleString("en-US")}</td>
               ))}
             </tr>
@@ -469,7 +469,7 @@ function SegmentsPanel() {
         <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
           <tr>
             <th className="px-3 py-2">Segment</th>
-            {["Connections", "Tool lists", "MCP searches", "Callers who searched", "Entries opened", "Other tools"].map((c) => (
+            {["Handshake calls", "Tool lists", "MCP searches", "Callers who searched", "Entries requested", "Other tools"].map((c) => (
               <th key={c} className="px-3 py-2 text-right">{c}</th>
             ))}
           </tr>

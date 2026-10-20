@@ -359,6 +359,8 @@ export type SegmentRow = {
   health: number;
   reports: number;
   submits: number;
+  catalog: number;
+  submissionStatus: number;
   keyed: number;
   mcpConnect: number;
   mcpToolsList: number;
@@ -377,13 +379,17 @@ export const getSegments = createServerFn({ method: "POST" })
     const { classifyCaller, actionOf, mcpActionOf, SEGMENT_LABELS } = await import("@/lib/segments");
     const client = supabaseAdmin as any;
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    // Actual authenticated submitters are established from entry ownership,
+    // never from visits to the public moderation-status endpoint.
+    const { data: submitted } = await client.from("entries").select("submitted_by").not("submitted_by", "is", null);
+    const publisherUsers = new Set((submitted ?? []).map((e: { submitted_by: string }) => e.submitted_by));
     type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number };
     const actors = new Map<string, Agg>();
     let firstMcpOpAt: string | null = null;
     for (let from = 0; from < 300000; from += 1000) {
       const { data } = await client
         .from("access_events")
-        .select("actor, surface, path, user_agent, api_key_id, created_at")
+        .select("actor, surface, path, user_agent, api_key_id, user_id, created_at")
         .gte("created_at", since)
         .order("created_at", { ascending: false })
         .range(from, from + 999);
@@ -392,6 +398,7 @@ export const getSegments = createServerFn({ method: "POST" })
         let a = actors.get(r.actor);
         if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0 }));
         a.surfaces.add(r.surface);
+        if (r.user_id && publisherUsers.has(r.user_id)) a.surfaces.add("submitted_entry");
         a.days.add(String(r.created_at).slice(0, 10));
         const act = actionOf(r.surface);
         a.acts[act] = (a.acts[act] ?? 0) + 1;
@@ -410,7 +417,7 @@ export const getSegments = createServerFn({ method: "POST" })
       const seg = classifyCaller(a.ua, a.surfaces);
       let s = out.get(seg);
       if (!s)
-        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, keyed: 0, mcpConnect: 0, mcpToolsList: 0, mcpSearches: 0, mcpEntries: 0, mcpOtherTools: 0, mcpSearchers: 0 }));
+        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, catalog: 0, submissionStatus: 0, keyed: 0, mcpConnect: 0, mcpToolsList: 0, mcpSearches: 0, mcpEntries: 0, mcpOtherTools: 0, mcpSearchers: 0 }));
       s.callers++;
       if (a.days.size >= 2) s.returning++;
       s.calls += a.calls;
@@ -420,6 +427,8 @@ export const getSegments = createServerFn({ method: "POST" })
       s.health += a.acts["health"] ?? 0;
       s.reports += a.acts["report"] ?? 0;
       s.submits += a.acts["submit"] ?? 0;
+      s.catalog += a.acts["catalog"] ?? 0;
+      s.submissionStatus += a.acts["submission_status"] ?? 0;
       s.keyed += a.keyed;
       s.mcpConnect += a.acts["mcp_connect"] ?? 0;
       s.mcpToolsList += a.acts["mcp_tools_list"] ?? 0;

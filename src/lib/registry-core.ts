@@ -266,16 +266,39 @@ export function needBaseTokens(need: string): string[] {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .split(/[^a-z0-9+]+/)
-    .filter((t) => (t.length > 2 || /\d/.test(t)) && !STOPWORDS.has(t));
+    .filter((t) => (t.length > 2 || t === "ai" || /\d/.test(t)) && !STOPWORDS.has(t));
 }
 
 export function needTokens(need: string): string[] {
   const base = needBaseTokens(need);
   const out = new Set(base);
+  const explicit3d = base.some((t) => ["3d", "mesh", "stl", "maillage"].includes(t));
   for (const token of base) {
+    if (["model", "models", "modele", "modeles"].includes(token) && !explicit3d) continue;
     for (const synonym of SYNONYMS[token] ?? []) out.add(synonym);
   }
   return [...out];
+}
+
+/** Domain words must describe the service, not its incidental payment method.
+ * Keep this shared by HTTP, MCP and A2A discovery. */
+function discoveryDomain(need: string): "currency" | "llm" | null {
+  const words = need.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const currencies = words.match(/\b(?:usd|eur|gbp|jpy|chf|cad|aud|cny|inr)\b/g) ?? [];
+  if (new Set(currencies).size >= 2 || /\b(?:currency|currencies|forex|fx|devises)\b|exchange rates?|taux de change/.test(words)) return "currency";
+  if (!/\b(?:3d|mesh|stl)\b/.test(words) && /\bllms?\b|\bai models?\b|large language models?/.test(words)) return "llm";
+  return null;
+}
+
+function eligibleForDomain(entry: MatchSource, domain: ReturnType<typeof discoveryDomain>): boolean {
+  if (!domain) return true;
+  const capabilities = (entry.capabilities ?? []).join(" ").toLowerCase().replace(/[_-]/g, " ");
+  const description = `${entry.name} ${entry.summary} ${entry.description ?? ""}`.toLowerCase();
+  if (domain === "currency") return /convert currency|currency conversion|exchange rates?|historical fx|forex/.test(capabilities);
+  // Some submitters tag pricing calculators as generic "AI inference".
+  // Actual chat/embedding tools are stronger evidence than these broad tags.
+  return /chat completions?|text embeddings?|tool use|vision chat|code completion/.test(capabilities)
+    || (/\bchat\b/.test(capabilities) && /deepseek|language model|llm|claude|openai|mistral/.test(description));
 }
 
 
@@ -459,8 +482,10 @@ export function buildDiscovery(
   const { need, tokens } = options;
   const minReliability = options.minReliability ?? 0;
   const limit = options.limit ?? 5;
+  const domain = discoveryDomain(need);
 
   const scored = rows
+    .filter((entry) => eligibleForDomain(entry, domain))
     .map((entry) => ({ entry, score: matchScore(entry, tokens), rel: reliability(entry) }))
     .filter(({ score, rel }) => score > 0 && (rel.score ?? 0) >= minReliability)
     .sort((a, b) => b.score - a.score || (b.rel.score ?? 0) - (a.rel.score ?? 0));

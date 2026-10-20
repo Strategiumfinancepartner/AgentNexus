@@ -20,22 +20,25 @@ const MONITOR =
   /(bot|probe|monitor|health|collector|index|observatory|scanner|rating|trust|watch|verif|engine|oracle|sentinel|mcpbeat|clono|glimind|aidoing|registry|postman|checker|scoring|evidence|bureau|ledger|intelligence|network|gateway)/i;
 
 export function classifyCaller(userAgent: string, surfaces: Iterable<string>): Segment {
-  for (const s of surfaces) if (s === "submission") return "publisher";
+  // Status lookups are public reads, not proof of having submitted an entry.
+  for (const s of surfaces) if (s === "submitted_entry") return "publisher";
   const ua = userAgent ?? "";
   if (CRAWLER.test(ua)) return "crawler";
+  if (/(probe|scanner|health-check|healthcheck)/i.test(ua)) return "monitor";
   if (AI_AGENT.test(ua)) return "ai_agent";
   if (MONITOR.test(ua)) return "monitor";
   return "developer";
 }
 
 /** What a call was for, from its surface. MCP traffic is counted separately (tool not logged). */
-export type Action = "search" | "entry" | "health" | "report" | "submit" | "mcp" | "other";
+export type Action = "search" | "catalog" | "entry" | "health" | "report" | "submit" | "submission_status" | "mcp" | "other";
 export function actionOf(surface: string): Action {
-  if (surface === "discover" || surface === "registry" || surface === "capabilities") return "search";
+  if (surface === "discover") return "search";
+  if (surface === "registry" || surface === "capabilities") return "catalog";
   if (surface === "registry.entry" || surface === "entries.ndjson") return "entry";
   if (surface === "status" || surface.startsWith("health-card") || surface.startsWith("is-down")) return "health";
   if (surface === "report") return "report";
-  if (surface === "submission") return "submit";
+  if (surface === "submission") return "submission_status";
   if (surface === "mcp") return "mcp";
   return "other";
 }
@@ -49,7 +52,7 @@ export function mcpActionOf(path: string | null | undefined): McpAction {
   if (op === "tools/list") return "tools_list";
   if (op.startsWith("tools/call:")) {
     const tool = op.slice("tools/call:".length);
-    if (tool === "search_registry" || tool === "discover_capabilities" || tool === "list_entries" || tool === "list_categories") return "search";
+    if (tool === "search_registry" || tool === "discover_capabilities") return "search";
     if (tool === "get_entry") return "entry";
     if (tool === "submit_entry") return "submit";
     return "other_tool";

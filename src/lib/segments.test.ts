@@ -3,7 +3,7 @@ import { actionOf, classifyCaller, mcpActionOf } from "./segments";
 
 describe("classifyCaller", () => {
   it("a caller who submitted is a publisher, whatever its signature", () => {
-    expect(classifyCaller("Agent-Revenue-Network/1.2.7", ["mcp", "submission"])).toBe("publisher");
+    expect(classifyCaller("Agent-Revenue-Network/1.2.7", ["mcp", "submitted_entry"])).toBe("publisher");
   });
   it("Amazonbot and Barkrowler are crawlers", () => {
     expect(classifyCaller("Mozilla/5.0 (compatible; Amazonbot/0.1)", ["registry.entry"])).toBe("crawler");
@@ -28,6 +28,17 @@ describe("classifyCaller", () => {
 });
 
 describe("actionOf", () => {
+  it("a moderation-status lookup is not a submission or publisher proof", () => {
+    expect(actionOf("submission")).toBe("submission_status");
+    expect(classifyCaller("curl/8.5.0", ["submission"])).toBe("developer");
+  });
+  it("catalog reads are not searches", () => {
+    expect(actionOf("registry")).toBe("catalog");
+    expect(actionOf("capabilities")).toBe("catalog");
+  });
+  it("an explicitly named Copilot probe is a monitor", () => {
+    expect(classifyCaller("mcpforcopilot-probe/0.1", ["mcp"])).toBe("monitor");
+  });
   it("maps surfaces to actions", () => {
     expect(actionOf("discover")).toBe("search");
     expect(actionOf("registry.entry")).toBe("entry");
@@ -37,6 +48,10 @@ describe("actionOf", () => {
 });
 
 describe("mcpActionOf", () => {
+  it("listing entries and categories does not prove a search", () => {
+    expect(mcpActionOf("/mcp#tools/call:list_entries")).toBe("other_tool");
+    expect(mcpActionOf("/mcp#tools/call:list_categories")).toBe("other_tool");
+  });
   it("a connection is not a search", () => {
     expect(mcpActionOf("/mcp#initialize")).toBe("connect");
     expect(mcpActionOf("/mcp#tools/list")).toBe("tools_list");
