@@ -11,6 +11,8 @@
 
 ## Architecture
 
+- Pinned publisher data-quality checks run every hourly probe cycle independently of catalog rotation, persist their evidence in schema_detail, and feed confirmed watches with freshness and volume transitions. Why: an HTTP 200 does not establish that the returned data is current or complete.
+
 - Subscription purchase intents persist in same-origin session storage with an expiry and return through public auth after session hydration to a validated pricing plan; checkout revalidates the account and returns to key onboarding. Why: OAuth callbacks can lose query parameters or finish session hydration after the page mounts.
 
 - Schema validation is a third probe layer (liveness → capability → schema) in `src/lib/schema-probe.server.ts`, keyed by entry slug in `SCHEMA_PROFILES`; only pinned entries (AI APIs first) are shape-checked. Why: a 200 that parses but misses a required field is the failure agents hit hardest, and error envelopes are the honest contract verifiable without provider keys.

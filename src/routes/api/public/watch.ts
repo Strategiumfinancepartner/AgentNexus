@@ -96,7 +96,7 @@ export const Route = createFileRoute("/api/public/watch")({
         const admin = supabaseAdmin as any;
         const { data: entry } = await admin
           .from("entries")
-          .select("id, slug, name, health_ok, schema_ok, discovered_tools")
+          .select("id, slug, name, health_ok, schema_ok, schema_detail, discovered_tools")
           .eq("slug", slug.toLowerCase())
           .eq("status", "approved")
           .maybeSingle();
@@ -110,7 +110,8 @@ export const Route = createFileRoute("/api/public/watch")({
           return json({ error: `You already follow ${limit} tools, the limit of your plan.`, upgrade: "https://agentnexus.app/pricing" }, 402);
         }
 
-        const state = await watchState({ up: entry.health_ok, schema_ok: entry.schema_ok, tools: entry.discovered_tools });
+        const { readDataQuality } = await import("@/lib/data-quality");
+        const state = await watchState({ up: entry.health_ok, schema_ok: entry.schema_ok, tools: entry.discovered_tools, ...readDataQuality(entry.schema_detail) });
         const { data: existing } = await admin
           .from("tool_watches")
           .select("id, confirmed_at")

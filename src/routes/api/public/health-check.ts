@@ -19,6 +19,8 @@ export const Route = createFileRoute("/api/public/health-check")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const summary = await runHealthChecks(supabaseAdmin as never, 40);
+        const { runDataQualityChecks } = await import("@/lib/data-quality.server");
+        const dataQuality = await runDataQualityChecks(supabaseAdmin as never);
 
         // Publisher plan benefits are reconciled right after the probes, so a
         // new subscriber is featured/verified within one cycle and a lapsed one
@@ -31,7 +33,7 @@ export const Route = createFileRoute("/api/public/health-check")({
           console.error("publisher entitlement sync failed", error);
         }
 
-        return new Response(JSON.stringify({ success: true, ...summary, entitlements }), {
+        return new Response(JSON.stringify({ success: true, ...summary, entitlements, data_quality: dataQuality }), {
           headers: jsonHeaders,
         });
       },

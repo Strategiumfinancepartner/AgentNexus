@@ -17,11 +17,13 @@ export type WatchSnapshot = {
   up: boolean | null;
   schema_ok: boolean | null;
   tools: unknown;
+  fresh?: boolean | null;
+  volume?: boolean | null;
 };
 
 export async function watchState(s: WatchSnapshot): Promise<string> {
   const tools = Array.isArray(s.tools) && s.tools.length ? await sha(JSON.stringify(s.tools)) : "-";
-  return `up=${s.up ?? "?"};schema=${s.schema_ok ?? "?"};tools=${tools}`;
+  return `up=${s.up ?? "?"};schema=${s.schema_ok ?? "?"};tools=${tools}${s.fresh !== undefined ? `;fresh=${s.fresh ?? "?"};volume=${s.volume ?? "?"}` : ""}`;
 }
 
 function describeChange(prev: string, next: string): string[] {
@@ -32,6 +34,10 @@ function describeChange(prev: string, next: string): string[] {
   if (p.schema !== n.schema)
     out.push(n.schema === "true" ? "response shape matches its contract again" : n.schema === "false" ? "response shape no longer matches its documented contract" : "schema check unavailable");
   if (p.tools !== n.tools) out.push("advertised tool list changed (names, descriptions or input schemas)");
+  if (p.fresh !== n.fresh && n.fresh === "false") out.push("data is older than 6 hours");
+  if (p.fresh === "false" && n.fresh === "true") out.push("data freshness recovered (within 6 hours)");
+  if (p.volume !== n.volume && n.volume === "false") out.push("live offers fell below 100,000");
+  if (p.volume === "false" && n.volume === "true") out.push("live offers recovered to at least 100,000");
   return out;
 }
 
@@ -58,6 +64,10 @@ export async function notifyWatchers(
         continue;
       }
       const changes = describeChange(w.last_state, state);
+      if (!changes.length) {
+        await admin.from("tool_watches").update({ last_state: state }).eq("id", w.id);
+        continue;
+      }
       const payload = {
         event: "tool.changed",
         slug: entry.slug,

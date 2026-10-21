@@ -4,6 +4,7 @@ import { probeLivenessOnce as probeOnce } from "@/lib/liveness-probe.server";
 
 import { hasPlaceholder, probeCapabilities } from "@/lib/capability-probe.server";
 import { SCHEMA_PROFILES, runSchemaProbe, type SchemaProbe } from "@/lib/schema-probe.server";
+import { readDataQuality } from "./data-quality";
 
 
 export type ProbeResult = {
@@ -181,7 +182,7 @@ export async function runHealthChecks(
 }> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, discovered_tools")
+    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, discovered_tools")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -309,6 +310,7 @@ export async function runHealthChecks(
         up: result.ok,
         schema_ok: schema ? schema.ok : r.schema_ok ?? null,
         tools: capability.probeable && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
+        ...readDataQuality(r.schema_detail),
       });
     }
   }
