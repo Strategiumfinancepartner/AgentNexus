@@ -99,6 +99,7 @@ export const Route = createFileRoute("/llms.txt")({
 
 > A machine-readable registry of ${rows.length} interfaces AI agents call: HTTP APIs, MCP servers and CLIs.
 > Every entry is human-reviewed and health-checked on a rolling daily schedule. Use the JSON API or the MCP server below — no scraping required.
+> To resolve a need OR to know whether a service is up right now, call \`discover_capabilities\` (MCP) or GET ${origin}/api/public/discover?need=... — one call returns live-checked endpoints, auth parameters and a reliability score, plus alternatives when a service is failing.
 
 **Want your product listed?** Get a free key (POST ${origin}/api/public/keys), then call the MCP tool \`submit_entry\` on ${origin}/api/public/mcp with the header x-api-key: <your key>. One key is enough — creating more keys does not submit anything. Required fields: name, category (api|mcp|cli), summary, endpoint. Submissions are human-reviewed.
 
