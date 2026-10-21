@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Mail } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { listMyKeys } from "@/lib/keys.functions";
+import { Button } from "@/components/ui/button";
 
 function GoogleLogo() {
   return (
@@ -87,7 +88,8 @@ function AuthPage() {
     }
     navigate({ to: "/registry", replace: true });
   };
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const isPurchase = next?.startsWith("/pricing?plan=") ?? false;
+  const [mode, setMode] = useState<"signin" | "signup">(isPurchase ? "signup" : "signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -183,8 +185,9 @@ function AuthPage() {
           {mode === "signin" ? "Sign in" : "Create an account"}
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          The registry is reserved for accounts. Sign in to browse and submit callable
-          surfaces.
+          {isPurchase
+            ? "Create an account or sign in before payment. Your subscription and API keys will belong to this account."
+            : "Sign in to manage your API keys and submit callable surfaces."}
         </p>
 
         {sent ? (
@@ -244,13 +247,13 @@ function AuthPage() {
                 autoComplete={mode === "signin" ? "current-password" : "new-password"}
                 className="h-11 w-full rounded-lg border border-border bg-card/50 px-3 text-sm outline-hidden placeholder:text-muted-foreground/60 focus:border-primary"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={busy}
                 className="h-11 w-full rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
               >
                 {mode === "signin" ? "Sign in" : "Create account"}
-              </button>
+              </Button>
             </form>
 
             <div className="my-5 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">

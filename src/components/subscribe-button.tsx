@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
+import { Button } from "@/components/ui/button";
+import { purchaseReturnPath } from "@/lib/purchase-intent";
 
-type Props = { priceId: string; label: string };
+type Props = { priceId: string; label: string; resume?: boolean };
 
 /** Which product each price belongs to, so we can recognise the current plan. */
 const productOfPrice: Record<string, string> = {
@@ -13,17 +15,20 @@ const productOfPrice: Record<string, string> = {
 };
 
 /** Opens checkout for a signed-in user; sends anyone else to sign in first. */
-export function SubscribeButton({ priceId, label }: Props) {
+export function SubscribeButton({ priceId, label, resume = false }: Props) {
   const navigate = useNavigate();
   const { openCheckout, loading } = usePaddleCheckout();
   const [user, setUser] = useState<{ id: string; email?: string | undefined } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentProduct, setCurrentProduct] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+  const resumed = useRef(false);
 
   useEffect(() => {
     let alive = true;
     (async () => {
       const { data } = await supabase.auth.getUser();
+      if (alive) setReady(true);
       if (!alive || !data.user) return;
       setUser({ id: data.user.id, email: data.user.email ?? undefined });
 
@@ -54,21 +59,30 @@ export function SubscribeButton({ priceId, label }: Props) {
 
   const start = async () => {
     setError(null);
-    if (!user) {
-      navigate({ to: "/auth", search: { next: "/pricing" } });
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) {
+      navigate({ to: "/auth", search: { next: purchaseReturnPath(priceId) } });
       return;
     }
     try {
       await openCheckout({
         priceId,
-        customerEmail: user.email,
-        customData: { userId: user.id },
-        successUrl: `${window.location.origin}/pricing?checkout=success`,
+        customerEmail: data.user.email,
+        customData: { userId: data.user.id },
+        successUrl: `${window.location.origin}/keys?welcome=1`,
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Checkout could not be opened.");
     }
   };
+
+  useEffect(() => {
+    if (!resume || !ready || resumed.current) return;
+    resumed.current = true;
+    void start();
+    // A purchase intent is resumed once; failures remain retryable via the button.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resume, ready]);
 
   if (isCurrent) {
     return (
@@ -80,13 +94,15 @@ export function SubscribeButton({ priceId, label }: Props) {
 
   return (
     <div className="mt-6">
-      <button
+      <Button
+        variant="link"
         onClick={start}
-        disabled={loading}
-        className="font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70 disabled:opacity-40"
+        disabled={loading || !ready}
+        className="h-auto whitespace-normal px-0 font-mono text-[11px] uppercase tracking-widest"
       >
         {loading ? "Opening…" : `${isSwitch ? "Switch to this plan" : label} →`}
-      </button>
+      </Button>
+      {user?.email && <p className="mt-2 break-all text-[11px] text-muted-foreground">Account: {user.email}</p>}
       {error && (
         <p role="alert" className="mt-2 text-[11px] text-destructive">
           {error}

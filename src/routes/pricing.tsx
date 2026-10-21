@@ -2,8 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { SubscribeButton } from "@/components/subscribe-button";
 import { ManageSubscription } from "@/components/manage-subscription";
+import { purchasePrice } from "@/lib/purchase-intent";
 
 export const Route = createFileRoute("/pricing")({
+  validateSearch: (s: Record<string, unknown>) => ({ plan: purchasePrice(s["plan"]) }),
   head: () => ({
     meta: [
       { title: "Pricing — Agent Nexus (agentnexus.app)" },
@@ -76,6 +78,7 @@ const plans = [
 
 
 function PricingPage() {
+  const { plan: selectedPlan } = Route.useSearch();
   return (
     <div className="min-h-screen bg-background text-foreground">
       <PaymentTestModeBanner />
@@ -135,7 +138,12 @@ function PricingPage() {
                 ))}
               </ul>
               {"priceId" in plan && plan.priceId ? (
-                <SubscribeButton priceId={plan.priceId} label="Subscribe" />
+                <>
+                  <SubscribeButton priceId={plan.priceId} label="Subscribe" resume={selectedPlan === plan.priceId} />
+                  <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                    Account required. {plan.price} charged today, then monthly. Cancel anytime.
+                  </p>
+                </>
               ) : (
                 <Link
                   to={plan.cta.to}

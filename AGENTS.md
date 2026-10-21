@@ -11,6 +11,8 @@
 
 ## Architecture
 
+- Subscription purchase intents return through the public auth page to a validated pricing plan; checkout revalidates the account and uses its ID, then returns to key onboarding. Why: payments must never be detached from the account or lose the chosen plan during signup.
+
 - Schema validation is a third probe layer (liveness → capability → schema) in `src/lib/schema-probe.server.ts`, keyed by entry slug in `SCHEMA_PROFILES`; only pinned entries (AI APIs first) are shape-checked. Why: a 200 that parses but misses a required field is the failure agents hit hardest, and error envelopes are the honest contract verifiable without provider keys.
 - The site root accepts MCP JSON-RPC POSTs through the anonymous MCP handler as a compatibility fallback. Why: some directory checkers test the website URL instead of the declared endpoint.
 - Agent-key submissions are limited to 1 per key AND 1 per source address per 24h (src/lib/mcp/agent-submit.server.ts). Why: one operator minted 15 keys in 20h to bypass the per-key limit.
