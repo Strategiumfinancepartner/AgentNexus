@@ -1,15 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { listMyKeys, createApiKey, revokeApiKey } from "@/lib/keys.functions";
 import { getMyAccess } from "@/lib/registry.functions";
+import { checkoutSyncState } from "@/lib/checkout-sync";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/keys")({
-  validateSearch: (s: Record<string, unknown>): { welcome?: 1 } =>
-    s["welcome"] === 1 || s["welcome"] === "1" ? { welcome: 1 } : {},
+  validateSearch: (s: Record<string, unknown>): { welcome?: 1; checkout?: "success" } => ({
+    ...(s["welcome"] === 1 || s["welcome"] === "1" ? { welcome: 1 as const } : {}),
+    ...(s["checkout"] === "success" ? { checkout: "success" as const } : {}),
+  }),
   head: () => ({
     meta: [
       { title: "API keys — Agent Nexus (agentnexus.app)" },
@@ -33,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/keys")({
 
 function KeysPage() {
   const queryClient = useQueryClient();
-  const { welcome } = Route.useSearch();
+  const { welcome, checkout } = Route.useSearch();
   const fetchKeys = useServerFn(listMyKeys);
   const fetchAccess = useServerFn(getMyAccess);
   const create = useServerFn(createApiKey);
@@ -68,9 +72,24 @@ function KeysPage() {
 
   const active = (data?.keys ?? []).filter((k) => !k.revoked_at);
   const quota = data?.quota;
+  const [syncElapsed, setSyncElapsed] = useState(0);
+  const syncState = checkoutSyncState(checkout === "success", quota?.tier, syncElapsed);
+  const awaitingPayment = syncState !== "ready";
+
+  useEffect(() => {
+    if (syncState !== "pending") return;
+    void queryClient.invalidateQueries({ queryKey: ["api-keys"] });
+    void queryClient.invalidateQueries({ queryKey: ["access"] });
+    const interval = setInterval(() => {
+      setSyncElapsed((elapsed) => elapsed + 2_000);
+      void queryClient.invalidateQueries({ queryKey: ["api-keys"] });
+      void queryClient.invalidateQueries({ queryKey: ["access"] });
+    }, 2_000);
+    return () => clearInterval(interval);
+  }, [syncState, queryClient]);
 
   return (
-    <AppShell hasSubscription={access.data?.hasSubscription ?? false}>
+    <AppShell hasSubscription={awaitingPayment || quota?.tier === "pro" || (access.data?.hasSubscription ?? false)}>
       <main className="pt-12 pb-24">
         <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-primary">Access</p>
         <h1 className="mt-4 text-3xl font-medium tracking-tight">API keys</h1>
@@ -89,7 +108,20 @@ function KeysPage() {
           upgrade.
         </p>
 
-        {quota && (
+        {awaitingPayment && (
+          <div role="status" className="mt-8 border-y border-border py-5 text-sm text-muted-foreground">
+            {syncState === "pending"
+              ? "Confirming your subscription…"
+              : "Subscription confirmation is taking longer than expected."}
+            {syncState === "delayed" && (
+              <Button variant="outline" className="ml-3" onClick={() => setSyncElapsed(0)}>
+                Check again
+              </Button>
+            )}
+          </div>
+        )}
+
+        {quota && !awaitingPayment && (
           <div className="mt-8 flex flex-wrap gap-8 border-y border-border/60 py-5 font-mono text-[11px] uppercase tracking-widest">
             <span>
               <span className="text-muted-foreground">tier</span>{" "}
@@ -105,7 +137,7 @@ function KeysPage() {
           </div>
         )}
 
-        {welcome && quota && active.length === 0 && !freshKey && (
+        {welcome && quota && !awaitingPayment && active.length === 0 && !freshKey && (
           <div className="mt-8 rounded-xl border border-primary/40 bg-primary/[0.05] p-5">
             <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
               Welcome — one last step
@@ -142,7 +174,7 @@ function KeysPage() {
             />
             <button
               type="submit"
-              disabled={createMutation.isPending}
+              disabled={createMutation.isPending || awaitingPayment}
               className="font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70 disabled:opacity-40"
             >
               {createMutation.isPending ? "Creating…" : "Create key →"}

@@ -74,7 +74,7 @@ export function SubscribeButton({ priceId, label, resume = false }: Props) {
         priceId,
         customerEmail: data.user.email,
         customData: { userId: data.user.id },
-        successUrl: `${window.location.origin}/keys?welcome=1`,
+        successUrl: `${window.location.origin}/keys?welcome=1&checkout=success`,
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Checkout could not be opened.");

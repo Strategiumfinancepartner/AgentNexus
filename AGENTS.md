@@ -11,6 +11,8 @@
 
 ## Architecture
 
+- Paid checkout returns explicitly request bounded refreshes of server-confirmed access and key quotas before showing onboarding; return parameters never grant access. Why: payment notifications may arrive after the first cached Free read.
+
 - Pinned publisher data-quality checks run every hourly probe cycle independently of catalog rotation, persist their evidence in schema_detail, and feed confirmed watches with freshness and volume transitions. Why: an HTTP 200 does not establish that the returned data is current or complete.
 
 - Subscription purchase intents persist in same-origin session storage with an expiry and return through public auth after session hydration to a validated pricing plan; checkout revalidates the account and returns to key onboarding. Why: OAuth callbacks can lose query parameters or finish session hydration after the page mounts.
