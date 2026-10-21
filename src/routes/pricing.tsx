@@ -122,7 +122,7 @@ function PricingPage() {
           {plans.map((plan) => (
             <section
               key={plan.name}
-              className={`rounded-2xl border p-5 ${
+              className={`flex flex-col rounded-2xl border p-5 ${
                 plan.highlight ? "border-primary/40 bg-primary/[0.04]" : "border-border"
               }`}
             >
@@ -143,21 +143,18 @@ function PricingPage() {
                   </li>
                 ))}
               </ul>
-              {"priceId" in plan && plan.priceId ? (
-                <>
+              <div className="mt-auto">
+                {"priceId" in plan && plan.priceId ? (
                   <SubscribeButton priceId={plan.priceId} label="Subscribe" resume={selectedPlan === plan.priceId} />
-                  <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-                    Account required. {plan.price} charged today, then monthly. Cancel anytime.
-                  </p>
-                </>
-              ) : (
-                <Link
-                  to={plan.cta.to}
-                  className="mt-6 inline-block font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70"
-                >
-                  {plan.cta.label} →
-                </Link>
-              )}
+                ) : (
+                  <Link
+                    to={plan.cta.to}
+                    className="mt-6 inline-block font-mono text-[11px] uppercase tracking-widest text-primary transition-opacity hover:opacity-70"
+                  >
+                    {plan.cta.label} →
+                  </Link>
+                )}
+              </div>
             </section>
           ))}
         </div>
