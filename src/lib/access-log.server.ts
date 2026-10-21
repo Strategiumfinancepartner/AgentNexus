@@ -30,6 +30,8 @@ const EXACT: Record<string, string> = {
   "/api/public/submission": "submission",
   "/api/public/report": "report",
   "/api/public/ingest": "ingest",
+  "/api/public/a2a": "a2a",
+  "/api/public/watch": "watch",
 };
 
 /** Maps a request path to a loggable surface name, or null to skip logging. */
@@ -38,6 +40,7 @@ export function surfaceFor(pathname: string): string | null {
   if (EXACT[path]) return EXACT[path];
   if (path.startsWith("/mcp/")) return "mcp";
   if (path.startsWith("/api/public/registry/")) return "registry.entry";
+  if (path.startsWith("/api/public/health-card/")) return "health-card";
   if (path.startsWith("/.well-known/")) return `well-known${path.slice("/.well-known".length)}`;
   return null;
 }

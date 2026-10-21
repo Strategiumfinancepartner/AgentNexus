@@ -47,7 +47,10 @@ const accessLogMiddleware = createMiddleware().server(async (ctx: any) => {
   if (request) {
     try {
       const { surfaceFor } = await import("./lib/access-log.server");
-      surface = surfaceFor(new URL(request.url).pathname);
+      const pathname = new URL(request.url).pathname;
+      // The site root accepts MCP JSON-RPC POSTs (compatibility fallback):
+      // log them as MCP so keyed calls there reach the journal too.
+      surface = request.method === "POST" && (pathname === "/" || pathname === "") ? "mcp" : surfaceFor(pathname);
     } catch {
       surface = null;
     }
