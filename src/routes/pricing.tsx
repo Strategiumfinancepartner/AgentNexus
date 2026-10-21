@@ -2,10 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { SubscribeButton } from "@/components/subscribe-button";
 import { ManageSubscription } from "@/components/manage-subscription";
-import { purchasePrice } from "@/lib/purchase-intent";
+import { purchasePrice, type PurchasePrice } from "@/lib/purchase-intent";
 
 export const Route = createFileRoute("/pricing")({
-  validateSearch: (s: Record<string, unknown>) => ({ plan: purchasePrice(s["plan"]) }),
+  validateSearch: (s: Record<string, unknown>): { plan?: PurchasePrice } => {
+    const plan = purchasePrice(s["plan"]);
+    return plan ? { plan } : {};
+  },
   head: () => ({
     meta: [
       { title: "Pricing — Agent Nexus (agentnexus.app)" },

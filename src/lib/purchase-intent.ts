@@ -11,7 +11,7 @@ export function purchaseReturnPath(price: string): string {
   return `/pricing?plan=${valid}`;
 }
 
-export function purchaseIdentity(user: { id: string; email?: string } | null) {
+export function purchaseIdentity(user: { id: string; email?: string | undefined } | null) {
   if (!user?.id) throw new Error("Sign in or create an account before subscribing.");
   return { customerEmail: user.email, customData: { userId: user.id } };
 }

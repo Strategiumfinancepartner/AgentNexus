@@ -28,8 +28,8 @@ export function SubscribeButton({ priceId, label, resume = false }: Props) {
     let alive = true;
     (async () => {
       const { data } = await supabase.auth.getUser();
-      if (alive) setReady(true);
-      if (!alive || !data.user) return;
+      if (!alive) return;
+      if (!data.user) { setReady(true); return; }
       setUser({ id: data.user.id, email: data.user.email ?? undefined });
 
       // An active plan changes the call to action: no double-buying the same plan.
@@ -41,7 +41,9 @@ export function SubscribeButton({ priceId, label, resume = false }: Props) {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      if (!alive || !row) return;
+      if (!alive) return;
+      setReady(true);
+      if (!row) return;
       const live =
         ["active", "trialing", "past_due"].includes(row.status) ||
         (row.status === "canceled" &&
@@ -58,6 +60,7 @@ export function SubscribeButton({ priceId, label, resume = false }: Props) {
   const isSwitch = !!currentProduct && !isCurrent;
 
   const start = async () => {
+    if (isCurrent) return;
     setError(null);
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
@@ -77,12 +80,12 @@ export function SubscribeButton({ priceId, label, resume = false }: Props) {
   };
 
   useEffect(() => {
-    if (!resume || !ready || resumed.current) return;
+    if (!resume || !ready || isCurrent || resumed.current) return;
     resumed.current = true;
     void start();
     // A purchase intent is resumed once; failures remain retryable via the button.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resume, ready]);
+  }, [resume, ready, isCurrent]);
 
   if (isCurrent) {
     return (
