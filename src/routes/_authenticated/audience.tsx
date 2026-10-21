@@ -486,6 +486,29 @@ function SegmentsPanel() {
         </tbody>
       </table>
       <div className="border-t border-border/60 bg-card/40 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        HTTP actions — 30 days · direct web/API calls outside MCP
+      </div>
+      <table className="w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr>
+            <th className="px-3 py-2">Segment</th>
+            {["HTTP calls", "HTTP callers", "Searches", "Callers who searched", "Entries opened", "Callers who opened", "Health checks", "Catalog reads"].map((c) => (
+              <th key={c} className="px-3 py-2 text-right">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {q.data.rows.map((r) => (
+            <tr key={r.segment} className="border-t border-border/40">
+              <td className="px-3 py-2">{r.label}</td>
+              {[r.http, r.httpCallers, r.searches, r.httpSearchers, r.entries, r.httpEntryOpeners, r.health, r.catalog].map((v, i) => (
+                <td key={i} className="px-3 py-2 text-right">{v.toLocaleString("en-US")}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="border-t border-border/60 bg-card/40 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
         Watched entries — {q.data.watches.filter((w) => w.active).length} active of {q.data.watches.length} · email watches need confirmation before any alert
       </div>
       <table className="w-full text-left font-mono text-xs">

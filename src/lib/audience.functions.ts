@@ -381,6 +381,10 @@ export type SegmentRow = {
   mcpEntries: number;
   mcpOtherTools: number;
   mcpSearchers: number;
+  http: number;
+  httpCallers: number;
+  httpSearchers: number;
+  httpEntryOpeners: number;
 };
 
 /** Reviewer-only: 30-day traffic split by caller segment (monitors never mixed with users). */
@@ -430,7 +434,7 @@ export const getSegments = createServerFn({ method: "POST" })
       const seg = classifyCaller(a.ua, a.surfaces);
       let s = out.get(seg);
       if (!s)
-        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, catalog: 0, submissionStatus: 0, keyed: 0, mcpConnect: 0, mcpToolsList: 0, mcpSearches: 0, mcpEntries: 0, mcpOtherTools: 0, mcpSearchers: 0 }));
+        out.set(seg, (s = { segment: seg, label: SEGMENT_LABELS[seg], callers: 0, returning: 0, calls: 0, mcp: 0, searches: 0, entries: 0, health: 0, reports: 0, submits: 0, catalog: 0, submissionStatus: 0, keyed: 0, mcpConnect: 0, mcpToolsList: 0, mcpSearches: 0, mcpEntries: 0, mcpOtherTools: 0, mcpSearchers: 0, http: 0, httpCallers: 0, httpSearchers: 0, httpEntryOpeners: 0 }));
       s.callers++;
       if (a.days.size >= 2) s.returning++;
       s.calls += a.calls;
@@ -449,6 +453,11 @@ export const getSegments = createServerFn({ method: "POST" })
       s.mcpEntries += a.acts["mcp_entry"] ?? 0;
       s.mcpOtherTools += (a.acts["mcp_other_tool"] ?? 0) + (a.acts["mcp_submit"] ?? 0);
       if ((a.acts["mcp_search"] ?? 0) > 0) s.mcpSearchers++;
+      const http = a.calls - (a.acts["mcp"] ?? 0);
+      s.http += http;
+      if (http > 0) s.httpCallers++;
+      if ((a.acts["search"] ?? 0) > 0) s.httpSearchers++;
+      if ((a.acts["entry"] ?? 0) > 0) s.httpEntryOpeners++;
     }
     const { data: watchRows } = await client
       .from("tool_watches")
