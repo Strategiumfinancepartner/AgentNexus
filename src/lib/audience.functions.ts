@@ -450,6 +450,23 @@ export const getSegments = createServerFn({ method: "POST" })
       s.mcpOtherTools += (a.acts["mcp_other_tool"] ?? 0) + (a.acts["mcp_submit"] ?? 0);
       if ((a.acts["mcp_search"] ?? 0) > 0) s.mcpSearchers++;
     }
-    const { count: watches } = await client.from("tool_watches").select("id", { count: "exact", head: true }).not("confirmed_at", "is", null);
-    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches ?? 0, mcpTrackingSince: firstMcpOpAt };
+    const { data: watchRows } = await client
+      .from("tool_watches")
+      .select("id, email, webhook_url, owner, confirmed_at, created_at, last_state, last_notified_at, entries(slug, name)")
+      .order("created_at", { ascending: false })
+      .limit(200);
+    const watchList = ((watchRows ?? []) as any[]).map((w) => ({
+      id: w.id as string,
+      slug: (w.entries?.slug ?? "?") as string,
+      name: (w.entries?.name ?? "?") as string,
+      channel: w.webhook_url ? "webhook" : "email",
+      recipient: (w.email ?? (w.webhook_url ? String(w.webhook_url).replace(/^https?:\/\//, "").split("/")[0] : w.owner)) as string,
+      active: !!w.confirmed_at || (!!w.webhook_url && !w.email),
+      confirmedAt: (w.confirmed_at ?? null) as string | null,
+      createdAt: w.created_at as string,
+      lastState: (w.last_state ?? null) as string | null,
+      lastNotifiedAt: (w.last_notified_at ?? null) as string | null,
+    }));
+    const watches = watchList.filter((w) => w.confirmedAt).length;
+    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches, watches: watchList, mcpTrackingSince: firstMcpOpAt };
   });

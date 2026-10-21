@@ -485,6 +485,31 @@ function SegmentsPanel() {
           ))}
         </tbody>
       </table>
+      <div className="border-t border-border/60 bg-card/40 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        Watched entries — {q.data.watches.filter((w) => w.active).length} active of {q.data.watches.length} · email watches need confirmation before any alert
+      </div>
+      <table className="w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr>
+            {["Entry", "Channel", "Recipient", "Status", "Created", "Last state", "Last alert"].map((c) => (
+              <th key={c} className="px-3 py-2">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {q.data.watches.map((w) => (
+            <tr key={w.id} className="border-t border-border/40">
+              <td className="px-3 py-2">{w.name} <span className="text-muted-foreground">({w.slug})</span></td>
+              <td className="px-3 py-2">{w.channel}</td>
+              <td className="px-3 py-2">{w.recipient}</td>
+              <td className={`px-3 py-2 ${w.active ? "text-primary" : "text-muted-foreground"}`}>{w.active ? "active" : "awaiting confirmation"}</td>
+              <td className="px-3 py-2">{w.createdAt.slice(0, 10)}</td>
+              <td className="px-3 py-2">{w.lastState ?? "—"}</td>
+              <td className="px-3 py-2">{w.lastNotifiedAt ? w.lastNotifiedAt.slice(0, 16).replace("T", " ") : "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Section>
   );
 }
