@@ -26,6 +26,7 @@ export function usePaddleCheckout() {
         customer: identity.customerEmail ? { email: identity.customerEmail } : undefined,
         customData: { ...options.customData, ...identity.customData },
         settings: {
+          locale: "en",
           displayMode: "overlay",
           successUrl: options.successUrl ?? `${window.location.origin}/pricing?checkout=success`,
           allowLogout: false,
