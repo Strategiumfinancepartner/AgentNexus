@@ -28,3 +28,4 @@
 - Segment searches exclude catalog listing; publisher attribution requires entry ownership, and explicit probe signatures remain monitors. Why: status lookups, handshakes, and tool enumeration are not customer intent.
 - Liveness HTTP attempts have independent timeouts and outage confirmation uses GET directly. Why: a timed-out HEAD must not make a working MCP endpoint appear offline.
 - Each API key records its minting channel in api_keys.origin, guessed from the user-agent by src/lib/key-origin.ts. Why: to know which distribution channel (SDKs, npm, n8n, AI clients, site) produces keys; it is an unverified signal.
+- Publisher reports (src/lib/entry-report.ts) count search appearances from entry_appearances and opens from access_events (HTTP path or MCP `get_entry?slug=`), excluding crawlers/monitors from headline numbers; visible only to the submitter or reviewers. Why: publishers pay for evidence of real agent attention, not robot traffic.
