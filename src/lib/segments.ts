@@ -12,8 +12,14 @@ export const SEGMENT_LABELS: Record<Segment, string> = {
   developer: "Developers & browsers (unverified humans)",
 };
 
+/** Our own test traffic (sandbox curl, log tests). Excluded from activation KPIs. */
+const INTERNAL_ACTORS = new Set(["ip:789e5e7a2f832ce5d6595416bfab89c4"]);
+export function isInternalCaller(actor: string, userAgent: string): boolean {
+  return INTERNAL_ACTORS.has(actor) || /^nexus-/i.test(userAgent ?? "");
+}
+
 const CRAWLER =
-  /(amazonbot|googlebot|bingbot|barkrowler|gptbot|oai-searchbot|claudebot|bytespider|petalbot|yandex|ahrefs|semrush|applebot|duckduck|baiduspider|spider|crawl|facebookexternalhit|mj12bot|dotbot)/i;
+  /(amazonbot|googlebot|googleother|google-extended|google-inspectiontool|bingbot|barkrowler|gptbot|oai-searchbot|claudebot|bytespider|petalbot|yandex|ahrefs|semrush|applebot|duckduck|baiduspider|spider|crawl|facebookexternalhit|mj12bot|dotbot)/i;
 const AI_AGENT =
   /(codex|openai-mcp|claude-user|claude-code|anthropic|zed\/|opencode|cursor|windsurf|cline|gemini|copilot|chatgpt-user|perplexity-user|continue)/i;
 const MONITOR =

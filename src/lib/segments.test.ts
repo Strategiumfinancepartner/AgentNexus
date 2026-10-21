@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { actionOf, classifyCaller, mcpActionOf } from "./segments";
+import { actionOf, classifyCaller, mcpActionOf, isInternalCaller } from "./segments";
 
 describe("classifyCaller", () => {
   it("a caller who submitted is a publisher, whatever its signature", () => {
@@ -62,5 +62,16 @@ describe("mcpActionOf", () => {
   });
   it("old calls without detail stay unknown", () => {
     expect(mcpActionOf("/mcp")).toBe("unknown");
+  });
+});
+
+describe("activation exclusions", () => {
+  it("GoogleOther is a crawler", () => {
+    expect(classifyCaller("Mozilla/5.0 (compatible; GoogleOther)", [])).toBe("crawler");
+  });
+  it("our own test traffic is internal", () => {
+    expect(isInternalCaller("ip:789e5e7a2f832ce5d6595416bfab89c4", "curl/8.14.1")).toBe(true);
+    expect(isInternalCaller("ip:x", "nexus-logtest/1")).toBe(true);
+    expect(isInternalCaller("ip:x", "meld-agent/1.0")).toBe(false);
   });
 });

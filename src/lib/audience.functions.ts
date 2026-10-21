@@ -393,7 +393,7 @@ export const getSegments = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     await assertReviewer(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { classifyCaller, actionOf, mcpActionOf, SEGMENT_LABELS } = await import("@/lib/segments");
+    const { classifyCaller, actionOf, mcpActionOf, SEGMENT_LABELS, isInternalCaller } = await import("@/lib/segments");
     const client = supabaseAdmin as any;
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     // Actual authenticated submitters are established from entry ownership,
@@ -468,9 +468,9 @@ export const getSegments = createServerFn({ method: "POST" })
       return t.toISOString().slice(0, 10);
     };
     const weekMap = new Map<string, { activated: number; repeated: number; aiAgents: number }>();
-    for (const a of actors.values()) {
+    for (const [actorId, a] of actors) {
       const seg = classifyCaller(a.ua, a.surfaces);
-      if (seg === "crawler" || seg === "monitor" || a.usefulDays.size === 0) continue;
+      if (seg === "crawler" || seg === "monitor" || a.usefulDays.size === 0 || isInternalCaller(actorId, a.ua)) continue;
       const byWeek = new Map<string, number>();
       for (const d of a.usefulDays) byWeek.set(weekOf(d), (byWeek.get(weekOf(d)) ?? 0) + 1);
       for (const [w, days] of byWeek) {
