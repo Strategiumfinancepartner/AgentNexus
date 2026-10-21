@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 import { Mail } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { listMyKeys } from "@/lib/keys.functions";
 
 function GoogleLogo() {
   return (
@@ -65,10 +67,23 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const { next } = Route.useSearch();
-  const afterAuth = () => {
+  const fetchKeys = useServerFn(listMyKeys);
+  // Every sign-in flow (password, Google/Apple/Microsoft, email link) comes back here,
+  // so an account without an active key — Free or Pro — is guided to create one first.
+  const backHere = () => `${window.location.origin}/auth${next ? `?next=${encodeURIComponent(next)}` : ""}`;
+  const afterAuth = async () => {
     if (next) {
       window.location.href = next;
       return;
+    }
+    try {
+      const { keys } = await fetchKeys();
+      if (!keys.some((k) => !k.revoked_at)) {
+        navigate({ to: "/keys", search: { welcome: 1 }, replace: true });
+        return;
+      }
+    } catch {
+      /* fall through to the registry */
     }
     navigate({ to: "/registry", replace: true });
   };
@@ -81,7 +96,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) afterAuth();
+      if (data.session) void afterAuth();
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, next]);
@@ -95,9 +110,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            emailRedirectTo: next
-              ? `${window.location.origin}${next}`
-              : window.location.origin,
+            emailRedirectTo: backHere(),
             data: { display_name: displayName || email.split("@")[0] },
           },
         });
@@ -106,11 +119,11 @@ function AuthPage() {
           setSent(true);
           return;
         }
-        afterAuth();
+        await afterAuth();
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        afterAuth();
+        await afterAuth();
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Authentication failed");
@@ -122,9 +135,7 @@ function AuthPage() {
   async function handleOAuth(provider: "google" | "apple" | "microsoft", label: string) {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: next
-        ? `${window.location.origin}${next}`
-        : window.location.origin,
+      redirect_uri: backHere(),
     });
     if (result.error) {
       setBusy(false);
@@ -132,7 +143,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    afterAuth();
+    await afterAuth();
   }
 
   async function handleMagicLink() {
@@ -145,9 +156,7 @@ function AuthPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: next
-            ? `${window.location.origin}${next}`
-            : window.location.origin,
+          emailRedirectTo: backHere(),
         },
       });
       if (error) throw error;

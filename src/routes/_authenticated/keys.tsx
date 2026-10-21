@@ -8,6 +8,8 @@ import { listMyKeys, createApiKey, revokeApiKey } from "@/lib/keys.functions";
 import { getMyAccess } from "@/lib/registry.functions";
 
 export const Route = createFileRoute("/_authenticated/keys")({
+  validateSearch: (s: Record<string, unknown>): { welcome?: 1 } =>
+    s["welcome"] === 1 || s["welcome"] === "1" ? { welcome: 1 } : {},
   head: () => ({
     meta: [
       { title: "API keys — Agent Nexus (agentnexus.app)" },
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/keys")({
 
 function KeysPage() {
   const queryClient = useQueryClient();
+  const { welcome } = Route.useSearch();
   const fetchKeys = useServerFn(listMyKeys);
   const fetchAccess = useServerFn(getMyAccess);
   const create = useServerFn(createApiKey);
@@ -99,6 +102,26 @@ function KeysPage() {
             <span>
               <span className="text-muted-foreground">resets</span> 00:00 utc
             </span>
+          </div>
+        )}
+
+        {welcome && active.length === 0 && !freshKey && (
+          <div className="mt-8 rounded-xl border border-primary/40 bg-primary/[0.05] p-5">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
+              Welcome — one last step
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              Your account is ready. Create your first key now: it raises your agents to{" "}
+              {quota?.tier === "pro" ? "50,000" : "1,000"} calls a day and lets us alert you when a
+              tool you follow breaks.
+            </p>
+            <button
+              onClick={() => createMutation.mutate("default")}
+              disabled={createMutation.isPending}
+              className="mt-4 h-10 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {createMutation.isPending ? "Creating…" : "Create my first key"}
+            </button>
           </div>
         )}
 
