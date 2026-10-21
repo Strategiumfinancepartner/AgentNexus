@@ -486,6 +486,28 @@ function SegmentsPanel() {
         </tbody>
       </table>
       <div className="border-t border-border/60 bg-card/40 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        Activated agents per week — distinct callers (robots and monitors excluded) who searched or opened an entry · repeated = on 2+ days that week
+      </div>
+      <table className="w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr>
+            {["Week (Mon)", "Activated", "Repeated", "Of which AI agents"].map((c, i) => (
+              <th key={c} className={`px-3 py-2 ${i ? "text-right" : ""}`}>{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {q.data.activation.map((w) => (
+            <tr key={w.week} className="border-t border-border/40">
+              <td className="px-3 py-2">{w.week}</td>
+              {[w.activated, w.repeated, w.aiAgents].map((v, i) => (
+                <td key={i} className="px-3 py-2 text-right">{v.toLocaleString("en-US")}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className="border-t border-border/60 bg-card/40 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
         HTTP actions — 30 days · direct web/API calls outside MCP
       </div>
       <table className="w-full text-left font-mono text-xs">

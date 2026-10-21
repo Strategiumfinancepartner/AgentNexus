@@ -400,7 +400,7 @@ export const getSegments = createServerFn({ method: "POST" })
     // never from visits to the public moderation-status endpoint.
     const { data: submitted } = await client.from("entries").select("submitted_by").not("submitted_by", "is", null);
     const publisherUsers = new Set((submitted ?? []).map((e: { submitted_by: string }) => e.submitted_by));
-    type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number };
+    type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number; usefulDays: Set<string> };
     const actors = new Map<string, Agg>();
     let firstMcpOpAt: string | null = null;
     for (let from = 0; from < 300000; from += 1000) {
@@ -413,12 +413,14 @@ export const getSegments = createServerFn({ method: "POST" })
       const rows = (data ?? []) as any[];
       for (const r of rows) {
         let a = actors.get(r.actor);
-        if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0 }));
+        if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0, usefulDays: new Set() }));
         a.surfaces.add(r.surface);
         if (r.user_id && publisherUsers.has(r.user_id)) a.surfaces.add("submitted_entry");
         a.days.add(String(r.created_at).slice(0, 10));
         const act = actionOf(r.surface);
         a.acts[act] = (a.acts[act] ?? 0) + 1;
+        const useful = act === "search" || act === "entry" || (act === "mcp" && ["search", "entry"].includes(mcpActionOf(r.path)));
+        if (useful) a.usefulDays.add(String(r.created_at).slice(0, 10));
         if (act === "mcp") {
           const m = `mcp_${mcpActionOf(r.path)}`;
           a.acts[m] = (a.acts[m] ?? 0) + 1;
@@ -459,6 +461,27 @@ export const getSegments = createServerFn({ method: "POST" })
       if ((a.acts["search"] ?? 0) > 0) s.httpSearchers++;
       if ((a.acts["entry"] ?? 0) > 0) s.httpEntryOpeners++;
     }
+    // Activated agents: distinct non-robot callers with a useful action (search or entry open), per ISO week.
+    const weekOf = (d: string) => {
+      const t = new Date(d + "T00:00:00Z");
+      t.setUTCDate(t.getUTCDate() - ((t.getUTCDay() + 6) % 7));
+      return t.toISOString().slice(0, 10);
+    };
+    const weekMap = new Map<string, { activated: number; repeated: number; aiAgents: number }>();
+    for (const a of actors.values()) {
+      const seg = classifyCaller(a.ua, a.surfaces);
+      if (seg === "crawler" || seg === "monitor" || a.usefulDays.size === 0) continue;
+      const byWeek = new Map<string, number>();
+      for (const d of a.usefulDays) byWeek.set(weekOf(d), (byWeek.get(weekOf(d)) ?? 0) + 1);
+      for (const [w, days] of byWeek) {
+        let x = weekMap.get(w);
+        if (!x) weekMap.set(w, (x = { activated: 0, repeated: 0, aiAgents: 0 }));
+        x.activated++;
+        if (days >= 2) x.repeated++;
+        if (seg === "ai_agent") x.aiAgents++;
+      }
+    }
+    const activation = [...weekMap.entries()].map(([week, v]) => ({ week, ...v })).sort((x, y) => y.week.localeCompare(x.week));
     const { data: watchRows } = await client
       .from("tool_watches")
       .select("id, email, webhook_url, owner, confirmed_at, created_at, last_state, last_notified_at, entries(slug, name)")
@@ -477,5 +500,5 @@ export const getSegments = createServerFn({ method: "POST" })
       lastNotifiedAt: (w.last_notified_at ?? null) as string | null,
     }));
     const watches = watchList.filter((w) => w.confirmedAt).length;
-    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches, watches: watchList, mcpTrackingSince: firstMcpOpAt };
+    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches, watches: watchList, mcpTrackingSince: firstMcpOpAt, activation };
   });
