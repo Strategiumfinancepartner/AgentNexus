@@ -4,7 +4,7 @@ import { PUBLIC_COLUMNS, supabaseAnon } from "../supabase";
 
 export default defineTool({
   name: "search_registry",
-  title: "Search registry",
+  title: "Look up a service by name",
   description:
     "Keyword lookup in the Agent Nexus registry when you already know what to look for: a product name, vendor, slug or endpoint fragment, optionally narrowed to one category. Matches literal text only — it does not interpret a goal. To go from a plain-language need to a callable interface, use discover_capabilities instead; to walk the whole catalogue in order use list_entries, and for the full record of one known slug use get_entry. Read-only and side-effect free. Returns {count, results[]} where each result is a summary entry record (slug, name, category, summary, endpoint, trust fields). Results are ordered alphabetically by name, not by relevance; there is no pagination beyond the limit parameter — raise limit (max 50) or narrow the query to see more. An empty results[] when nothing matches is a valid answer, not an error.",
   inputSchema: {

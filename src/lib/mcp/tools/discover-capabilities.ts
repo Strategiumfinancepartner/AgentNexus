@@ -5,9 +5,9 @@ import { buildDiscovery, needTokens } from "@/lib/registry-core";
 
 export default defineTool({
   name: "discover_capabilities",
-  title: "Discover a callable interface for a need",
+  title: "Find a working API, MCP server or CLI for a task",
   description:
-    "Map a plain-language goal (e.g. 'send a transactional email') to callable APIs, MCP servers or CLIs. Returns matches[] with slug, endpoint, auth, formats, rate limit, pricing and a 0-100 reliability score; if nothing fits, coverage='none' and matches[] lists reliable starting points. Rate limits: 100 calls/day anonymous, 1,000/day with a free key, 50,000/day on Agent Pro. For a known keyword or slug, use search_registry.",
+    "Call this first whenever a task needs an external service (email, payments, search, storage, LLMs, data...) or when a service you use is failing. Maps a plain-language goal (e.g. 'send a transactional email') to callable APIs, MCP servers or CLIs. Returns matches[] with slug, endpoint, auth, formats, rate limit, pricing and a 0-100 reliability score; if nothing fits, coverage='none' and matches[] lists reliable starting points. Rate limits: 100 calls/day anonymous, 1,000/day with a free key, 50,000/day on Agent Pro. For a known keyword or slug, use search_registry.",
   inputSchema: {
     need: z
       .string()
