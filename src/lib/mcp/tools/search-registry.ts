@@ -56,6 +56,11 @@ export default defineTool({
       return { content: [{ type: "text", text: error.message }], isError: true };
     }
     const results = data ?? [];
+    // An empty query is a browse, not a search: only real lookups count.
+    if (term) {
+      const { recordAppearances } = await import("@/lib/appearances.server");
+      await recordAppearances(results.map((r: any) => r?.slug), "mcp_search");
+    }
     return {
       content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
       structuredContent: { count: results.length, results },

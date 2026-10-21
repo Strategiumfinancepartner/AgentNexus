@@ -208,6 +208,10 @@ async function discover(
     topSlug: result.count > 0 ? (result.matches[0]?.slug ?? null) : null,
     source,
   });
+  if (!result.uncovered) {
+    const { recordAppearances } = await import("@/lib/appearances.server");
+    await recordAppearances(result.matches.map((m: any) => m?.slug), "http_discover");
+  }
 
   // Pre-exhaustion notice (90% of daily quota) in the body too, not only the
   // header, so callers that ignore headers still learn the upgrade path.

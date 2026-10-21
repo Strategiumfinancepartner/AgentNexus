@@ -298,6 +298,30 @@ export type Database = {
         }
         Relationships: []
       }
+      entry_appearances: {
+        Row: {
+          created_at: string
+          entry_slug: string
+          id: string
+          rank: number
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          entry_slug: string
+          id?: string
+          rank?: number
+          source: string
+        }
+        Update: {
+          created_at?: string
+          entry_slug?: string
+          id?: string
+          rank?: number
+          source?: string
+        }
+        Relationships: []
+      }
       entry_votes: {
         Row: {
           created_at: string

@@ -77,6 +77,11 @@ export async function mcpOpOf(request: Request): Promise<string | null> {
     if (!method) return null;
     if (method === "tools/call") {
       const name = String(first?.params?.name ?? "unknown").replace(/[^a-z0-9_.-]/gi, "").slice(0, 60);
+      // The public slug of get_entry is kept so publisher reports can count opens.
+      if (name === "get_entry") {
+        const slug = String(first?.params?.arguments?.slug ?? "").toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 80);
+        if (slug) return `tools/call:get_entry?slug=${slug}`;
+      }
       return `tools/call:${name}`;
     }
     return method.replace(/[^a-z0-9_/.-]/gi, "");

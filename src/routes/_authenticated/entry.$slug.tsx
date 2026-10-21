@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getEntry, getMyAccess, listVotes, toggleVote } from "@/lib/registry.functions";
+import { getEntryReport } from "@/lib/entry-report.functions";
 import { VoteButton } from "@/components/vote-button";
 import { AppShell, HealthBadge } from "@/components/app-shell";
 import { reliability } from "@/lib/registry-core";
@@ -197,6 +198,8 @@ function EntryPage() {
                 </p>
               )}
             </section>
+
+            <PublisherReport slug={slug} />
           </>
         )}
       </main>

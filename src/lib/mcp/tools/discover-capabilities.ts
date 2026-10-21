@@ -93,6 +93,10 @@ export default defineTool({
       topSlug: result.count > 0 ? (result.matches[0]?.slug ?? null) : null,
       source: "mcp",
     });
+    if (!result.uncovered) {
+      const { recordAppearances } = await import("@/lib/appearances.server");
+      await recordAppearances(result.matches.map((m: any) => m?.slug), "mcp_discover");
+    }
 
     return {
       content: [{ type: "text", text: JSON.stringify(result, null, 2) }],

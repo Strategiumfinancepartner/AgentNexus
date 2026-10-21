@@ -51,7 +51,7 @@ export function mcpActionOf(path: string | null | undefined): McpAction {
   if (op === "initialize" || op === "notifications/initialized") return "connect";
   if (op === "tools/list") return "tools_list";
   if (op.startsWith("tools/call:")) {
-    const tool = op.slice("tools/call:".length);
+    const tool = op.slice("tools/call:".length).split("?")[0];
     if (tool === "search_registry" || tool === "discover_capabilities") return "search";
     if (tool === "get_entry") return "entry";
     if (tool === "submit_entry") return "submit";
