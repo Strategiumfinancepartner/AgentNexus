@@ -18,7 +18,7 @@ export async function probeNovaData(): Promise<DataQuality> {
   };
   const first = await once();
   if (first.fresh !== false && first.volume !== false) return first;
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 10000));
   return once();
 }
 

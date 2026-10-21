@@ -57,7 +57,8 @@ export async function probeEndpoint(endpoint: string): Promise<ProbeResult> {
   const first = await probeOnce(url);
   if (first.ok) return first;
 
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  // Cold-starting hosts answer 503 for a few seconds before recovering.
+  await new Promise((resolve) => setTimeout(resolve, 10000));
   const second = await probeOnce(url, "GET");
   if (second.ok) return second;
 
