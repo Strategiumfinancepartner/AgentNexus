@@ -217,3 +217,38 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
     </div>
   );
 }
+
+function PublisherReport({ slug }: { slug: string }) {
+  const fetchReport = useServerFn(getEntryReport);
+  const q = useQuery({ queryKey: ["entry-report", slug], queryFn: () => fetchReport({ data: { slug } }) });
+  if (!q.data || !q.data.allowed) return null;
+  const { report: r, watchers, reports } = q.data;
+  const stats: [string, string | number, string][] = [
+    ["Found", r.appearances.total, "times returned for a real search (MCP + HTTP)"],
+    ["Opened", r.opens.byHumansAndAgents, `full record reads by agents and developers (${r.opens.byRobots} more by robots)`],
+    ["AI agents", r.callers.aiAgents, "distinct AI clients that opened it"],
+    ["Developers", r.callers.developers, "distinct unverified callers that opened it"],
+    ["Returning", r.callers.returning, "non-robot callers seen on 2+ days"],
+    ["Following", watchers, "active alert subscriptions"],
+    ["Call reports", reports, "invocation outcomes reported by agents"],
+  ];
+  return (
+    <section className="mt-12 rounded-xl border border-border bg-card/50 p-5">
+      <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+        Publisher report · last {r.days} days
+      </h2>
+      <dl className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        {stats.map(([label, value, hint]) => (
+          <div key={label}>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</dt>
+            <dd className="mt-1 text-2xl font-medium text-foreground">{value}</dd>
+            <p className="text-[11px] leading-snug text-muted-foreground/80">{hint}</p>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-4 text-[11px] text-muted-foreground/70">
+        Search appearances and MCP opens are counted from 21 Oct 2026; earlier opens come from the HTTP API only. Crawlers and monitors are excluded from headline numbers.
+      </p>
+    </section>
+  );
+}
