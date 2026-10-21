@@ -137,7 +137,7 @@ function FreeKeyPage() {
           This key is anonymous: it is not attached to any account, so it stays at 1,000 calls a day
           even if you subscribe afterwards. If you expect to go to Agent Pro (50,000 calls a day),
           create your key while signed in on{" "}
-          <Link to="/keys" className="underline underline-offset-4 hover:text-foreground">
+          <Link to="/auth" search={{ next: "/keys?welcome=1" }} className="underline underline-offset-4 hover:text-foreground">
             /keys
           </Link>{" "}
           — account keys switch to 50,000 automatically the moment the subscription is active,

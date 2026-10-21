@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
@@ -7,6 +7,7 @@ import { Mail } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { listMyKeys } from "@/lib/keys.functions";
 import { Button } from "@/components/ui/button";
+import { AUTH_INTENT_KEY, clearAuthIntent, readAuthIntent, rememberAuthIntent, safeAuthPath } from "@/lib/auth-intent";
 
 function GoogleLogo() {
   return (
@@ -42,7 +43,8 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): { next?: string } => {
     const next = typeof s['next'] === "string" ? s['next'] : "";
     // only same-origin relative paths may be resumed after sign-in
-    return /^\/(?!\/)/.test(next) ? { next } : {};
+    const safe = safeAuthPath(next);
+    return safe ? { next: safe } : {};
   },
   head: () => ({
     meta: [
@@ -69,12 +71,18 @@ function AuthPage() {
   const navigate = useNavigate();
   const { next } = Route.useSearch();
   const fetchKeys = useServerFn(listMyKeys);
+  const continuing = useRef(false);
   // Every sign-in flow (password, Google/Apple/Microsoft, email link) comes back here,
   // so an account without an active key — Free or Pro — is guided to create one first.
   const backHere = () => `${window.location.origin}/auth${next ? `?next=${encodeURIComponent(next)}` : ""}`;
   const afterAuth = async () => {
-    if (next) {
-      window.location.href = next;
+    const { data } = await supabase.auth.getSession();
+    if (!data.session || continuing.current) return;
+    continuing.current = true;
+    const destination = next ?? readAuthIntent(sessionStorage);
+    clearAuthIntent();
+    if (destination) {
+      navigate({ href: destination, replace: true });
       return;
     }
     try {
@@ -97,9 +105,15 @@ function AuthPage() {
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
+    if (next) rememberAuthIntent(next);
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) void afterAuth();
     });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Defer outside the auth callback: getSession can otherwise deadlock.
+      if (session) setTimeout(() => { void afterAuth(); }, 0);
+    });
+    return () => listener.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate, next]);
 
@@ -136,8 +150,9 @@ function AuthPage() {
 
   async function handleOAuth(provider: "google" | "apple" | "microsoft", label: string) {
     setBusy(true);
+    rememberAuthIntent(next ?? readAuthIntent(sessionStorage));
     const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: backHere(),
+      redirect_uri: `${window.location.origin}/auth`,
     });
     if (result.error) {
       setBusy(false);

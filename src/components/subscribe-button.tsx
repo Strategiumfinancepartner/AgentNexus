@@ -5,6 +5,7 @@ import { getPaddleEnvironment } from "@/lib/paddle";
 import { usePaddleCheckout } from "@/hooks/usePaddleCheckout";
 import { Button } from "@/components/ui/button";
 import { purchaseReturnPath } from "@/lib/purchase-intent";
+import { rememberAuthIntent } from "@/lib/auth-intent";
 
 type Props = { priceId: string; label: string; resume?: boolean };
 
@@ -64,6 +65,7 @@ export function SubscribeButton({ priceId, label, resume = false }: Props) {
     setError(null);
     const { data } = await supabase.auth.getUser();
     if (!data.user) {
+      rememberAuthIntent(purchaseReturnPath(priceId));
       navigate({ to: "/auth", search: { next: purchaseReturnPath(priceId) } });
       return;
     }
