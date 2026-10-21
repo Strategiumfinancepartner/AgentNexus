@@ -7,7 +7,7 @@ import { Mail } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { listMyKeys } from "@/lib/keys.functions";
 import { Button } from "@/components/ui/button";
-import { AUTH_INTENT_KEY, clearAuthIntent, readAuthIntent, rememberAuthIntent, safeAuthPath } from "@/lib/auth-intent";
+import { clearAuthIntent, readAuthIntent, rememberAuthIntent, safeAuthPath } from "@/lib/auth-intent";
 
 function GoogleLogo() {
   return (
