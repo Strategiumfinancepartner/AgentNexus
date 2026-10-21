@@ -105,7 +105,7 @@ function KeysPage() {
           </div>
         )}
 
-        {welcome && active.length === 0 && !freshKey && (
+        {welcome && quota && active.length === 0 && !freshKey && (
           <div className="mt-8 rounded-xl border border-primary/40 bg-primary/[0.05] p-5">
             <p className="font-mono text-[10px] uppercase tracking-widest text-primary">
               Welcome — one last step
