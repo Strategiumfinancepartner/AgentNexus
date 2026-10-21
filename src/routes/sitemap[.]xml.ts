@@ -26,10 +26,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/refunds",
           "/privacy",
         ];
+        // Page-specific content dates; only set when that page's content really changed.
+        const STATIC_LASTMOD: Record<string, string> = { "/pricing": "2026-10-21" };
         const urls = [
           ...staticPaths.map(
             (p) =>
-              `<url><loc>${origin}${p}</loc><changefreq>daily</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`,
+              `<url><loc>${origin}${p}</loc>${STATIC_LASTMOD[p] ? `<lastmod>${STATIC_LASTMOD[p]}</lastmod>` : ""}<changefreq>daily</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`,
           ),
           ...((data ?? []) as { slug: string; created_at: string; updated_at: string | null }[]).flatMap(
             (e) => {

@@ -58,6 +58,7 @@ const plans = [
       "Drift alerts on 100 tools, delivered straight to your agent's webhook",
       "Pick interfaces on reliability, not guesswork",
       "Your agent stops breaking on quota limits",
+      "Create your account, then pay securely with Paddle — your key unlocks right after",
     ],
     cta: { label: "Get a free key", to: "/free-key" as const },
     priceId: "agent_pro_monthly",
@@ -70,7 +71,9 @@ const plans = [
     line: "For the team behind an API, MCP server or CLI.",
     points: [
       "Verified badge earned by a real call test",
+      "Listing report: how often agents find, open and come back to your entry, robots counted apart",
       "Monitored daily, alerted on downtime",
+      "Data-freshness checks on request: alert when your data goes stale or volume drops",
       "Ranked higher in what agents get served",
       "A distribution channel, not an ad",
     ],
