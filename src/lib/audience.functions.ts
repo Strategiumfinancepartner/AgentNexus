@@ -303,6 +303,19 @@ export const getAudience = createServerFn({ method: "POST" })
 
     // Every key ever minted, with its measured usage. Agent keys carry no
     // account: they are the only way a machine gets 1 000 calls/day.
+    // The quota counter (api_usage) sees every keyed call, including ones the
+    // access log files under the caller's address (e.g. some MCP handshakes).
+    const quotaCalls = new Map<string, number>();
+    {
+      const { data: usageRows } = await client
+        .from("api_usage")
+        .select("actor, calls")
+        .like("actor", "key:%")
+        .gte("day", since.slice(0, 10));
+      for (const r of (usageRows ?? []) as { actor: string; calls: number }[]) {
+        quotaCalls.set(r.actor, (quotaCalls.get(r.actor) ?? 0) + Number(r.calls ?? 0));
+      }
+    }
     const keyRows: KeyRow[] = keys
       .map((k) => {
         const usage = callerMap.get(`key:${k.id}`);
@@ -316,7 +329,7 @@ export const getAudience = createServerFn({ method: "POST" })
           lastUsedAt: k.last_used_at,
           revoked: Boolean(k.revoked_at),
           quota: k.user_id && planById.get(k.user_id) === "Agent Pro" ? 50_000 : 1_000,
-          calls: usage?.hits ?? 0,
+          calls: Math.max(usage?.hits ?? 0, quotaCalls.get(`key:${k.id}`) ?? 0),
           lastCallAt: usage?.lastSeen ?? null,
           userAgent: usage?.userAgent ?? "",
           country: usage?.country ?? "",
