@@ -17,7 +17,7 @@ export async function probeNovaData(): Promise<DataQuality> {
       health.status === "fulfilled" ? health.value['count_live'] : null, Date.now() / 1000);
   };
   const first = await once();
-  if (first.fresh !== false && first.volume !== false) return first;
+  if (first.fresh === true && first.volume === true) return first;
   await new Promise((resolve) => setTimeout(resolve, 10000));
   return once();
 }
