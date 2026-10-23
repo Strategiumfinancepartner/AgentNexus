@@ -75,3 +75,14 @@ describe("activation exclusions", () => {
     expect(isInternalCaller("ip:x", "meld-agent/1.0")).toBe(false);
   });
 });
+
+import { stickyAgentUa as sticky } from "./segments";
+describe("sticky AI agent identity", () => {
+  it("a ChatGPT caller stays an AI agent after a generic node call", () => {
+    expect(classifyCaller(sticky("node", "openai-mcp/1.0.0"), [])).toBe("ai_agent");
+    expect(classifyCaller(sticky("openai-mcp/1.0.0", "node"), [])).toBe("ai_agent");
+  });
+  it("ClaudeBot is never promoted to AI agent", () => {
+    expect(classifyCaller(sticky("node", "ClaudeBot/1.0 claudebot@anthropic.com"), [])).toBe("developer");
+  });
+});
