@@ -171,6 +171,10 @@ const SYNONYMS: Record<string, string[]> = {
   envoyer: ["send"],
   paiement: ["payment", "payments", "checkout"],
   paiements: ["payment", "payments"],
+  charge: ["payment", "payments", "checkout"],
+  card: ["payment", "payments"],
+  cards: ["payment", "payments"],
+  pay: ["payment", "payments"],
   facture: ["invoice", "billing"],
   facturation: ["billing", "invoice"],
   carte: ["map", "maps"],
@@ -288,6 +292,28 @@ function discoveryDomain(need: string): "currency" | "llm" | null {
   if (new Set(currencies).size >= 2 || /\b(?:currency|currencies|forex|fx|devises)\b|exchange rates?|taux de change/.test(words)) return "currency";
   if (!/\b(?:3d|mesh|stl)\b/.test(words) && /\bllms?\b|\bai models?\b|large language models?/.test(words)) return "llm";
   return null;
+}
+
+const FALLBACK_WORDS = new Set([
+  "down", "outage", "failing", "broken", "alternative", "alternatives", "instead",
+  "replacement", "replace", "working", "not", "panne", "remplacer", "remplacant", "is",
+]);
+const FALLBACK_RE = /\b(?:is down|down|outage|alternatives? (?:to|for)|instead of|replacement for|replace|not working|failing|en panne|remplacer|remplacant de)\b/;
+
+/** Finds the service a fallback-style need names, longest name first. */
+function failingService(need: string, rows: any[]): { entry: any; nameTokens: string[] } | null {
+  const text = need.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  if (!FALLBACK_RE.test(text)) return null;
+  let best: { entry: any; nameTokens: string[]; len: number } | null = null;
+  for (const entry of rows) {
+    const name = String(entry.name ?? "").toLowerCase().replace(/\b(api|mcp|server|cli)\b/g, "").trim();
+    if (name.length < 3 || !(entry.capabilities ?? []).length) continue;
+    const re = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`);
+    if (re.test(text) && (!best || name.length > best.len)) {
+      best = { entry, nameTokens: needBaseTokens(name), len: name.length };
+    }
+  }
+  return best;
 }
 
 function eligibleForDomain(entry: MatchSource, domain: ReturnType<typeof discoveryDomain>): boolean {
@@ -479,12 +505,22 @@ export function buildDiscovery(
     limit?: number;
   },
 ): DiscoveryResult {
-  const { need, tokens } = options;
+  const { need } = options;
+  let tokens = options.tokens;
   const minReliability = options.minReliability ?? 0;
   const limit = options.limit ?? 5;
   const domain = discoveryDomain(need);
 
+  // Fallback phrasing ("stripe is down", "alternative to SendGrid"): search by
+  // the named service's capabilities and leave that service out.
+  const failing = failingService(need, rows);
+  if (failing) {
+    const rest = tokens.filter((t) => !FALLBACK_WORDS.has(t) && !failing.nameTokens.includes(t));
+    tokens = [...new Set([...rest, ...needTokens((failing.entry.capabilities ?? []).join(" ").replace(/[_-]/g, " "))])];
+  }
+
   const scored = rows
+    .filter((entry) => !failing || entry.slug !== failing.entry.slug)
     .filter((entry) => eligibleForDomain(entry, domain))
     .map((entry) => ({ entry, score: matchScore(entry, tokens), rel: reliability(entry) }))
     .filter(({ score, rel }) => score > 0 && (rel.score ?? 0) >= minReliability)

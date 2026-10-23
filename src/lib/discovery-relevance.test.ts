@@ -33,3 +33,17 @@ describe("discovery domain relevance", () => {
     expect(discover(need, [entry("smtp2go-api", ["send email", "transactional email"]), mesh]).matches[0]?.slug).toBe("smtp2go-api");
   });
 });
+
+describe("fallback phrasing", () => {
+  const stripe = { ...entry("stripe-api", ["accept payments", "charge cards", "subscriptions"]), name: "Stripe API" };
+  const paddle = entry("paddle-api", ["accept payments", "subscriptions"]);
+  const qr = entry("qr-api", ["generate qr code"], "Down to earth QR alternative");
+  it.each(["stripe is down", "alternative to Stripe"])("%s returns another payment service, not Stripe", (need) => {
+    const slugs = discover(need, [stripe, paddle, qr]).matches.map((m) => m.slug);
+    expect(slugs[0]).toBe("paddle-api");
+    expect(slugs).not.toContain("stripe-api");
+  });
+  it("charge a card selects payments", () => {
+    expect(discover("charge a card", [qr, paddle]).matches[0]?.slug).toBe("paddle-api");
+  });
+});
