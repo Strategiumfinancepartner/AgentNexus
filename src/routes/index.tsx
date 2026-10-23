@@ -297,6 +297,9 @@ function Index() {
             </a>
           </span>
           <nav className="flex flex-wrap items-center gap-5">
+            <Link to="/guides/api-fallbacks" className="transition-colors hover:text-foreground">
+              API fallback guide
+            </Link>
             <Link to="/best-email-apis" className="transition-colors hover:text-foreground">
               Best email APIs
             </Link>

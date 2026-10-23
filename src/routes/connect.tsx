@@ -194,6 +194,9 @@ function Connect() {
             <pre className="mt-6 overflow-x-auto rounded-xl border border-border/70 bg-card/50 px-4 py-4 font-mono text-[11.5px] leading-relaxed text-muted-foreground">
               <code>{AGENT_EXAMPLE(origin)}</code>
             </pre>
+            <Link to="/guides/api-fallbacks" className="mt-6 inline-block text-sm text-primary hover:underline">
+              Read the API fallback walkthrough →
+            </Link>
           </section>
 
           <section className="border-t border-border/60 py-12">

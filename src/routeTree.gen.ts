@@ -81,6 +81,7 @@ import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as ApiMcpOauthRouteImport } from './routes/api/mcp-oauth'
+import { Route as GuidesApiFallbacksRouteImport } from './routes/guides.api-fallbacks'
 import { Route as IsDownSlugRouteImport } from './routes/is-down.$slug'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
 import { Route as McpServerCardRouteImport } from './routes/mcp/server-card'
@@ -522,6 +523,11 @@ const ApiMcpOauthRoute = ApiMcpOauthRouteImport.update({
   path: '/api/mcp-oauth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesApiFallbacksRoute = GuidesApiFallbacksRouteImport.update({
+  id: '/guides/api-fallbacks',
+  path: '/guides/api-fallbacks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IsDownSlugRoute = IsDownSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -800,6 +806,7 @@ export interface FileRoutesByFullPath {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
@@ -911,6 +918,7 @@ export interface FileRoutesByTo {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
@@ -1024,6 +1032,7 @@ export interface FileRoutesById {
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
@@ -1137,6 +1146,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
@@ -1248,6 +1258,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
@@ -1360,6 +1371,7 @@ export interface FileRouteTypes {
     | '/_authenticated/signals'
     | '/_authenticated/submit'
     | '/api/mcp-oauth'
+    | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
@@ -1467,6 +1479,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93X402ManifestChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93X402ManifestChar91DotChar93jsonRoute
   Char91DotwellKnownChar93X402Char91DotChar93jsonRoute: typeof Char91DotwellKnownChar93X402Char91DotChar93jsonRoute
   ApiMcpOauthRoute: typeof ApiMcpOauthRoute
+  GuidesApiFallbacksRoute: typeof GuidesApiFallbacksRoute
   RegistrySlugRoute: typeof RegistrySlugRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
@@ -1994,6 +2007,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpOauthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/api-fallbacks': {
+      id: '/guides/api-fallbacks'
+      path: '/guides/api-fallbacks'
+      fullPath: '/guides/api-fallbacks'
+      preLoaderRoute: typeof GuidesApiFallbacksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/is-down/$slug': {
       id: '/is-down/$slug'
       path: '/$slug'
@@ -2481,6 +2501,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93X402Char91DotChar93jsonRoute:
     Char91DotwellKnownChar93X402Char91DotChar93jsonRoute,
   ApiMcpOauthRoute: ApiMcpOauthRoute,
+  GuidesApiFallbacksRoute: GuidesApiFallbacksRoute,
   RegistrySlugRoute: RegistrySlugRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,

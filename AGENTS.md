@@ -11,6 +11,8 @@
 
 ## Architecture
 
+- Public tutorials share their section content with downloadable dev.to Markdown in a browser-safe module. Why: on-site instructions and publication drafts must stay consistent without a second manually maintained article.
+
 - Paid checkout returns explicitly request bounded refreshes of server-confirmed access and key quotas before showing onboarding; return parameters never grant access. Why: payment notifications may arrive after the first cached Free read.
 
 - Pinned publisher data-quality checks run every hourly probe cycle independently of catalog rotation, retry failed or unavailable observations before persisting evidence in schema_detail, and feed confirmed watches with freshness and volume transitions. Why: an HTTP 200 does not establish that the returned data is current or complete, and cold starts must get the confirmation retry.
