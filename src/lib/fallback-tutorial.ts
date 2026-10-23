@@ -1,5 +1,5 @@
 export const tutorialTitle = "Give your AI agent a fallback plan when an API goes down";
-export const tutorialDescription = "Connect Agent Nexus to Claude Code, discover alternatives to a failing API, and inspect the evidence before switching providers.";
+export const tutorialDescription = "Use Agent Nexus from any compatible MCP client, HTTP app, SDK or workflow to discover alternatives to a failing API and inspect the evidence before switching.";
 export const tutorialPath = "/guides/api-fallbacks";
 
 export const tutorialSections = [
@@ -13,11 +13,13 @@ export const tutorialSections = [
   {
     title: "1. Connect your agent",
     paragraphs: [
-      "With Claude Code installed, add the public remote MCP endpoint. No Agent Nexus account or key is needed to start reading the registry.",
+      "Agent Nexus is not limited to Claude Code. Connect any client that supports remote HTTP MCP, such as compatible configurations of Claude, ChatGPT or Cursor, using the endpoint below. Availability and authentication settings depend on your client.",
+      "The same Agent Nexus key works across supported MCP connections, direct HTTP requests, our Python and JavaScript SDKs, CLI, n8n, LangChain, CrewAI and LlamaIndex integrations. Configure it separately in each integration; requests using the same key share its daily quota. It does not replace the credentials needed by the external APIs you discover.",
+      "Public discovery also works without a key. For keyed usage, generate a key at https://agentnexus.app/keys and keep it private. The key belongs in the integration's API key setting or the x-api-key request header, not in a chat prompt. A client that cannot send authentication headers cannot use the key through that direct connection.",
     ],
-    language: "bash",
-    code: "claude mcp add --transport http agent-nexus https://agentnexus.app/api/public/mcp",
-    after: "Other clients can use the same endpoint in their MCP settings. Confirm that discover_capabilities and get_entry appear in the available tools. A connection or tools/list response is only a setup check, not proof the agent has used discovery.",
+    language: "text",
+    code: "Remote MCP endpoint: https://agentnexus.app/api/public/mcp\nOptional authentication header: x-api-key: YOUR_AGENT_NEXUS_KEY",
+    after: "Client-specific configurations are at https://agentnexus.app/connect. Confirm that discover_capabilities and get_entry appear in the available tools. A connection or tools/list response is only a setup check, not proof the agent has used discovery.",
   },
   {
     title: "2. Give it a specific task",
@@ -30,10 +32,11 @@ export const tutorialSections = [
   },
   {
     title: "3. Try the same discovery over HTTP",
-    paragraphs: ["You can inspect the response yourself without an AI client. This read-only request does not send an email."],
+    paragraphs: ["You can inspect the response yourself without an AI client. This read-only request uses the same Agent Nexus key as your other integrations and does not send an email. Set AGENTNEXUS_API_KEY privately in your environment first; omit the header for anonymous discovery."],
     language: "bash",
     code: [
       "curl -sS --get 'https://agentnexus.app/api/public/discover' \\",
+      "  -H \"x-api-key: $AGENTNEXUS_API_KEY\" \\",
       "  --data-urlencode 'need=Resend is down, find an alternative to send a transactional email' \\",
       "  --data-urlencode 'category=api' \\",
       "  --data-urlencode 'limit=3'",
