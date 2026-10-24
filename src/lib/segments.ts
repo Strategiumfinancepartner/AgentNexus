@@ -36,6 +36,13 @@ export function classifyCaller(userAgent: string, surfaces: Iterable<string>): S
   return "developer";
 }
 
+/** Keeps an AI-agent user-agent once seen; otherwise keeps the current one. Crawlers are never promoted. */
+export function stickyAgentUa(current: string, next: string): string {
+  const isAgent = (ua: string) => !CRAWLER.test(ua) && AI_AGENT.test(ua);
+  if (isAgent(current)) return current;
+  return isAgent(next) ? next : current;
+}
+
 /** What a call was for, from its surface. MCP traffic is counted separately (tool not logged). */
 export type Action = "search" | "catalog" | "entry" | "health" | "report" | "submit" | "submission_status" | "mcp" | "other";
 export function actionOf(surface: string): Action {

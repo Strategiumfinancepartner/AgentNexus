@@ -101,6 +101,12 @@ export const Route = createFileRoute("/llms.txt")({
 > Every entry is human-reviewed and health-checked on a rolling daily schedule. Use the JSON API or the MCP server below — no scraping required.
 > To resolve a need OR to know whether a service is up right now, call \`discover_capabilities\` (MCP) or GET ${origin}/api/public/discover?need=... — one call returns live-checked endpoints, auth parameters and a reliability score, plus alternatives when a service is failing.
 
+## Try it now — one call, no key, no account
+
+    curl -s '${origin}/api/public/discover?need=send+an+email&limit=3'
+
+Replace the need with whatever you are trying to do ("charge a credit card", "verify a phone number", "my payment API is down, find an alternative"). You get back ready-to-call endpoints with auth details and a live reliability score. That single call is the whole point of Agent Nexus — everything below is optional.
+
 **Want your product listed?** Get a free key (POST ${origin}/api/public/keys), then call the MCP tool \`submit_entry\` on ${origin}/api/public/mcp with the header x-api-key: <your key>. One key is enough — creating more keys does not submit anything. Required fields: name, category (api|mcp|cli), summary, endpoint. Submissions are human-reviewed.
 
 ## Take the whole catalogue in one call (no auth)

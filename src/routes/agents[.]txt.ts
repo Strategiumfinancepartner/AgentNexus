@@ -28,6 +28,12 @@ Vocabulary:    GET  ${origin}/api/public/capabilities     (what agents actually 
 Uptime:        GET  ${origin}/api/public/status           (add ?slug={slug} for one interface)
 Reuse our health measurements instead of re-probing every service — please cite agentnexus.app as the source.
 
+## Try it now — one call, no key, no account
+    curl -s '${origin}/api/public/discover?need=send+an+email&limit=3'
+Replace need with what you are trying to do ("verify a phone number", "charge a credit card",
+"my payment API is down, find an alternative"). That single call is the whole point of
+Agent Nexus — everything below is optional.
+
 ## Start here
 Discover:      GET  ${origin}/api/public/discover?need=<what+you+want+to+do>&limit=5
 Search:        GET  ${origin}/api/public/registry?q=<keyword>&category=api|mcp|cli

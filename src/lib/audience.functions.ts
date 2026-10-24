@@ -393,7 +393,7 @@ export const getSegments = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     await assertReviewer(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { classifyCaller, actionOf, mcpActionOf, SEGMENT_LABELS, isInternalCaller } = await import("@/lib/segments");
+    const { classifyCaller, actionOf, mcpActionOf, SEGMENT_LABELS, isInternalCaller, stickyAgentUa } = await import("@/lib/segments");
     const client = supabaseAdmin as any;
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     // Actual authenticated submitters are established from entry ownership,
@@ -414,6 +414,8 @@ export const getSegments = createServerFn({ method: "POST" })
       for (const r of rows) {
         let a = actors.get(r.actor);
         if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0, usefulDays: new Set() }));
+        // Sticky: once a caller identifies as an AI agent client, a later generic UA (node, undici) never demotes it.
+        else a.ua = stickyAgentUa(a.ua, r.user_agent ?? "");
         a.surfaces.add(r.surface);
         if (r.user_id && publisherUsers.has(r.user_id)) a.surfaces.add("submitted_entry");
         a.days.add(String(r.created_at).slice(0, 10));
