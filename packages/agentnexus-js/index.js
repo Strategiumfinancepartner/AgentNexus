@@ -1,7 +1,7 @@
 // Agent Nexus client: find a working API, MCP server or CLI in 3 lines.
 // Zero dependencies. Works in Node 18+, Deno, Bun, browsers and edge runtimes.
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.1";
 export const MCP_URL = "https://agentnexus.app/api/public/mcp";
 const DEFAULT_BASE_URL = "https://agentnexus.app";
 
@@ -14,6 +14,22 @@ export class AgentNexusError extends Error {
 }
 
 const env = (k) => (typeof process !== "undefined" && process.env ? process.env[k] : undefined);
+
+/**
+ * Accepts a slug string or a full entry object ({ slug } or { name }) and
+ * returns the slug string. Passing an object used to leak "[object Object]"
+ * into request URLs.
+ */
+function toSlug(input) {
+  if (input && typeof input === "object") {
+    const candidate = input.slug ?? input.name;
+    if (typeof candidate === "string" && candidate) return candidate;
+    throw new AgentNexusError("getEntry/healthCard need a slug string or an object with a slug field");
+  }
+  const slug = String(input ?? "").trim();
+  if (!slug) throw new AgentNexusError("A non-empty slug is required");
+  return slug;
+}
 
 export class AgentNexus {
   constructor({ apiKey, baseUrl, timeoutMs = 20000 } = {}) {
@@ -80,7 +96,7 @@ export class AgentNexus {
   }
 
   report(slug, { ok, statusCode, latencyMs, note } = {}) {
-    const body = { slug, outcome: ok ? "success" : "failure" };
+    const body = { slug: toSlug(slug), outcome: ok ? "success" : "failure" };
     if (statusCode != null) body.status_code = Math.trunc(statusCode);
     if (latencyMs != null) body.latency_ms = Math.trunc(latencyMs);
     if (note) body.error = String(note).slice(0, 500);
