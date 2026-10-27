@@ -17,12 +17,22 @@ export default defineTool({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ slug }) => {
     const supabase = supabaseAnon();
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("entries")
       .select(PUBLIC_COLUMNS)
       .eq("status", "approved")
       .eq("slug", slug)
       .maybeSingle();
+
+    if (!error && !data) {
+      const { data: alias, error: aliasError } = await supabase.from("entry_aliases")
+        .select("to_slug").eq("from_slug", slug).maybeSingle();
+      if (aliasError) error = aliasError;
+      else if (alias?.to_slug) {
+        ({ data, error } = await supabase.from("entries").select(PUBLIC_COLUMNS)
+          .eq("status", "approved").eq("slug", alias.to_slug).maybeSingle());
+      }
+    }
 
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
@@ -32,9 +42,10 @@ export default defineTool({
         `No approved entry with slug "${slug}". Use search_registry to list available slugs.`,
       );
     }
+    const canonicalSlug = data.slug;
     const watch = {
-      hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape (schema or tool list). Free, 3 tools per key. Email follows are confirmed by a one-click email before alerts start.`,
-      how: `POST https://agentnexus.app/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
+      hint: `Follow "${canonicalSlug}": get alerted when it goes down, comes back, or changes shape (schema or tool list). Free, 3 tools per key. Email follows are confirmed by a one-click email before alerts start.`,
+      how: `POST https://agentnexus.app/api/public/watch with {"slug":"${canonicalSlug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
     };
     return withKeyInvitation({
       content: [{ type: "text", text: JSON.stringify({ entry: data, watch }, null, 2) }],

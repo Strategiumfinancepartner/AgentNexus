@@ -193,8 +193,20 @@ export function isAnonymousMcpMethod(method: string) {
   );
 }
 
+/** Reject JSON-shaped probes before dispatching or consuming quota. */
+export function isValidMcpRequest(message: unknown): boolean {
+  if (!message || typeof message !== "object" || Array.isArray(message)) return false;
+  const value = message as Record<string, unknown>;
+  return value['jsonrpc'] === "2.0" && typeof value['method'] === "string" && value['method'].length > 0
+    && (value['id'] === undefined || typeof value['id'] === "string" || (typeof value['id'] === "number" && Number.isFinite(value['id'])))
+    && (value['params'] === undefined || (value['params'] !== null && typeof value['params'] === "object" && !Array.isArray(value['params'])));
+}
+
 /** Handle one JSON-RPC message anonymously. `message` is the parsed body. */
 export async function handleAnonymousMcpMessage(request: Request, message: any): Promise<Response> {
+  if (!isValidMcpRequest(message)) {
+    return rpcError(null, -32600, "Invalid request: send a JSON-RPC 2.0 object with a method", 400);
+  }
   const id = message?.id ?? null;
   const method = String(message?.method ?? "");
 
@@ -375,7 +387,7 @@ export async function handleAnonymousMcpPost(request: Request): Promise<Response
   try {
     message = await request.json();
   } catch {
-    return rpcError(null, -32700, "Parse error", 400);
+    return rpcError(null, -32700, 'Parse error: POST a JSON-RPC 2.0 object, e.g. {"jsonrpc":"2.0","id":1,"method":"tools/list"}. Connect: https://agentnexus.app/connect', 400);
   }
   return handleAnonymousMcpMessage(request, message);
 }

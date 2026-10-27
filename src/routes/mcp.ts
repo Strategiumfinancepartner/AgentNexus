@@ -15,6 +15,7 @@ import {
   anonCors,
   handleAnonymousMcpMessage,
   isAnonymousMcpMethod,
+  isValidMcpRequest,
   mcpDiscoveryDocument,
 } from "@/lib/mcp/anonymous.server";
 
@@ -89,6 +90,10 @@ export async function mcpHandler(ctx: any): Promise<Response> {
           message = JSON.parse(raw);
         } catch {
           return replay();
+        }
+
+        if (!isValidMcpRequest(message)) {
+          return handleAnonymousMcpMessage(request, message);
         }
 
         const method = String(message?.method ?? "");
