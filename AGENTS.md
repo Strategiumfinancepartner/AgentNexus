@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture
+- Read-only MCP tools share an optional key invitation appended as text without changing structured results or initiating key creation. Why: both authenticated and anonymous transports must offer the same next step without breaking consumers or user consent.
 
 - Public tutorials share their section content with downloadable dev.to Markdown in a browser-safe module. Why: on-site instructions and publication drafts must stay consistent without a second manually maintained article.
 

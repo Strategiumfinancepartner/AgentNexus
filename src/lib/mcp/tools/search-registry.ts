@@ -1,6 +1,7 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "../supabase";
+import { withKeyInvitation } from "../key-invitation";
 
 export default defineTool({
   name: "search_registry",
@@ -61,9 +62,9 @@ export default defineTool({
       const { recordAppearances } = await import("@/lib/appearances.server");
       await recordAppearances(results.map((r: any) => r?.slug), "mcp_search");
     }
-    return {
+    return withKeyInvitation({
       content: [{ type: "text", text: JSON.stringify(results, null, 2) }],
       structuredContent: { count: results.length, results },
-    };
+    });
   },
 });

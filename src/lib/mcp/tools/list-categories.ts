@@ -1,6 +1,7 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { supabaseAnon } from "../supabase";
+import { withKeyInvitation } from "../key-invitation";
 
 const LAYERS = [
   {
@@ -45,9 +46,9 @@ export default defineTool({
       count: rows.filter((r) => r.category === layer.id).length,
     }));
 
-    return {
+    return withKeyInvitation({
       content: [{ type: "text", text: JSON.stringify(categories, null, 2) }],
       structuredContent: { categories },
-    };
+    });
   },
 });

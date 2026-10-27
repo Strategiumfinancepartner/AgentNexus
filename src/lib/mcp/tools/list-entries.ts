@@ -1,6 +1,7 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "../supabase";
+import { withKeyInvitation } from "../key-invitation";
 
 const PAGE_SIZE_MAX = 50;
 
@@ -75,9 +76,9 @@ export default defineTool({
 
     const results = data ?? [];
     const payload = { total, page, per_page, pages, results };
-    return {
+    return withKeyInvitation({
       content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       structuredContent: payload,
-    };
+    });
   },
 });

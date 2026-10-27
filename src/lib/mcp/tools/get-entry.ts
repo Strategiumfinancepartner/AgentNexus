@@ -1,6 +1,7 @@
 import { defineTool, ToolError } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "../supabase";
+import { withKeyInvitation } from "../key-invitation";
 
 export default defineTool({
   name: "get_entry",
@@ -35,9 +36,9 @@ export default defineTool({
       hint: `Follow "${slug}": get alerted when it goes down, comes back, or changes shape (schema or tool list). Free, 3 tools per key. Email follows are confirmed by a one-click email before alerts start.`,
       how: `POST https://agentnexus.app/api/public/watch with {"slug":"${slug}"} and your x-api-key (the key's email gets the alerts), or add "email" / "webhook_url".`,
     };
-    return {
+    return withKeyInvitation({
       content: [{ type: "text", text: JSON.stringify({ entry: data, watch }, null, 2) }],
       structuredContent: { entry: data, watch },
-    };
+    });
   },
 });

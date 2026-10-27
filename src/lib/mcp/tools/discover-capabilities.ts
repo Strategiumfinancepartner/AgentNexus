@@ -2,6 +2,7 @@ import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import { PUBLIC_COLUMNS, supabaseAnon } from "../supabase";
 import { buildDiscovery, needTokens } from "@/lib/registry-core";
+import { withKeyInvitation } from "../key-invitation";
 
 export default defineTool({
   name: "discover_capabilities",
@@ -98,9 +99,9 @@ export default defineTool({
       await recordAppearances(result.matches.map((m: any) => m?.slug), "mcp_discover");
     }
 
-    return {
+    return withKeyInvitation({
       content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
       structuredContent: result,
-    };
+    });
   },
 });
