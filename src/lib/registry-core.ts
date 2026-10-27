@@ -145,6 +145,7 @@ export function reliability(entry: ReliabilitySource): Reliability {
 const STOPWORDS = new Set([
   "the","a","an","to","for","of","and","or","with","i","need","want","how","do","can","my",
   "je","dois","veux","un","une","des","de","du","la","le","les","pour","avec","comment",
+  "find", "get", "by", "from", "using", "use", "please",
 ]);
 
 /**
@@ -199,6 +200,11 @@ const SYNONYMS: Record<string, string[]> = {
   geocodage: ["geocoding"],
   entreprise: ["company", "business"],
   societe: ["company", "business"],
+  businesses: ["business", "company", "companies"],
+  companies: ["company", "business", "businesses"],
+  korean: ["korea"],
+  korea: ["korean"],
+  region: ["regions", "regional"],
   sms: ["messaging", "text"],
   appel: ["call", "voice"],
   agenda: ["calendar"],
@@ -345,6 +351,39 @@ export type MatchSource = Pick<
   | "featured"
 >;
 
+function normalizedWords(value: string): string {
+  return value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[_-]/g, " ");
+}
+
+/** Match complete words, never incidental fragments (data inside Datacircle). */
+function containsTerm(value: string, term: string): boolean {
+  const escaped = normalizedWords(term).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return escaped.length > 0 && new RegExp(`(?:^|[^a-z0-9])${escaped}(?=$|[^a-z0-9])`).test(normalizedWords(value));
+}
+
+function entryMatchesTerm(entry: MatchSource, term: string): boolean {
+  return [entry.name, entry.slug, entry.summary, entry.description ?? "", ...(entry.tags ?? []), ...(entry.capabilities ?? [])]
+    .some((value) => containsTerm(value, term));
+}
+
+function needCoverage(entry: MatchSource, need: string): number {
+  const base = needBaseTokens(need);
+  if (base.length === 0) return 0;
+  return base.filter((term) => needTokens(term).some((synonym) => entryMatchesTerm(entry, synonym))).length / base.length;
+}
+
+function namedService(entry: MatchSource, need: string): boolean {
+  const identity = (value: string) => normalizedWords(value).replace(/\b(api|mcp|server|cli)\b/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+  const query = identity(need);
+  return query.length >= 3 && (identity(entry.name) === query || identity(entry.slug) === query);
+}
+
+/** Explicit country constraints cannot be satisfied by generic business tags. */
+function eligibleForGeography(entry: MatchSource, need: string): boolean {
+  if (!/\b(korean?|south korea)\b/.test(normalizedWords(need))) return true;
+  return entryMatchesTerm(entry, "korea") || entryMatchesTerm(entry, "korean");
+}
+
 /** Scores how well an interface answers a natural-language need. */
 export function matchScore(entry: MatchSource, tokens: string[]): number {
   if (tokens.length === 0) return 0;
@@ -355,13 +394,13 @@ export function matchScore(entry: MatchSource, tokens: string[]): number {
   let score = 0;
   let hits = 0;
   for (const token of tokens) {
-    if (capabilities.some((c) => c.includes(token) || token.includes(c))) {
+    if (capabilities.some((c) => containsTerm(c, token))) {
       score += 6;
       hits += 1;
-    } else if (tags.some((t) => t.includes(token) || token.includes(t))) {
+    } else if (tags.some((t) => containsTerm(t, token))) {
       score += 4;
       hits += 1;
-    } else if (text.includes(token)) {
+    } else if (containsTerm(text, token)) {
       score += 2;
       hits += 1;
     }
@@ -519,16 +558,20 @@ export function buildDiscovery(
     tokens = [...new Set([...rest, ...needTokens((failing.entry.capabilities ?? []).join(" ").replace(/[_-]/g, " "))])];
   }
 
-  const scored = rows
+  const named = failing ? [] : rows.filter((entry) => namedService(entry, need));
+  const candidates = named.length > 0 ? named : rows;
+  const scored = candidates
     .filter((entry) => !failing || entry.slug !== failing.entry.slug)
     .filter((entry) => eligibleForDomain(entry, domain))
-    .map((entry) => ({ entry, score: matchScore(entry, tokens), rel: reliability(entry) }))
+    .filter((entry) => eligibleForGeography(entry, need))
+    .map((entry) => ({ entry, score: matchScore(entry, tokens) + (named.length > 0 ? 20 : 0), rel: reliability(entry) }))
     .filter(({ score, rel }) => score > 0 && (rel.score ?? 0) >= minReliability)
     .sort((a, b) => b.score - a.score || (b.rel.score ?? 0) - (a.rel.score ?? 0));
 
   if (scored.length > 0) {
     const matches = scored.slice(0, limit).map(({ entry, score }) => shape(entry, score, "capability"));
-    const strong = (scored[0]?.score ?? 0) >= 6;
+    const best = scored[0];
+    const strong = Boolean(best && (named.length > 0 || (best.score >= 6 && (failing || needCoverage(best.entry, need) >= 0.75))));
     return {
       need,
       coverage: strong ? "exact" : "partial",
@@ -552,6 +595,7 @@ export function buildDiscovery(
   }
 
   const fallback = rows
+    .filter((entry) => eligibleForGeography(entry, need))
     .map((entry) => ({ entry, rel: reliability(entry) }))
     .sort(
       (a, b) =>

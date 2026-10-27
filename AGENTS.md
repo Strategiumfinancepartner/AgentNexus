@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture
+- HTTP and MCP capability discovery share whole-word relevance, explicit geographic eligibility and named-service priority in registry-core. Why: incidental text fragments and generic tags must not override a requested service or country.
 - Read-only MCP tools share an optional key invitation appended as text without changing structured results or initiating key creation. Why: both authenticated and anonymous transports must offer the same next step without breaking consumers or user consent.
 
 - Public tutorials share their section content with downloadable dev.to Markdown in a browser-safe module. Why: on-site instructions and publication drafts must stay consistent without a second manually maintained article.

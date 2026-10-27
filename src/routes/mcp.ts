@@ -13,6 +13,7 @@ import mcp from "../lib/mcp/index";
 import {
   ANON_TOOLS,
   anonCors,
+  handleAnonymousMcpPost,
   handleAnonymousMcpMessage,
   isAnonymousMcpMethod,
   isValidMcpRequest,
@@ -89,7 +90,9 @@ export async function mcpHandler(ctx: any): Promise<Response> {
         try {
           message = JSON.parse(raw);
         } catch {
-          return replay();
+          return handleAnonymousMcpPost(new Request(request.url, {
+            method: "POST", headers: request.headers, body: raw,
+          }));
         }
 
         if (!isValidMcpRequest(message)) {
@@ -115,22 +118,21 @@ export async function mcpHandler(ctx: any): Promise<Response> {
         // bare array) must come back as a JSON-RPC error, never a 500 page.
         try {
           return await handleAnonymousMcpMessage(request, message);
-        } catch (error) {
+        } catch {
           return new Response(
             JSON.stringify({
               jsonrpc: "2.0",
               id: message?.id ?? null,
               error: {
-                code: -32600,
-                message: "Invalid request",
+                code: -32603,
+                message: "MCP service temporarily unavailable. Retry shortly.",
                 data: {
                   hint: "Send a JSON-RPC 2.0 object: {\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}",
                   docs: "https://agentnexus.app/connect",
-                  detail: error instanceof Error ? error.message : String(error),
                 },
               },
             }),
-            { status: 200, headers: { "Content-Type": "application/json" } },
+            { status: 500, headers: { ...anonCors, "x-nexus-error-detail": "MCP anonymous dispatch failed", "Retry-After": "30" } },
           );
         }
 }

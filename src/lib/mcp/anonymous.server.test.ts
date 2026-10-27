@@ -14,6 +14,7 @@ describe('MCP request validation', () => {
     const response = await post(body);
     expect(response.status).toBe(400);
     expect((await response.json()).error.code).toBe(-32700);
+    expect(response.headers.get('x-nexus-error-detail')).toBe('MCP JSON-RPC rejection: code=-32700');
   });
   it.each([null, [], {}, { method: 'tools/list' }, { jsonrpc: '2.0', method: 3 }, { jsonrpc: '2.0', method: 'tools/list', params: null }])('rejects invalid envelopes: %j', async (body) => {
     const response = await post(JSON.stringify(body));

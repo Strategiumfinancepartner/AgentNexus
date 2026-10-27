@@ -12,6 +12,27 @@ const mesh = entry("sketchfab-api", ["search 3d models", "find downloadable mesh
 const discover = (need: string, rows: unknown[]) => buildDiscovery(rows, { need, tokens: needTokens(need) });
 
 describe("discovery domain relevance", () => {
+  it("datacircle selects Datacircle, never Mockaroo through the fragment data", () => {
+    const datacircle = { ...entry("datacircle-mcp", ["list APIs", "search plans"]), name: "Datacircle", category: "mcp" };
+    const mockaroo = { ...entry("mockaroo-api", ["mock_data", "schemas"]), name: "Mockaroo" };
+    const result = discover("datacircle", [mockaroo, datacircle]);
+    expect(result.matches.map((match) => match.slug)).toEqual(["datacircle-mcp"]);
+    expect(result.coverage).toBe("exact");
+  });
+  it("find Korean businesses by region does not suggest Georgia when Korea is uncovered", () => {
+    const georgia = entry("legal-sandbox-georgia-api", ["company data", "business lookup", "find", "georgia"]);
+    const result = discover("find Korean businesses by region", [georgia]);
+    expect(result.coverage).toBe("none");
+    expect(result.uncovered).toBe(true);
+    expect(result.matches).toEqual([]);
+  });
+  it("find Korean businesses by region selects a service declaring Korean regional business data", () => {
+    const boim = entry("boim-mcp", ["search businesses by region"], "Korean business data");
+    const georgia = entry("legal-sandbox-georgia-api", ["company data", "business lookup", "find", "georgia"]);
+    const result = discover("find Korean businesses by region", [georgia, boim]);
+    expect(result.matches.map((match) => match.slug)).toEqual(["boim-mcp"]);
+    expect(result.coverage).toBe("exact");
+  });
   it("currency conversion returns FX, not a page converter paid in USDC", () => {
     const result = discover("convert USD to EUR", [page, fx]);
     expect(result.matches.map((m) => m.slug)).toEqual(["frankfurter-fx-api"]);

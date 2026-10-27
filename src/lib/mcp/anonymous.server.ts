@@ -135,7 +135,7 @@ function rpcResult(id: unknown, result: unknown, headers: Record<string, string>
 function rpcError(id: unknown, code: number, message: string, status = 200) {
   return new Response(JSON.stringify({ jsonrpc: "2.0", id, error: { code, message } }), {
     status,
-    headers: anonCors,
+    headers: { ...anonCors, ...(status >= 400 ? { "x-nexus-error-detail": `MCP JSON-RPC rejection: code=${code}` } : {}) },
   });
 }
 
