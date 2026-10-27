@@ -288,7 +288,7 @@ export async function handleAnonymousMcpMessage(request: Request, message: any):
             title: "Agent Nexus",
             version: "1.1.0",
             description:
-              "Registry of 650+ human-reviewed APIs, MCP servers and CLIs that AI agents can call, each health-checked daily on a rolling schedule, with endpoint, auth parameters, formats, rate limits and a 0-100 reliability score. Whole catalogue downloadable in one call at https://agentnexus.app/api/public/entries.ndjson; new interfaces feed at https://agentnexus.app/feed.xml.",
+              "Registry of 700+ human-reviewed APIs, MCP servers and CLIs that AI agents can call, health-checked hourly for priority entries and otherwise on a rolling daily cycle, with endpoint, auth parameters, formats, rate limits and a 0-100 reliability score. Whole catalogue downloadable in one call at https://agentnexus.app/api/public/entries.ndjson; new interfaces feed at https://agentnexus.app/feed.xml.",
             websiteUrl: "https://agentnexus.app",
             icons: [
               {

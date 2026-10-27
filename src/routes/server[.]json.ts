@@ -17,7 +17,7 @@ export const Route = createFileRoute("/server.json")({
               name: "app.agentnexus/agent-nexus",
               title: "Agent Nexus",
               description:
-                "650+ tested APIs, MCP servers and CLIs your agent can call. Self-service key in one call.",
+                "700+ tested APIs, MCP servers and CLIs your agent can call. Optional free key for higher limits.",
               version: "1.1.0",
               websiteUrl: origin,
               remotes: [
