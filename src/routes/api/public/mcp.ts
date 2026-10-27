@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
-  ANON_TOOLS,
-  PROTOCOL_VERSION,
   anonCors,
   handleAnonymousMcpPost,
+  mcpDiscoveryDocument,
 } from "@/lib/mcp/anonymous.server";
 
 /**
@@ -35,23 +34,7 @@ export const Route = createFileRoute("/api/public/mcp")({
             { status: 405, headers: { ...anonCors, Allow: "POST, OPTIONS" } },
           );
         }
-        return new Response(
-          JSON.stringify(
-            {
-              name: "agent-nexus-read",
-              title: "Agent Nexus (read-only)",
-              transport: "streamable-http",
-              protocolVersion: PROTOCOL_VERSION,
-              authentication: "none",
-              endpoint: `${new URL(request.url).origin}/api/public/mcp`,
-              tools: ANON_TOOLS.map((t) => t.name),
-              note: "Anonymous read-only mirror, stateless: POST JSON-RPC here, no session id and no SSE stream required. Writes require the authenticated server at /mcp.",
-            },
-            null,
-            2,
-          ),
-          { status: 200, headers: anonCors },
-        );
+        return mcpDiscoveryDocument(request, "/api/public/mcp");
       },
 
 

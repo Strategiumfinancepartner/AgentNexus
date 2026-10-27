@@ -333,6 +333,40 @@ export async function handleAnonymousMcpMessage(request: Request, message: any):
   }
 }
 
+/**
+ * Discovery document answered to plain GET/HEAD probes on the MCP endpoints.
+ * Directory crawlers and onboarding probes (Glama, Taifoon, RNWY…) test the
+ * URL with a GET before attempting a JSON-RPC handshake; a 401/400 there reads
+ * as "server down" in their benches, so we answer 200 with connection
+ * instructions instead.
+ */
+export function mcpDiscoveryDocument(request: Request, endpointPath: string): Response {
+  const origin = new URL(request.url).origin;
+  return new Response(
+    JSON.stringify(
+      {
+        name: "agent-nexus-read",
+        title: "Agent Nexus (read-only)",
+        transport: "streamable-http",
+        protocolVersion: PROTOCOL_VERSION,
+        supportedProtocolVersions: SUPPORTED_PROTOCOL_VERSIONS,
+        authentication: "none for read tools; submit_entry requires a free agent key (x-api-key header)",
+        endpoint: `${origin}${endpointPath}`,
+        tools: ANON_TOOLS.map((t) => t.name),
+        howToConnect: {
+          step1: `POST ${origin}${endpointPath} with {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"${PROTOCOL_VERSION}","capabilities":{},"clientInfo":{"name":"your-agent","version":"1.0"}}}`,
+          step2: 'Then call tools/list, and tools/call with e.g. {"name":"search_registry","arguments":{"query":"send email"}}',
+        },
+        freeKey: `POST ${origin}/api/public/keys {"agent":"your-name"} raises you from 100 to 1000 calls/day, no account needed.`,
+        note: "Stateless server: POST JSON-RPC here, no session id and no SSE stream required.",
+      },
+      null,
+      2,
+    ),
+    { status: 200, headers: anonCors },
+  );
+}
+
 /** Full POST entry point: parse and dispatch. */
 export async function handleAnonymousMcpPost(request: Request): Promise<Response> {
   let message: any;

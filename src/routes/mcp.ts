@@ -12,8 +12,10 @@ import { createTanStackMcpHandler } from "@lovable.dev/mcp-js/stacks/tanstack";
 import mcp from "../lib/mcp/index";
 import {
   ANON_TOOLS,
+  anonCors,
   handleAnonymousMcpMessage,
   isAnonymousMcpMethod,
+  mcpDiscoveryDocument,
 } from "@/lib/mcp/anonymous.server";
 
 const authenticatedHandler = createTanStackMcpHandler(mcp, {
@@ -35,6 +37,35 @@ export const Route = createFileRoute("/mcp")({
 /** Shared by /mcp and legacy aliases such as /mcp/v1. */
 export async function mcpHandler(ctx: any): Promise<Response> {
         const request: Request = ctx.request;
+
+        // Plain GET/HEAD probes (directory crawlers, onboarding benches) get a
+        // 200 discovery document with connection instructions instead of the
+        // OAuth handler's 401, which their benches read as "server down".
+        if (
+          (request.method === "GET" || request.method === "HEAD") &&
+          !request.headers.get("authorization")
+        ) {
+          const accept = request.headers.get("accept") ?? "";
+          if (accept.includes("text/event-stream") && !accept.includes("application/json")) {
+            return new Response(
+              JSON.stringify({
+                jsonrpc: "2.0",
+                error: {
+                  code: -32000,
+                  message:
+                    "This server is stateless: no server-initiated SSE stream. POST JSON-RPC to this same URL.",
+                },
+                id: null,
+              }),
+              { status: 405, headers: { ...anonCors, Allow: "POST, GET, OPTIONS" } },
+            );
+          }
+          return mcpDiscoveryDocument(request, "/mcp");
+        }
+
+        if (request.method === "OPTIONS") {
+          return new Response(null, { status: 204, headers: anonCors });
+        }
 
         // Anything with credentials, or any non-POST transport concern, is the
         // generated handler's business.
