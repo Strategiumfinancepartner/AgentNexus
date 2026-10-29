@@ -6,7 +6,7 @@ const { reads, client } = vi.hoisted(() => {
   query.select.mockReturnValue(query);
   query.eq.mockReturnValue(query);
   query.maybeSingle.mockImplementation(async () => reads.shift());
-  return { reads, client: { from: vi.fn((_table: string) => query) } };
+  return { reads, client: { from: vi.fn((_table: string) => query), rpc: vi.fn(async () => { const r: any = reads.shift(); return { data: r.data?.to_slug ?? null, error: r.error }; }) } };
 });
 vi.mock('../supabase', () => ({ PUBLIC_COLUMNS: 'slug', supabaseAnon: () => client }));
 import getEntry from './get-entry';
