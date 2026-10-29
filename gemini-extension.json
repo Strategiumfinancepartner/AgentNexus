@@ -1,8 +1,10 @@
 {
   "name": "agent-nexus",
-  "version": "1.1.0",
-  "description": "Live-probed registry of 690+ APIs, MCP servers and CLIs for AI agents. Hosted, nothing to install.",
+  "version": "1.0.0",
+  "description": "Discovery registry for public APIs, MCP servers and CLIs, with recorded health checks. Read-only.",
   "mcpServers": {
-    "agent-nexus": { "httpUrl": "https://agentnexus.app/mcp" }
+    "agentnexus": {
+      "httpUrl": "https://agentnexus.app/mcp"
+    }
   }
 }
