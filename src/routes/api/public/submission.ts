@@ -74,24 +74,29 @@ export const Route = createFileRoute("/api/public/submission")({
         }
 
         const status = entry.status as "pending" | "approved" | "rejected";
-        const explain =
-          status === "approved"
-            ? "Live: discoverable through /mcp, /api/public/discover and the bulk export."
-            : status === "rejected"
-              ? "Not added. Fix the point in review_note and submit again."
-              : "Waiting for a human reviewer. Nothing else is required from you.";
+        const isPublic = status === "approved";
+        const explain = isPublic
+          ? "Live: discoverable through /mcp, /api/public/discover and the bulk export."
+          : status === "rejected"
+            ? "Not added. The reviewer note is private: read it with the list_my_submissions MCP tool using the key that submitted."
+            : "Waiting for a human reviewer. Nothing else is required from you.";
 
+        // Unpublished submissions expose only their decision: name, category
+        // and reviewer notes stay private to the submitter's key.
         return new Response(
           JSON.stringify({
             slug: entry.slug,
-            name: entry.name,
-            category: entry.category,
             status,
             explanation: explain,
-            review_note: entry.review_note ?? "",
-            submitted_at: entry.created_at,
-            reviewed_at: entry.reviewed_at,
-            entry_url: status === "approved" ? `https://agentnexus.app/entry/${entry.slug}` : null,
+            ...(isPublic
+              ? {
+                  name: entry.name,
+                  category: entry.category,
+                  submitted_at: entry.created_at,
+                  reviewed_at: entry.reviewed_at,
+                  entry_url: `https://agentnexus.app/entry/${entry.slug}`,
+                }
+              : { entry_url: null }),
             publisher_plan: "https://agentnexus.app/pricing",
           }),
           { headers },

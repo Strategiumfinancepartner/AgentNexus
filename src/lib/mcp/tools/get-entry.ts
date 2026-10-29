@@ -25,8 +25,7 @@ export default defineTool({
       .maybeSingle();
 
     if (!error && !data) {
-      const { data: alias, error: aliasError } = await supabase.from("entry_aliases")
-        .select("to_slug").eq("from_slug", slug).maybeSingle();
+      const { data: alias, error: aliasError } = await (supabase as any).rpc("resolve_entry_alias", { _slug: slug }).then((r: any) => ({ data: r.data ? { to_slug: r.data as string } : null, error: r.error }));
       if (aliasError) error = aliasError;
       else if (alias?.to_slug) {
         ({ data, error } = await supabase.from("entries").select(PUBLIC_COLUMNS)

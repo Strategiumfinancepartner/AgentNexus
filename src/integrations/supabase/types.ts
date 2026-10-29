@@ -955,6 +955,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      resolve_entry_alias: { Args: { _slug: string }; Returns: string }
       trigger_health_check_run: { Args: never; Returns: undefined }
     }
     Enums: {

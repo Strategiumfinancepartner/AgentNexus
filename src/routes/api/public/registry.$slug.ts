@@ -103,11 +103,7 @@ const serveEntry = async ({
           });
         }
         if (!data) {
-          const { data: alias } = await client
-            .from("entry_aliases")
-            .select("to_slug")
-            .eq("from_slug", slug)
-            .maybeSingle();
+          const { data: alias } = await (client as any).rpc("resolve_entry_alias", { _slug: slug }).then((r: any) => ({ data: r.data ? { to_slug: r.data as string } : null, error: r.error }));
           if (alias?.to_slug) {
             return new Response(null, {
               status: 301,

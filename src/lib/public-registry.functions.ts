@@ -91,11 +91,7 @@ export const getPublicEntry = createServerFn({ method: "GET" })
     if (!error && row) return row as unknown as PublicEntryDetail;
 
     // Retired duplicate slug → tell the caller where the canonical entry lives.
-    const { data: alias } = await client
-      .from("entry_aliases")
-      .select("to_slug")
-      .eq("from_slug", data.slug)
-      .maybeSingle();
+    const { data: alias } = await (client as any).rpc("resolve_entry_alias", { _slug: data.slug }).then((r: any) => ({ data: r.data ? { to_slug: r.data as string } : null, error: r.error }));
     if (alias?.to_slug) return { redirectTo: alias.to_slug as string };
     return null;
   });
