@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture
+- Repository first-task examples run standalone with Python's standard library, validate a returned provider contract against a recipe-specific HTTPS allowlist, and require a complete downstream response before success. Why: GitHub onboarding must demonstrate real execution without credentials, arbitrary endpoint execution, or fabricated conversion evidence.
 - Power Platform response definitions expose discovery call/trust contracts and named status health fields. Why: imported actions must return actionable provider endpoints and health evidence instead of opaque objects.
 - Authenticated and anonymous MCP transports share minimal operational instructions without quota, key, email or auxiliary-link guidance; optional offers stay in tool results and quota notices. Why: review metadata must remain capability-focused and consistent across transports.
 - HTTP and MCP capability discovery share whole-word relevance, explicit geographic eligibility and named-service priority in registry-core. Why: incidental text fragments and generic tags must not override a requested service or country.

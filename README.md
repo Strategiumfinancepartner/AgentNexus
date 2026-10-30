@@ -22,7 +22,7 @@ on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus) and on the
 
 ## Connect an agent in one line
 
-**Try a real discovery task:** [find transactional email APIs](https://agentnexus.app/api/public/discover?q=send%20transactional%20email&limit=3), [browse the registry](https://agentnexus.app/explore), or follow the [first-task guide](https://agentnexus.app/connect). Discovery returns a service's call contract; Agent Nexus does not call that service on your behalf.
+**Start with a completed task, not just a search:** obtain Berlin's weather through a discovered public API. The example below needs Python 3 only—no account, key, extra packages, or payment. Agent Nexus finds the service; the example calls the provider directly.
 
 ### Official integrations
 
@@ -38,16 +38,19 @@ on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus) and on the
 
 Use only the package names linked above; unrelated projects also use the AgentNexus name. A [free key](https://agentnexus.app/free-key) gives 1,000 calls/day shared across compatible clients; keep it private. Anonymous discovery remains available at 100 calls/day per source address.
 
-### Make the first useful call
+### Complete your first task
+
+From a checkout of this repository:
 
 ```sh
-curl -s https://agentnexus.app/api/public/mcp \
-  -H 'Content-Type: application/json' \
-  -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"discover_capabilities","arguments":{"need":"send transactional email","limit":3}}}'
+python3 examples/first_weather_task.py
 ```
 
-Select a returned service, read its authentication and pricing requirements, and call its endpoint with that provider's credentials. Report an outcome only after an actual invocation; a successful discovery is not proof that the downstream task succeeded.
+The example discovers Bright Sky, checks the returned no-key contract and expected HTTPS host, then requests Berlin's current weather using the provider's documented `/current_weather` endpoint. It prints the temperature, conditions and observation timestamp only after receiving a complete provider response. If discovery, the contract or the provider response changes, it stops without claiming success. It never books, pays, creates a key, or submits an invocation report.
+
+Live check on October 30, 2026: discovery and the direct provider request both returned HTTP 200; the observation at 08:00 UTC was 7.5 °C and fog. This is an example result, not a promise of future availability or identical weather. This verification is our own test—not evidence of customer activation.
+
+For a different task, read the returned service's authentication and pricing requirements before calling it. Report an outcome only after an actual invocation; discovery and health probes alone do not prove task completion.
 
 MCP (Streamable HTTP, stateless, anonymous — no consent screen, no key):
 
