@@ -242,7 +242,11 @@ export async function handleAnonymousMcpMessage(request: Request, message: any):
 
   if (isHandshake) {
     const { consumeRateLimit, requestActor } = await import("@/lib/telemetry.server");
-    const ok = await consumeRateLimit("mcp_handshake", requestActor(request), 600, 3600);
+    // Fail open after 250 ms: a slow counter must not slow every handshake.
+    const ok = await Promise.race([
+      consumeRateLimit("mcp_handshake", requestActor(request), 600, 3600),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(true), 250)),
+    ]);
     if (!ok) {
       return new Response(
         JSON.stringify({

@@ -66,15 +66,19 @@ const accessLogMiddleware = createMiddleware().server(async (ctx: any) => {
     }
   }
 
-  const result = await ctx.next();
+  // Journal the hit in parallel with the handler instead of after it, so the
+  // caller waits max(handler, log) rather than their sum (MCPcanary latency).
+  const logging =
+    request && surface
+      ? import("./lib/access-log.server")
+          .then(({ logAccess }) => logAccess(request, surface as string, mcpOp))
+          .catch(() => undefined)
+      : Promise.resolve();
+
+  const [result] = await Promise.all([ctx.next(), logging]);
 
   if (request && surface) {
-    try {
-      const { logAccess } = await import("./lib/access-log.server");
-      await logAccess(request, surface, mcpOp);
-    } catch {
-      // swallow
-    }
+
 
     // Failed responses go to their own counter, never mixed with traffic.
     // ctx.next() resolves to either a Response or a wrapper carrying one.
