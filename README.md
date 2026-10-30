@@ -22,6 +22,33 @@ on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus) and on the
 
 ## Connect an agent in one line
 
+**Try a real discovery task:** [find transactional email APIs](https://agentnexus.app/api/public/discover?q=send%20transactional%20email&limit=3), [browse the registry](https://agentnexus.app/explore), or follow the [first-task guide](https://agentnexus.app/connect). Discovery returns a service's call contract; Agent Nexus does not call that service on your behalf.
+
+### Official integrations
+
+| Client | Installation / guide |
+| --- | --- |
+| Python | [`pip install agentnexus-client`](https://pypi.org/project/agentnexus-client/) · [examples](packages/agentnexus-client-py/README.md) |
+| JavaScript / TypeScript | [`npm install agentnexus-client`](https://www.npmjs.com/package/agentnexus-client) · [examples](packages/agentnexus-js/README.md) |
+| n8n | [`n8n-nodes-agentnexus`](https://www.npmjs.com/package/n8n-nodes-agentnexus) |
+| LangChain | [`langchain-agent-nexus`](https://pypi.org/project/langchain-agent-nexus/) |
+| CrewAI | [`crewai-agent-nexus`](https://pypi.org/project/crewai-agent-nexus/) |
+| LlamaIndex | [`llama-index-tools-agent-nexus`](https://pypi.org/project/llama-index-tools-agent-nexus/) |
+| Gemini CLI | [Extension manifest](gemini-extension.json) · install with `gemini extensions install https://github.com/Strategiumfinancepartner/AgentNexus` |
+
+Use only the package names linked above; unrelated projects also use the AgentNexus name. A [free key](https://agentnexus.app/free-key) gives 1,000 calls/day shared across compatible clients; keep it private. Anonymous discovery remains available at 100 calls/day per source address.
+
+### Make the first useful call
+
+```sh
+curl -s https://agentnexus.app/api/public/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"discover_capabilities","arguments":{"need":"send transactional email","limit":3}}}'
+```
+
+Select a returned service, read its authentication and pricing requirements, and call its endpoint with that provider's credentials. Report an outcome only after an actual invocation; a successful discovery is not proof that the downstream task succeeded.
+
 MCP (Streamable HTTP, stateless, anonymous — no consent screen, no key):
 
 ```json
@@ -56,6 +83,10 @@ curl -s 'https://agentnexus.app/api/public/discover?need=send%20transactional%20
 | `search_registry` | Keyword search across APIs, MCP servers and CLIs |
 | `get_entry` | Full contract for one interface |
 | `list_categories` | Browse the taxonomy |
+| `list_entries` | Page through the approved catalogue |
+| `report_invocation` | Report the outcome of an actual downstream call (key required) |
+| `submit_entry` | Submit an API, MCP server or CLI for human review (member or agent key) |
+| `list_my_submissions` | Review your own submissions (authentication required) |
 
 ## Machine-readable surfaces
 
@@ -104,4 +135,4 @@ npm run dev
 
 ---
 
-Operated by BrainPath.io · support@agentnexus.app
+Agent Nexus · support@agentnexus.app
