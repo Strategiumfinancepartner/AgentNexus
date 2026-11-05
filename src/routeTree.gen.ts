@@ -41,6 +41,7 @@ import { Route as Char91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } 
 import { Route as Char91DotwellKnownChar93AgentsChar91DotChar93jsonRouteImport } from './routes/[.well-known]/agents[.]json'
 import { Route as Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-catalog[.]json'
 import { Route as Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ai-plugin[.]json'
+import { Route as Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRouteImport } from './routes/[.well-known]/appside-mcp[.]txt'
 import { Route as Char91DotwellKnownChar93ArdChar91DotChar93jsonRouteImport } from './routes/[.well-known]/ard[.]json'
 import { Route as Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRouteImport } from './routes/[.well-known]/brick-blue[.]json'
 import { Route as Char91DotwellKnownChar93GlamaChar91DotChar93jsonRouteImport } from './routes/[.well-known]/glama[.]json'
@@ -287,6 +288,12 @@ const Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute =
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/ai-plugin.json',
     path: '/.well-known/ai-plugin.json',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute =
+  Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRouteImport.update({
+    id: '/.well-known/appside-mcp.txt',
+    path: '/.well-known/appside-mcp.txt',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute =
@@ -772,6 +779,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/appside-mcp.txt': typeof Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute
   '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   '/.well-known/brick-blue.json': typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
@@ -885,6 +893,7 @@ export interface FileRoutesByTo {
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/appside-mcp.txt': typeof Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute
   '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   '/.well-known/brick-blue.json': typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
@@ -1000,6 +1009,7 @@ export interface FileRoutesById {
   '/.well-known/agents.json': typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   '/.well-known/ai-catalog.json': typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   '/.well-known/ai-plugin.json': typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  '/.well-known/appside-mcp.txt': typeof Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute
   '/.well-known/ard.json': typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   '/.well-known/brick-blue.json': typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   '/.well-known/glama.json': typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
@@ -1115,6 +1125,7 @@ export interface FileRouteTypes {
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/appside-mcp.txt'
     | '/.well-known/ard.json'
     | '/.well-known/brick-blue.json'
     | '/.well-known/glama.json'
@@ -1228,6 +1239,7 @@ export interface FileRouteTypes {
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/appside-mcp.txt'
     | '/.well-known/ard.json'
     | '/.well-known/brick-blue.json'
     | '/.well-known/glama.json'
@@ -1342,6 +1354,7 @@ export interface FileRouteTypes {
     | '/.well-known/agents.json'
     | '/.well-known/ai-catalog.json'
     | '/.well-known/ai-plugin.json'
+    | '/.well-known/appside-mcp.txt'
     | '/.well-known/ard.json'
     | '/.well-known/brick-blue.json'
     | '/.well-known/glama.json'
@@ -1457,6 +1470,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AgentsChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute
+  Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute: typeof Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute
   Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute
   Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute
   Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93GlamaChar91DotChar93jsonRoute
@@ -1738,6 +1752,13 @@ declare module '@tanstack/react-router' {
       path: '/.well-known/ai-plugin.json'
       fullPath: '/.well-known/ai-plugin.json'
       preLoaderRoute: typeof Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/appside-mcp.txt': {
+      id: '/.well-known/appside-mcp.txt'
+      path: '/.well-known/appside-mcp.txt'
+      fullPath: '/.well-known/appside-mcp.txt'
+      preLoaderRoute: typeof Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.well-known/ard.json': {
@@ -2461,6 +2482,8 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93AiCatalogChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93AiPluginChar91DotChar93jsonRoute,
+  Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute:
+    Char91DotwellKnownChar93AppsideMcpChar91DotChar93txtRoute,
   Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute:
     Char91DotwellKnownChar93ArdChar91DotChar93jsonRoute,
   Char91DotwellKnownChar93BrickBlueChar91DotChar93jsonRoute:
