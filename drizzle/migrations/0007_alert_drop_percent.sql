@@ -1,0 +1,1 @@
+ALTER TABLE public.entry_alert_settings ADD COLUMN IF NOT EXISTS drop_percent integer NOT NULL DEFAULT 80 CHECK (drop_percent BETWEEN 10 AND 100);

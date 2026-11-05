@@ -6,6 +6,8 @@ export type PublisherSnapshot = {
   volume?: boolean | null;
   stale?: string[] | null;
   sourcesTotal?: number | null;
+  zero?: string[] | null;
+  dropped?: string[] | null;
 };
 export type PublisherKinds = { outage: boolean; schema: boolean; data: boolean };
 
@@ -17,16 +19,20 @@ export function publisherState(s: PublisherSnapshot, k: PublisherKinds): string 
     parts.push(`fresh=${s.fresh ?? "?"}`, `volume=${s.volume ?? "?"}`);
     parts.push(`stale=${s.stale ? s.stale.join(",") : "?"}`);
     parts.push(`total=${s.sourcesTotal ?? "?"}`);
+    if (s.zero !== undefined) parts.push(`zero=${s.zero ? s.zero.join(",") : "?"}`);
+    if (s.dropped !== undefined) parts.push(`drop=${s.dropped ? s.dropped.join(",") : "?"}`);
   }
   return parts.join(";");
 }
 
-type Parsed = Partial<Record<"up" | "schema" | "fresh" | "volume" | "stale" | "total", string>>;
+type Parsed = Partial<Record<"up" | "schema" | "fresh" | "volume" | "stale" | "total" | "zero" | "drop", string>>;
 function parse(state: string): Parsed {
   return Object.fromEntries(state.split(";").filter(Boolean).map((x) => { const i = x.indexOf("="); return [x.slice(0, i), x.slice(i + 1)]; })) as Parsed;
 }
 
-export function describePublisherChange(prev: string, next: string, opts: { minVolume: number; staleHours: number; downSince?: string | null } ): string[] {
+function list(v: string | undefined): string[] { return v && v !== "?" ? v.split(",").filter(Boolean) : []; }
+
+export function describePublisherChange(prev: string, next: string, opts: { minVolume: number; staleHours: number; dropPercent?: number; downSince?: string | null } ): string[] {
   const p = parse(prev), n = parse(next), out: string[] = [];
   if ("up" in n && p.up !== n.up) {
     if (n.up === "false") out.push("OUTAGE: confirmed down (2 consecutive failed checks)");
@@ -52,6 +58,18 @@ export function describePublisherChange(prev: string, next: string, opts: { minV
     const total = n.total && n.total !== "?" ? ` of ${n.total}` : "";
     if (added.length) out.push(`STALE SOURCES: ${now.length}${total} sources not updated for ${opts.staleHours}h+ (new: ${added.join(", ")})`);
     if (recovered.length) out.push(`SOURCES RECOVERED: ${recovered.join(", ")}`);
+  }
+  if ("zero" in n && n.zero !== "?" && p.zero !== n.zero) {
+    const before = new Set(list(p.zero)); const now = list(n.zero);
+    const added = now.filter((x) => !before.has(x));
+    const back = [...before].filter((x) => !now.includes(x));
+    if (added.length) out.push(`SOURCE AT ZERO: ${added.join(", ")} now returning 0 live records`);
+    if (back.length && p.zero !== "?") out.push(`SOURCE BACK: ${back.join(", ")} returning records again`);
+  }
+  if ("drop" in n && n.drop !== "?" && p.drop !== n.drop) {
+    const before = new Set(list(p.drop));
+    const added = list(n.drop).filter((x) => !before.has(x));
+    if (added.length) out.push(`SOURCE DROP: ${added.join(", ")} lost more than ${opts.dropPercent ?? 80}% of live records since the previous check`);
   }
   return out;
 }

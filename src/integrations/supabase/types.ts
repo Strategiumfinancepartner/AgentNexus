@@ -300,6 +300,7 @@ export type Database = {
           alert_data: boolean
           alert_outage: boolean
           alert_schema: boolean
+          drop_percent: number
           email: string | null
           entry_id: string
           last_state: string | null
@@ -313,6 +314,7 @@ export type Database = {
           alert_data?: boolean
           alert_outage?: boolean
           alert_schema?: boolean
+          drop_percent?: number
           email?: string | null
           entry_id: string
           last_state?: string | null
@@ -326,6 +328,7 @@ export type Database = {
           alert_data?: boolean
           alert_outage?: boolean
           alert_schema?: boolean
+          drop_percent?: number
           email?: string | null
           entry_id?: string
           last_state?: string | null

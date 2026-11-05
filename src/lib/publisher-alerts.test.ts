@@ -65,3 +65,32 @@ describe("delivery retries", () => {
     } finally { f.mockRestore(); }
   });
 });
+
+describe("per-source zero and drop alerts", () => {
+  const now = 2_000_000_000;
+  const base = (zero: string[], dropped: string[]) => publisherState({ up: true, schema: true, fresh: true, volume: true, stale: [], sourcesTotal: 83, zero, dropped }, all);
+
+  it("a source falling to 0 is detected even when the total stays high", () => {
+    const q = assessNovaData(now - 60, 1_500_000, now, { sources: ["a", "b", "c"], bySource: { a: 1_499_000, b: 0 }, previousBySource: { a: 1_400_000, b: 900, c: 100 } });
+    expect(q.volume).toBe(true);
+    expect(q.zeroSources).toEqual(["b", "c"]);
+    expect(q.droppedSources).toEqual([]);
+  });
+
+  it("zero alert fires once, does not repeat, and reports the return", () => {
+    const ok = base([], []), down = base(["himalayas"], []);
+    expect(describePublisherChange(ok, down, opts)).toEqual(["SOURCE AT ZERO: himalayas now returning 0 live records"]);
+    expect(describePublisherChange(down, down, opts)).toEqual([]);
+    expect(describePublisherChange(down, ok, opts)).toEqual(["SOURCE BACK: himalayas returning records again"]);
+  });
+
+  it("drop above 80% since the previous check alerts; 50% or small sources do not", () => {
+    const q = assessNovaData(now - 60, 1_500_000, now, { bySource: { big: 100, half: 500, tiny: 1 }, previousBySource: { big: 1000, half: 1000, tiny: 40 } });
+    expect(q.droppedSources).toEqual(["big"]);
+    expect(describePublisherChange(base([], []), base([], ["big"]), opts)[0]).toContain("SOURCE DROP: big lost more than 80%");
+  });
+
+  it("first check without previous counts never reports drops", () => {
+    expect(assessNovaData(now - 60, 1_500_000, now, { bySource: { a: 5 } }).droppedSources).toEqual([]);
+  });
+});

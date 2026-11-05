@@ -22,7 +22,7 @@ export type AlertSettingsView = {
   allowed: boolean;
   publisher: boolean;
   canEdit: boolean;
-  settings: null | { alert_outage: boolean; alert_schema: boolean; alert_data: boolean; stale_hours: number; min_volume: number | null; email: string | null; webhook_url: string | null; webhook_secret: string };
+  settings: null | { alert_outage: boolean; alert_schema: boolean; alert_data: boolean; stale_hours: number; min_volume: number | null; drop_percent: number; email: string | null; webhook_url: string | null; webhook_secret: string };
   history: { created_at: string; channel: string; target: string; status: string; attempts: number; last_error: string | null; changes: string[] }[];
 };
 
@@ -33,7 +33,7 @@ export const getAlertSettings = createServerFn({ method: "POST" })
     const a = await authorize(context, data.slug);
     if (!a) return { allowed: false, publisher: false, canEdit: false, settings: null, history: [] };
     const [{ data: s }, { data: h }] = await Promise.all([
-      a.admin.from("entry_alert_settings").select("alert_outage, alert_schema, alert_data, stale_hours, min_volume, email, webhook_url, webhook_secret").eq("entry_id", a.entry.id).maybeSingle(),
+      a.admin.from("entry_alert_settings").select("alert_outage, alert_schema, alert_data, stale_hours, min_volume, drop_percent, email, webhook_url, webhook_secret").eq("entry_id", a.entry.id).maybeSingle(),
       a.admin.from("watch_deliveries").select("created_at, channel, target, status, attempts, last_error, payload").eq("entry_id", a.entry.id).eq("audience", "publisher").order("created_at", { ascending: false }).limit(30),
     ]);
     return {
@@ -49,6 +49,7 @@ export const saveAlertSettings = createServerFn({ method: "POST" })
     alert_outage: z.boolean(), alert_schema: z.boolean(), alert_data: z.boolean(),
     stale_hours: z.number().int().min(1).max(720),
     min_volume: z.number().int().min(0).max(1_000_000_000).nullable(),
+    drop_percent: z.number().int().min(10).max(100).default(80),
     email: z.string().trim().email().max(255).nullable(),
     webhook_url: z.string().trim().url().max(500).startsWith("https://").nullable(),
   }).parse(d))

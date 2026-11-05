@@ -75,6 +75,7 @@ const plans = [
       "Outage alerts, sent only once 2 checks in a row fail, plus a recovery notice",
       "Structure-change alerts when your responses stop matching their contract",
       "Stale-data alerts per source, with your own age and volume thresholds",
+      "Per-source volume alerts: a source dropping to zero, or losing a share you choose",
       "Email and signed webhook, retried until delivered, with a test button and alert history",
       "Ranked higher in what agents get served",
       "A distribution channel, not an ad",

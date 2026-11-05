@@ -13,13 +13,13 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
   const save = useServerFn(saveAlertSettings);
   const test = useServerFn(sendTestAlert);
   const q = useQuery({ queryKey: ["alert-settings", slug], queryFn: () => fetchSettings({ data: { slug } }) });
-  const [form, setForm] = useState({ alert_outage: true, alert_schema: true, alert_data: true, stale_hours: 24, min_volume: "", email: "", webhook_url: "" });
+  const [form, setForm] = useState({ alert_outage: true, alert_schema: true, alert_data: true, stale_hours: 24, min_volume: "", drop_percent: 80, email: "", webhook_url: "" });
   useEffect(() => {
     const s = q.data?.settings;
-    if (s) setForm({ alert_outage: s.alert_outage, alert_schema: s.alert_schema, alert_data: s.alert_data, stale_hours: s.stale_hours, min_volume: s.min_volume == null ? "" : String(s.min_volume), email: s.email ?? "", webhook_url: s.webhook_url ?? "" });
+    if (s) setForm({ alert_outage: s.alert_outage, alert_schema: s.alert_schema, alert_data: s.alert_data, stale_hours: s.stale_hours, min_volume: s.min_volume == null ? "" : String(s.min_volume), drop_percent: s.drop_percent ?? 80, email: s.email ?? "", webhook_url: s.webhook_url ?? "" });
   }, [q.data?.settings]);
   const saveM = useMutation({
-    mutationFn: () => save({ data: { slug, alert_outage: form.alert_outage, alert_schema: form.alert_schema, alert_data: form.alert_data, stale_hours: Number(form.stale_hours), min_volume: form.min_volume === "" ? null : Number(form.min_volume), email: form.email.trim() || null, webhook_url: form.webhook_url.trim() || null } }),
+    mutationFn: () => save({ data: { slug, alert_outage: form.alert_outage, alert_schema: form.alert_schema, alert_data: form.alert_data, stale_hours: Number(form.stale_hours), min_volume: form.min_volume === "" ? null : Number(form.min_volume), drop_percent: Number(form.drop_percent), email: form.email.trim() || null, webhook_url: form.webhook_url.trim() || null } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["alert-settings", slug] }),
   });
   const testM = useMutation({ mutationFn: () => test({ data: { slug } }), onSuccess: () => qc.invalidateQueries({ queryKey: ["alert-settings", slug] }) });
@@ -41,7 +41,7 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
       ) : null}
       <form className="mt-4 grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); saveM.mutate(); }}>
         <fieldset className="sm:col-span-2 flex flex-wrap gap-4 text-sm text-foreground" disabled={!canEdit}>
-          {([["alert_outage", "Outage"], ["alert_schema", "Structure change"], ["alert_data", "Stale data & volume"]] as const).map(([k, l]) => (
+          {([["alert_outage", "Outage"], ["alert_schema", "Structure change"], ["alert_data", "Stale data, volume & per-source zero/drop"]] as const).map(([k, l]) => (
             <label key={k} className="flex items-center gap-2">
               <input type="checkbox" checked={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.checked })} /> {l}
             </label>
@@ -52,6 +52,9 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
         </label>
         <label className={label}>Minimum live records (optional)
           <input className={input} type="number" min={0} value={form.min_volume} disabled={!canEdit} onChange={(e) => setForm({ ...form, min_volume: e.target.value })} />
+        </label>
+        <label className={label}>Per-source drop alert (% lost since last check; a source at 0 always alerts)
+          <input className={input} type="number" min={10} max={100} value={form.drop_percent} disabled={!canEdit} onChange={(e) => setForm({ ...form, drop_percent: Number(e.target.value) })} />
         </label>
         <label className={label}>Alert email (defaults to your account email)
           <input className={input} type="email" value={form.email} disabled={!canEdit} onChange={(e) => setForm({ ...form, email: e.target.value })} />

@@ -26,6 +26,8 @@ export function snapshotFromEntry(e: { down_since: string | null; health_checked
     volume: data ? data.volume ?? null : null,
     stale: data && Array.isArray(data.stale_sources) ? data.stale_sources as string[] : null,
     sourcesTotal: data ? data.sources_total ?? null : null,
+    zero: data && Array.isArray(data.zero_sources) ? data.zero_sources as string[] : null,
+    dropped: data && Array.isArray(data.dropped_sources) ? data.dropped_sources as string[] : null,
   };
 }
 
@@ -59,7 +61,7 @@ export async function notifyPublisher(admin: Admin, entryId: string): Promise<vo
     const state = publisherState(snapshotFromEntry(entry), kinds);
     if (settings.last_state === state) return;
     if (settings.last_state) {
-      const changes = describePublisherChange(settings.last_state, state, { minVolume: settings.min_volume ?? NOVA_MIN_LIVE, staleHours: settings.stale_hours });
+      const changes = describePublisherChange(settings.last_state, state, { minVolume: settings.min_volume ?? NOVA_MIN_LIVE, staleHours: settings.stale_hours, dropPercent: settings.drop_percent ?? undefined });
       if (changes.length) await sendPublisherAlert(admin, entry, settings, changes, state);
     }
     await admin.from("entry_alert_settings").update({ last_state: state }).eq("entry_id", entryId);

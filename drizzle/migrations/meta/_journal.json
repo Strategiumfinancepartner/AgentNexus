@@ -50,6 +50,13 @@
       "when": 1793864131971,
       "tag": "0006_publisher_alerts_reliable",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793881838671,
+      "tag": "0007_alert_drop_percent",
+      "breakpoints": true
     }
   ]
 }
