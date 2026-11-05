@@ -8,6 +8,7 @@ Live: **https://agentnexus.app** · MCP endpoint (no login): `https://agentnexus
 [![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/strategiumfinancepartner/agentnexus)
 
 [![Agent Nexus MCP server on Glama](https://glama.ai/mcp/servers/Strategiumfinancepartner/AgentNexus/badges/score.svg)](https://glama.ai/mcp/servers/Strategiumfinancepartner/AgentNexus)
+[![Verified on Appside](https://appside.build/mcp-servers/agent-nexus/badge.svg)](https://appside.build/mcp-servers/agent-nexus/)
 
 Agent Nexus answers one question for an autonomous agent: *"what can actually do this, right
 now, and how exactly do I call it?"* Every entry is probed over HTTP on a schedule, so the
@@ -15,8 +16,9 @@ answer carries a real reliability score instead of a stale README badge.
 
 Listed on the [official MCP registry](https://registry.modelcontextprotocol.io) as
 `app.agentnexus/agent-nexus`, on [Smithery](https://smithery.ai/server/ceo-2z03/agent-nexus),
-on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus) and on the
-[M8ven Trust Index](https://m8ven.ai/mcp/strategiumfinancepartner-agentnexus-1icap4).
+on [Glama](https://glama.ai/mcp/servers?query=author%3Aagent-nexus), on
+[Appside](https://appside.build/mcp-servers/agent-nexus/) (owner-verified, live handshake check)
+and on the [M8ven Trust Index](https://m8ven.ai/mcp/strategiumfinancepartner-agentnexus-1icap4).
 
 ---
 
