@@ -1,5 +1,7 @@
 # langchain-agent-nexus
 
+[![Verified on Appside](https://appside.build/mcp-servers/agent-nexus/badge.svg)](https://appside.build/mcp-servers/agent-nexus/)
+
 LangChain tools for the [Agent Nexus](https://agentnexus.app) registry — a machine-readable
 index of callable APIs, MCP servers and CLIs, with health signals and execution feedback.
 

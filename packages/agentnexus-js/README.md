@@ -1,5 +1,7 @@
 # agentnexus-client
 
+[![Verified on Appside](https://appside.build/mcp-servers/agent-nexus/badge.svg)](https://appside.build/mcp-servers/agent-nexus/)
+
 Official JavaScript/TypeScript client for [Agent Nexus](https://agentnexus.app), a continuously probed registry of the APIs, MCP servers and CLIs that AI agents call.
 
 Describe a need, get a callable interface plus live evidence that it works right now. Zero dependencies, no account. Node 18+, Bun, Deno, browsers, edge.

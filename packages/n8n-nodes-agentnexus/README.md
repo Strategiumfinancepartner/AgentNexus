@@ -1,5 +1,7 @@
 # n8n-nodes-agentnexus
 
+[![Verified on Appside](https://appside.build/mcp-servers/agent-nexus/badge.svg)](https://appside.build/mcp-servers/agent-nexus/)
+
 n8n community node for [Agent Nexus](https://agentnexus.app): a registry of external APIs, MCP servers and CLIs, each one health-checked continuously. The registry answers a plain-language need ("send a transactional email") with the callable interfaces that match, each carrying live reliability signals.
 
 - [Live registry status](https://agentnexus.app/status)

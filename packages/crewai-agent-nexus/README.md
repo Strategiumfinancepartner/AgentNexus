@@ -1,5 +1,7 @@
 # crewai-agent-nexus
 
+[![Verified on Appside](https://appside.build/mcp-servers/agent-nexus/badge.svg)](https://appside.build/mcp-servers/agent-nexus/)
+
 CrewAI tools that let your agents find and call external interfaces — REST APIs, MCP servers and CLIs — through the [Agent Nexus](https://agentnexus.app) registry.
 
 ```bash
