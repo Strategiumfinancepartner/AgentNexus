@@ -81,6 +81,7 @@ import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as ApiMcpOauthRouteImport } from './routes/api/mcp-oauth'
+import { Route as CaseStudiesNovaRouteImport } from './routes/case-studies.nova'
 import { Route as GuidesApiFallbacksRouteImport } from './routes/guides.api-fallbacks'
 import { Route as IsDownSlugRouteImport } from './routes/is-down.$slug'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
@@ -523,6 +524,11 @@ const ApiMcpOauthRoute = ApiMcpOauthRouteImport.update({
   path: '/api/mcp-oauth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CaseStudiesNovaRoute = CaseStudiesNovaRouteImport.update({
+  id: '/case-studies/nova',
+  path: '/case-studies/nova',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesApiFallbacksRoute = GuidesApiFallbacksRouteImport.update({
   id: '/guides/api-fallbacks',
   path: '/guides/api-fallbacks',
@@ -806,6 +812,7 @@ export interface FileRoutesByFullPath {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
@@ -918,6 +925,7 @@ export interface FileRoutesByTo {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
@@ -1032,6 +1040,7 @@ export interface FileRoutesById {
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
@@ -1146,6 +1155,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/case-studies/nova'
     | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
@@ -1258,6 +1268,7 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/case-studies/nova'
     | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
@@ -1371,6 +1382,7 @@ export interface FileRouteTypes {
     | '/_authenticated/signals'
     | '/_authenticated/submit'
     | '/api/mcp-oauth'
+    | '/case-studies/nova'
     | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
@@ -1479,6 +1491,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93X402ManifestChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93X402ManifestChar91DotChar93jsonRoute
   Char91DotwellKnownChar93X402Char91DotChar93jsonRoute: typeof Char91DotwellKnownChar93X402Char91DotChar93jsonRoute
   ApiMcpOauthRoute: typeof ApiMcpOauthRoute
+  CaseStudiesNovaRoute: typeof CaseStudiesNovaRoute
   GuidesApiFallbacksRoute: typeof GuidesApiFallbacksRoute
   RegistrySlugRoute: typeof RegistrySlugRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -2007,6 +2020,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpOauthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/case-studies/nova': {
+      id: '/case-studies/nova'
+      path: '/case-studies/nova'
+      fullPath: '/case-studies/nova'
+      preLoaderRoute: typeof CaseStudiesNovaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides/api-fallbacks': {
       id: '/guides/api-fallbacks'
       path: '/guides/api-fallbacks'
@@ -2501,6 +2521,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93X402Char91DotChar93jsonRoute:
     Char91DotwellKnownChar93X402Char91DotChar93jsonRoute,
   ApiMcpOauthRoute: ApiMcpOauthRoute,
+  CaseStudiesNovaRoute: CaseStudiesNovaRoute,
   GuidesApiFallbacksRoute: GuidesApiFallbacksRoute,
   RegistrySlugRoute: RegistrySlugRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
