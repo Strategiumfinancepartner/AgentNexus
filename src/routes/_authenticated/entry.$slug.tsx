@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getEntry, getMyAccess, listVotes, toggleVote } from "@/lib/registry.functions";
 import { getEntryReport } from "@/lib/entry-report.functions";
+import { PublisherAlertSettings } from "@/components/publisher-alert-settings";
 import { VoteButton } from "@/components/vote-button";
 import { AppShell, HealthBadge } from "@/components/app-shell";
 import { reliability } from "@/lib/registry-core";
@@ -200,6 +201,7 @@ function EntryPage() {
             </section>
 
             <PublisherReport slug={slug} />
+            <PublisherAlertSettings slug={slug} />
           </>
         )}
       </main>

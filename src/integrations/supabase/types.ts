@@ -145,10 +145,15 @@ export type Database = {
           category: Database["public"]["Enums"]["entry_category"]
           checks_ok: number
           checks_total: number
+          consecutive_failures: number
           created_at: string
+          data_checked_at: string | null
+          data_detail: string | null
+          data_ok: boolean | null
           description: string
           discovered_tools: string[]
           docs_url: string | null
+          down_since: string | null
           endpoint: string
           featured: boolean
           health_checked_at: string | null
@@ -193,10 +198,15 @@ export type Database = {
           category: Database["public"]["Enums"]["entry_category"]
           checks_ok?: number
           checks_total?: number
+          consecutive_failures?: number
           created_at?: string
+          data_checked_at?: string | null
+          data_detail?: string | null
+          data_ok?: boolean | null
           description?: string
           discovered_tools?: string[]
           docs_url?: string | null
+          down_since?: string | null
           endpoint: string
           featured?: boolean
           health_checked_at?: string | null
@@ -241,10 +251,15 @@ export type Database = {
           category?: Database["public"]["Enums"]["entry_category"]
           checks_ok?: number
           checks_total?: number
+          consecutive_failures?: number
           created_at?: string
+          data_checked_at?: string | null
+          data_detail?: string | null
+          data_ok?: boolean | null
           description?: string
           discovered_tools?: string[]
           docs_url?: string | null
+          down_since?: string | null
           endpoint?: string
           featured?: boolean
           health_checked_at?: string | null
@@ -279,6 +294,63 @@ export type Database = {
           verified_by?: string | null
         }
         Relationships: []
+      }
+      entry_alert_settings: {
+        Row: {
+          alert_data: boolean
+          alert_outage: boolean
+          alert_schema: boolean
+          email: string | null
+          entry_id: string
+          last_state: string | null
+          min_volume: number | null
+          stale_hours: number
+          updated_at: string
+          webhook_secret: string
+          webhook_url: string | null
+        }
+        Insert: {
+          alert_data?: boolean
+          alert_outage?: boolean
+          alert_schema?: boolean
+          email?: string | null
+          entry_id: string
+          last_state?: string | null
+          min_volume?: number | null
+          stale_hours?: number
+          updated_at?: string
+          webhook_secret?: string
+          webhook_url?: string | null
+        }
+        Update: {
+          alert_data?: boolean
+          alert_outage?: boolean
+          alert_schema?: boolean
+          email?: string | null
+          entry_id?: string
+          last_state?: string | null
+          min_volume?: number | null
+          stale_hours?: number
+          updated_at?: string
+          webhook_secret?: string
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entry_alert_settings_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: true
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "entry_alert_settings_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: true
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
       }
       entry_aliases: {
         Row: {
@@ -788,6 +860,7 @@ export type Database = {
           last_state: string | null
           owner: string
           unsubscribe_token: string
+          webhook_secret: string | null
           webhook_url: string | null
         }
         Insert: {
@@ -802,6 +875,7 @@ export type Database = {
           last_state?: string | null
           owner: string
           unsubscribe_token?: string
+          webhook_secret?: string | null
           webhook_url?: string | null
         }
         Update: {
@@ -816,6 +890,7 @@ export type Database = {
           last_state?: string | null
           owner?: string
           unsubscribe_token?: string
+          webhook_secret?: string | null
           webhook_url?: string | null
         }
         Relationships: [
@@ -862,6 +937,72 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      watch_deliveries: {
+        Row: {
+          attempts: number
+          audience: string
+          channel: string
+          created_at: string
+          entry_id: string
+          id: string
+          last_error: string | null
+          next_attempt_at: string
+          payload: Json
+          secret: string | null
+          sent_at: string | null
+          status: string
+          target: string
+          watch_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          audience?: string
+          channel: string
+          created_at?: string
+          entry_id: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          payload: Json
+          secret?: string | null
+          sent_at?: string | null
+          status?: string
+          target: string
+          watch_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          audience?: string
+          channel?: string
+          created_at?: string
+          entry_id?: string
+          id?: string
+          last_error?: string | null
+          next_attempt_at?: string
+          payload?: Json
+          secret?: string | null
+          sent_at?: string | null
+          status?: string
+          target?: string
+          watch_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_deliveries_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_deliveries_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "entry_vote_counts"
+            referencedColumns: ["entry_id"]
+          },
+        ]
       }
     }
     Views: {

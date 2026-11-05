@@ -96,7 +96,7 @@ export const Route = createFileRoute("/api/public/watch")({
         const admin = supabaseAdmin as any;
         const { data: entry } = await admin
           .from("entries")
-          .select("id, slug, name, health_ok, schema_ok, schema_detail, discovered_tools")
+          .select("id, slug, name, health_ok, schema_ok, data_detail, down_since, discovered_tools")
           .eq("slug", slug.toLowerCase())
           .eq("status", "approved")
           .maybeSingle();
@@ -111,7 +111,7 @@ export const Route = createFileRoute("/api/public/watch")({
         }
 
         const { readDataQuality } = await import("@/lib/data-quality");
-        const state = await watchState({ up: entry.health_ok, schema_ok: entry.schema_ok, tools: entry.discovered_tools, ...readDataQuality(entry.schema_detail) });
+        const state = await watchState({ up: entry.down_since ? false : entry.health_ok === null ? null : true, schema_ok: entry.schema_ok, tools: entry.discovered_tools, ...readDataQuality(entry.data_detail) });
         const { data: existing } = await admin
           .from("tool_watches")
           .select("id, confirmed_at")
@@ -123,12 +123,14 @@ export const Route = createFileRoute("/api/public/watch")({
         // Webhook watches belong to a Pro key: the caller is already verified,
         // so they start confirmed.
         if (webhook_url) {
+          const webhookSecret = [...crypto.getRandomValues(new Uint8Array(24))].map((b) => b.toString(16).padStart(2, "0")).join("");
           const { error } = await admin.from("tool_watches").upsert(
             {
               entry_id: entry.id,
               owner,
               email: notifyEmail,
               webhook_url,
+              webhook_secret: webhookSecret,
               api_key_id: key?.keyId ?? null,
               last_state: state,
               confirmed_at: new Date().toISOString(),
@@ -136,7 +138,7 @@ export const Route = createFileRoute("/api/public/watch")({
             { onConflict: "entry_id,owner" },
           );
           if (error) return json({ error: "Could not save" }, 500);
-          return json({ ok: true, following: entry.slug, alerts_to: webhook_url, alerts_on: ["down", "back up", "schema drift", "tools/list change"], plan_limit: limit });
+          return json({ ok: true, following: entry.slug, alerts_to: webhook_url, alerts_on: ["down", "back up", "schema drift", "tools/list change"], plan_limit: limit, signing_secret: webhookSecret, signature_header: "x-agentnexus-signature: sha256=<hex HMAC-SHA256 of raw body>" });
         }
 
         // Double opt-in for email watches: nobody can subscribe an address

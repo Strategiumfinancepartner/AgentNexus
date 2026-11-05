@@ -33,7 +33,11 @@ export const Route = createFileRoute("/api/public/health-check")({
           console.error("publisher entitlement sync failed", error);
         }
 
-        return new Response(JSON.stringify({ success: true, ...summary, entitlements, data_quality: dataQuality }), {
+        const { retryPendingDeliveries } = await import("@/lib/alert-delivery.server");
+        let deliveries: unknown = null;
+        try { deliveries = await retryPendingDeliveries(supabaseAdmin as never); } catch (error) { console.error("delivery retry failed", error); }
+
+        return new Response(JSON.stringify({ success: true, ...summary, entitlements, data_quality: dataQuality, deliveries }), {
           headers: jsonHeaders,
         });
       },

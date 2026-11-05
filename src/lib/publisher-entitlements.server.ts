@@ -65,6 +65,7 @@ type EntryRow = {
   verified: boolean;
   health_ok: boolean | null;
   capability_ok: boolean | null;
+  down_since?: string | null;
 };
 
 export async function syncPublisherEntitlements(admin: Admin): Promise<EntitlementSummary> {
@@ -72,7 +73,7 @@ export async function syncPublisherEntitlements(admin: Admin): Promise<Entitleme
 
   const { data } = await admin
     .from("entries")
-    .select("id, slug, name, submitted_by, featured, verified, health_ok, capability_ok")
+    .select("id, slug, name, submitted_by, featured, verified, health_ok, capability_ok, down_since")
     .eq("status", "approved");
   const rows = (data ?? []) as EntryRow[];
 
@@ -132,7 +133,12 @@ async function sendDowntimeAlerts(admin: Admin, entries: EntryRow[]): Promise<nu
 
   for (const entry of entries) {
     if (entry.health_ok === null) continue;
-    const kind = entry.health_ok ? "recovered" : "down";
+    // Entries with configured publisher alerts are handled by publisher-alerts.server.
+    const { data: configured } = await admin.from("entry_alert_settings").select("entry_id").eq("entry_id", entry.id).maybeSingle();
+    if (configured) continue;
+    // Only a confirmed outage (2 consecutive failed checks) counts as down.
+    if (!entry.health_ok && !entry.down_since) continue;
+    const kind = entry.down_since ? "down" : "recovered";
 
     const { data: last } = await admin
       .from("publisher_alerts")

@@ -183,7 +183,7 @@ export async function runHealthChecks(
 }> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, discovered_tools")
+    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -290,6 +290,12 @@ export async function runHealthChecks(
       health_latency_ms: isLocalCommand ? null : result.latency_ms,
       health_checked_at: checkedAt,
     };
+    // Confirmed outage: down only after 2 consecutive failed checks.
+    const prev = row as any;
+    const fails = isLocalCommand ? 0 : result.ok ? 0 : (prev.consecutive_failures ?? 0) + 1;
+    const downSince: string | null = isLocalCommand || result.ok ? null : fails >= 2 ? prev.down_since ?? checkedAt : prev.down_since ?? null;
+    update['consecutive_failures'] = fails;
+    update['down_since'] = downSince;
     if (capability.probeable) {
       update['capability_ok'] = capability.ok;
       update['capability_detail'] = capability.detail;
@@ -308,11 +314,13 @@ export async function runHealthChecks(
     if (!isLocalCommand) {
       const r = row as any;
       await notifyWatchers(supabaseAdmin, { id: row.id, slug: row.slug, name: r.name ?? row.slug }, {
-        up: result.ok,
+        up: result.ok ? true : downSince ? false : true,
         schema_ok: schema ? schema.ok : r.schema_ok ?? null,
         tools: capability.probeable && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
-        ...readDataQuality(r.schema_detail),
+        ...readDataQuality(r.data_detail),
       });
+      const { notifyPublisher } = await import("@/lib/publisher-alerts.server");
+      await notifyPublisher(supabaseAdmin, row.id);
     }
   }
 

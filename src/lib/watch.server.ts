@@ -50,7 +50,7 @@ export async function notifyWatchers(
   try {
     const { data: watches } = await admin
       .from("tool_watches")
-      .select("id, email, webhook_url, unsubscribe_token, last_state")
+      .select("id, email, webhook_url, webhook_secret, unsubscribe_token, last_state")
       .eq("entry_id", entry.id)
       // Double opt-in: email watches only fire once their address confirmed.
       // Webhook watches are saved already-confirmed by the watch route.
@@ -79,18 +79,16 @@ export async function notifyWatchers(
         entry_url: `https://agentnexus.app/registry/${entry.slug}`,
         observed_at: new Date().toISOString(),
       };
-      try {
-        if (w.webhook_url) {
-          await fetch(w.webhook_url, {
-            method: "POST",
-            headers: { "content-type": "application/json", "user-agent": "AgentNexus-Watch/1.0" },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(8000),
-          });
-        }
-        if (w.email) {
-          const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-          await sendTemplateEmail("tool-change-alert", w.email, {
+      // Failed sends stay queued in watch_deliveries and are retried hourly.
+      const { deliver } = await import("@/lib/alert-delivery.server");
+      if (w.webhook_url) {
+        await deliver(admin, { entryId: entry.id, watchId: w.id, audience: "watch", channel: "webhook", target: w.webhook_url, secret: w.webhook_secret ?? null, payload });
+      }
+      if (w.email) {
+        await deliver(admin, {
+          entryId: entry.id, watchId: w.id, audience: "watch", channel: "email", target: w.email,
+          payload: {
+            template: "tool-change-alert",
             idempotencyKey: `watch:${w.id}:${state}`,
             templateData: {
               entryName: entry.name,
@@ -98,10 +96,8 @@ export async function notifyWatchers(
               entryUrl: payload.entry_url,
               unsubscribeUrl: `https://agentnexus.app/api/public/watch?unsubscribe=${w.unsubscribe_token}`,
             },
-          });
-        }
-      } catch (error) {
-        console.error("watch delivery failed", error);
+          },
+        });
       }
       await admin
         .from("tool_watches")
