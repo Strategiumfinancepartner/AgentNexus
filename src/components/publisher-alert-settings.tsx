@@ -25,7 +25,7 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
   const testM = useMutation({ mutationFn: () => test({ data: { slug } }), onSuccess: () => qc.invalidateQueries({ queryKey: ["alert-settings", slug] }) });
 
   if (!q.data?.allowed) return null;
-  const { publisher, settings, history } = q.data;
+  const { publisher, canEdit, settings, history } = q.data;
 
   return (
     <section className="mt-6 rounded-xl border border-border bg-card/50 p-5">
@@ -40,7 +40,7 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
         </p>
       ) : null}
       <form className="mt-4 grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); saveM.mutate(); }}>
-        <fieldset className="sm:col-span-2 flex flex-wrap gap-4 text-sm text-foreground" disabled={!publisher}>
+        <fieldset className="sm:col-span-2 flex flex-wrap gap-4 text-sm text-foreground" disabled={!canEdit}>
           {([["alert_outage", "Outage"], ["alert_schema", "Structure change"], ["alert_data", "Stale data & volume"]] as const).map(([k, l]) => (
             <label key={k} className="flex items-center gap-2">
               <input type="checkbox" checked={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.checked })} /> {l}
@@ -48,16 +48,16 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
           ))}
         </fieldset>
         <label className={label}>Source stale after (hours)
-          <input className={input} type="number" min={1} max={720} value={form.stale_hours} disabled={!publisher} onChange={(e) => setForm({ ...form, stale_hours: Number(e.target.value) })} />
+          <input className={input} type="number" min={1} max={720} value={form.stale_hours} disabled={!canEdit} onChange={(e) => setForm({ ...form, stale_hours: Number(e.target.value) })} />
         </label>
         <label className={label}>Minimum live records (optional)
-          <input className={input} type="number" min={0} value={form.min_volume} disabled={!publisher} onChange={(e) => setForm({ ...form, min_volume: e.target.value })} />
+          <input className={input} type="number" min={0} value={form.min_volume} disabled={!canEdit} onChange={(e) => setForm({ ...form, min_volume: e.target.value })} />
         </label>
         <label className={label}>Alert email (defaults to your account email)
-          <input className={input} type="email" value={form.email} disabled={!publisher} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <input className={input} type="email" value={form.email} disabled={!canEdit} onChange={(e) => setForm({ ...form, email: e.target.value })} />
         </label>
         <label className={label}>Webhook URL (https, optional)
-          <input className={input} type="url" value={form.webhook_url} disabled={!publisher} onChange={(e) => setForm({ ...form, webhook_url: e.target.value })} />
+          <input className={input} type="url" value={form.webhook_url} disabled={!canEdit} onChange={(e) => setForm({ ...form, webhook_url: e.target.value })} />
         </label>
         {settings?.webhook_secret ? (
           <p className="sm:col-span-2 font-mono text-[11px] text-muted-foreground break-all">
@@ -65,8 +65,8 @@ export function PublisherAlertSettings({ slug }: { slug: string }) {
           </p>
         ) : null}
         <div className="sm:col-span-2 flex flex-wrap gap-3">
-          <button type="submit" disabled={!publisher || saveM.isPending} className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50">Save alerts</button>
-          <button type="button" disabled={!publisher || !settings || testM.isPending} onClick={() => testM.mutate()} className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground disabled:opacity-50">Send test alert</button>
+          <button type="submit" disabled={!canEdit || saveM.isPending} className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50">Save alerts</button>
+          <button type="button" disabled={!canEdit || !settings || testM.isPending} onClick={() => testM.mutate()} className="rounded-md border border-border px-3 py-1.5 text-sm text-foreground disabled:opacity-50">Send test alert</button>
           {saveM.isSuccess ? <span className="text-sm text-muted-foreground">Saved.</span> : null}
           {saveM.error ? <span className="text-sm text-destructive">{(saveM.error as Error).message}</span> : null}
           {testM.data ? <span className="text-sm text-muted-foreground">Test sent on {testM.data.sent}/{testM.data.total} channel(s).</span> : null}

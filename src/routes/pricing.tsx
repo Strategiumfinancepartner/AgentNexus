@@ -72,8 +72,10 @@ const plans = [
     points: [
       "Verified badge earned by a real call test",
       "Listing report: how often agents find, open and come back to your entry, robots counted apart",
-      "Monitored daily, alerted on downtime",
-      "Data-freshness checks on request: alert when your data goes stale or volume drops",
+      "Outage alerts, sent only once 2 checks in a row fail, plus a recovery notice",
+      "Structure-change alerts when your responses stop matching their contract",
+      "Stale-data alerts per source, with your own age and volume thresholds",
+      "Email and signed webhook, retried until delivered, with a test button and alert history",
       "Ranked higher in what agents get served",
       "A distribution channel, not an ad",
     ],

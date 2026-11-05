@@ -121,7 +121,7 @@ curl -s 'https://agentnexus.app/api/public/discover?need=send%20transactional%20
 | Anonymous | Trying it out, no account | 100 |
 | Free key | Agent developers | 1 000 |
 | Agent Pro | Production agents that must not stall | 50 000 |
-| Publisher | API / MCP / CLI vendors: verified badge, monitoring, alerts | — |
+| Publisher | API / MCP / CLI vendors: verified badge, listing report, confirmed-outage, structure-change and per-source stale-data alerts (email + signed webhook) | — |
 
 ## Stack
 
@@ -143,3 +143,15 @@ npm run dev
 ---
 
 Agent Nexus · support@agentnexus.app
+
+
+## Publisher alerts
+
+Publisher-plan entries get alerts on what actually breaks agents, not just "it answers":
+
+- **Confirmed outage**: sent only after 2 consecutive failed checks, plus a recovery notice. Checks are hourly, so outages shorter than an hour can be missed.
+- **Structure change**: the response no longer matches its documented contract.
+- **Stale data per source**: e.g. "12 of 83 sources not updated for 24h+", with your own age and volume thresholds. One alert per change, no repeats.
+- **Delivery**: email and webhook signed with `x-agentnexus-signature: sha256=<HMAC-SHA256 of raw body>`; failed sends are retried up to 5 times; test button and 30-alert history on your entry page.
+
+Live evidence for any entry: `GET https://agentnexus.app/api/public/health-card/<slug>` (includes `data_quality` and `outage`).

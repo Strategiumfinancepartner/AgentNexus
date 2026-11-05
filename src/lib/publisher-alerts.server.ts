@@ -35,12 +35,12 @@ async function recipientEmail(admin: Admin, settingsEmail: string | null, submit
   try { const { data } = await admin.auth.admin.getUserById(submitter); return data?.user?.email ?? null; } catch { return null; }
 }
 
-export async function sendPublisherAlert(admin: Admin, entry: { id: string; slug: string; name: string; submitted_by: string | null }, settings: any, changes: string[], state: string, test = false) {
+export async function sendPublisherAlert(admin: Admin, entry: { id: string; slug: string; name: string; submitted_by: string | null }, settings: any, changes: string[], state: string, test = false, fallbackEmail: string | null = null) {
   const entryUrl = `https://agentnexus.app/registry/${entry.slug}`;
   const payload = { event: test ? "publisher.test" : "publisher.alert", slug: entry.slug, name: entry.name, changes, state, entry_url: entryUrl, health_card: `https://agentnexus.app/api/public/health-card/${entry.slug}`, observed_at: new Date().toISOString() };
   const results: boolean[] = [];
   if (settings.webhook_url) results.push(await deliver(admin, { entryId: entry.id, audience: "publisher", channel: "webhook", target: settings.webhook_url, secret: settings.webhook_secret, payload }));
-  const email = await recipientEmail(admin, settings.email, entry.submitted_by);
+  const email = (await recipientEmail(admin, settings.email, entry.submitted_by)) ?? fallbackEmail;
   if (email) results.push(await deliver(admin, { entryId: entry.id, audience: "publisher", channel: "email", target: email, payload: {
     template: "tool-change-alert", idempotencyKey: `pub:${entry.id}:${test ? Date.now() : state}`,
     templateData: { entryName: entry.name, changes, entryUrl, unsubscribeUrl: `https://agentnexus.app/entry/${entry.slug}` },
