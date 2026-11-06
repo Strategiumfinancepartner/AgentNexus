@@ -68,7 +68,7 @@
       "type": "object",
       "properties": {
         "need": {"type": "string", "x-ms-summary": "Need", "description": "Interpreted task."},
-        "count": {"type": "integer", "x-ms-summary": "Count", "description": "Number of matches."},
+        "count": {"type": "integer", "format": "int32", "x-ms-summary": "Count", "description": "Number of matches."},
         "matches": {"type": "array", "items": {"$ref": "#/definitions/DiscoveryMatch"}, "x-ms-summary": "Matches", "description": "Matching services with call contracts and reliability evidence."}
       }
     },
@@ -128,7 +128,7 @@
     "RegistryResponse": {
       "type": "object",
       "properties": {
-        "count": {"type": "integer", "x-ms-summary": "Count", "description": "Number of results."},
+        "count": {"type": "integer", "format": "int32", "x-ms-summary": "Count", "description": "Number of results."},
         "results": {"type": "array", "items": {"$ref": "#/definitions/Entry"}, "x-ms-summary": "Results", "description": "Registry entries."}
       }
     }
