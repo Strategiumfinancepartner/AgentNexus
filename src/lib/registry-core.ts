@@ -470,7 +470,82 @@ export type DiscoveryMatch = {
   call: Record<string, unknown>;
   trust: Record<string, unknown>;
   report: Record<string, unknown>;
+  /** Live state from the latest probes — distinct from historical reliability in `trust`. */
+  current_health: CurrentHealth;
+  /** Present only when current_health.status is "down" or "degraded". */
+  alternatives?: DiscoveryAlternative[];
 };
+
+export type HealthStatus = "up" | "degraded" | "down" | "unknown";
+export type CurrentHealth = { status: HealthStatus; reasons: string[]; checked_at: string | null };
+export type DiscoveryAlternative = {
+  slug: string;
+  name: string;
+  why: string;
+  current_health: CurrentHealth;
+  reliability_score: number | null;
+  call: Record<string, unknown>;
+  disclaimer: string;
+};
+
+/** Current health from the latest probes. Never inferred from historical uptime. */
+export function currentHealth(entry: any): CurrentHealth {
+  const reasons: string[] = [];
+  const checked_at = entry.health_checked_at ?? null;
+  if (entry.down_since || entry.health_ok === false) {
+    reasons.push(entry.down_since ? "outage confirmed by consecutive failed probes" : "latest liveness probe failed");
+    return { status: "down", reasons, checked_at };
+  }
+  if (entry.capability_ok === false) reasons.push("capability probe failed");
+  if (entry.schema_ok === false) reasons.push("response schema check failed");
+  if (entry.data_ok === false) reasons.push("data freshness or volume check failed");
+  if (reasons.length) return { status: "degraded", reasons, checked_at };
+  if (entry.health_ok === true) return { status: "up", reasons, checked_at };
+  return { status: "unknown", reasons: ["not probed yet"], checked_at };
+}
+
+function authFamily(mode: unknown): string {
+  const m = String(mode ?? "").toLowerCase();
+  if (!m || m === "none" || m.includes("no auth")) return "none";
+  if (m.includes("oauth")) return "oauth";
+  return "key";
+}
+
+/**
+ * Up to 3 alternatives for a down/degraded entry: same capability overlap,
+ * currently up, ranked by functional relevance, then auth compatibility,
+ * then historical reliability. Advisory only — nothing is called.
+ */
+export function pickAlternatives(target: any, pool: any[], tokens: string[], max = 3): DiscoveryAlternative[] {
+  const caps = new Set<string>((target.capabilities ?? []).map((c: string) => String(c).toLowerCase()));
+  const fam = authFamily(target.auth_mode);
+  return pool
+    .filter((e) => e.slug !== target.slug && currentHealth(e).status === "up")
+    .map((e) => {
+      const overlap = (e.capabilities ?? []).filter((c: string) => caps.has(String(c).toLowerCase())).length;
+      const relevance = overlap * 3 + matchScore(e, tokens);
+      const sameAuth = authFamily(e.auth_mode) === fam;
+      return { e, overlap, relevance, sameAuth, rel: reliability(e).score ?? 0 };
+    })
+    .filter((x) => x.relevance > 0)
+    .sort((a, b) => b.relevance - a.relevance || Number(b.sameAuth) - Number(a.sameAuth) || b.rel - a.rel)
+    .slice(0, max)
+    .map(({ e, overlap, sameAuth, rel }) => ({
+      slug: e.slug,
+      name: e.name,
+      why: `${overlap > 0 ? `${overlap} shared capabilit${overlap > 1 ? "ies" : "y"}` : "matches the need"}; currently up; ${sameAuth ? "same auth style" : `different auth (${e.auth_mode || "unknown"})`}`,
+      current_health: currentHealth(e),
+      reliability_score: rel,
+      call: {
+        endpoint: e.endpoint,
+        auth_mode: e.auth_mode,
+        rate_limit: e.rate_limit || null,
+        docs_url: e.docs_url,
+        example: e.invocation_example || null,
+      },
+      disclaimer: "Suggested from registry probes only. Not guaranteed to work for your use; Agent Nexus did not call it on your behalf.",
+    }));
+}
 
 export type DiscoveryResult = {
   need: string;
@@ -525,7 +600,14 @@ function shape(entry: any, score: number, matched_on: DiscoveryMatch["matched_on
       body: { slug: entry.slug, outcome: "success", status_code: 200, latency_ms: 0 },
       curl: `curl -X POST https://agentnexus.app/api/public/report -H "Content-Type: application/json" -H "x-api-key: $NEXUS_KEY" -d '{"slug":"${entry.slug}","outcome":"success","status_code":200,"latency_ms":0}'`,
     },
+    current_health: currentHealth(entry),
   };
+}
+
+function withAlternatives(match: DiscoveryMatch, entry: any, rows: any[], tokens: string[]): DiscoveryMatch {
+  const st = match.current_health.status;
+  if (st !== "down" && st !== "degraded") return match;
+  return { ...match, alternatives: pickAlternatives(entry, rows, tokens) };
 }
 
 /**
@@ -569,7 +651,9 @@ export function buildDiscovery(
     .sort((a, b) => b.score - a.score || (b.rel.score ?? 0) - (a.rel.score ?? 0));
 
   if (scored.length > 0) {
-    const matches = scored.slice(0, limit).map(({ entry, score }) => shape(entry, score, "capability"));
+    const matches = scored
+      .slice(0, limit)
+      .map(({ entry, score }) => withAlternatives(shape(entry, score, "capability"), entry, rows, tokens));
     const best = scored[0];
     const strong = Boolean(best && (named.length > 0 || (best.score >= 6 && (failing || needCoverage(best.entry, need) >= 0.75))));
     return {
