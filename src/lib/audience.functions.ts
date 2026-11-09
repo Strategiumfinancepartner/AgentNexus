@@ -400,7 +400,7 @@ export const getSegments = createServerFn({ method: "POST" })
     // never from visits to the public moderation-status endpoint.
     const { data: submitted } = await client.from("entries").select("submitted_by").not("submitted_by", "is", null);
     const publisherUsers = new Set((submitted ?? []).map((e: { submitted_by: string }) => e.submitted_by));
-    type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number; usefulDays: Set<string> };
+    type Agg = { ua: string; surfaces: Set<string>; days: Set<string>; acts: Record<string, number>; calls: number; keyed: number; usefulDays: Set<string>; users: Set<string>; reported: boolean };
     const actors = new Map<string, Agg>();
     let firstMcpOpAt: string | null = null;
     for (let from = 0; from < 300000; from += 1000) {
@@ -413,7 +413,7 @@ export const getSegments = createServerFn({ method: "POST" })
       const rows = (data ?? []) as any[];
       for (const r of rows) {
         let a = actors.get(r.actor);
-        if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0, usefulDays: new Set() }));
+        if (!a) actors.set(r.actor, (a = { ua: r.user_agent ?? "", surfaces: new Set(), days: new Set(), acts: {}, calls: 0, keyed: 0, usefulDays: new Set(), users: new Set(), reported: false }));
         // Sticky: once a caller identifies as an AI agent client, a later generic UA (node, undici) never demotes it.
         else a.ua = stickyAgentUa(a.ua, r.user_agent ?? "");
         a.surfaces.add(r.surface);
@@ -430,6 +430,8 @@ export const getSegments = createServerFn({ method: "POST" })
         }
         a.calls++;
         if (r.api_key_id) a.keyed++;
+        if (r.user_id) a.users.add(r.user_id);
+        if (act === "report" || String(r.path ?? "").includes("tools/call:report_invocation")) a.reported = true;
       }
       if (rows.length < 1000) break;
     }
@@ -483,6 +485,24 @@ export const getSegments = createServerFn({ method: "POST" })
         if (seg === "ai_agent") x.aiAgents++;
       }
     }
+    const { buildFunnel } = await import("@/lib/adoption-funnel");
+    const { data: subs } = await client.from("subscriptions").select("user_id, status").in("status", ["active", "trialing"]);
+    const paying = new Set(((subs ?? []) as any[]).map((x) => x.user_id));
+    const funnelCallers = [...actors.entries()]
+      .filter(([id, a]) => {
+        const seg = classifyCaller(a.ua, a.surfaces);
+        return seg !== "crawler" && seg !== "monitor" && !isInternalCaller(id, a.ua);
+      })
+      .map(([, a]) => ({
+        tier: ([...a.users].some((u) => paying.has(u)) ? "paying" : a.keyed > 0 || a.users.size > 0 ? "identified" : "anonymous") as "anonymous" | "identified" | "paying",
+        connected: (a.acts["mcp_connect"] ?? 0) > 0 || a.calls - (a.acts["mcp"] ?? 0) > 0,
+        toolsList: (a.acts["mcp_tools_list"] ?? 0) > 0,
+        searched: (a.acts["search"] ?? 0) + (a.acts["mcp_search"] ?? 0) > 0,
+        openedEntry: (a.acts["entry"] ?? 0) + (a.acts["mcp_entry"] ?? 0) > 0,
+        reported: a.reported,
+        usefulDays: [...a.usefulDays],
+      }));
+    const funnel = buildFunnel(funnelCallers, new Date().toISOString().slice(0, 10));
     const activation = [...weekMap.entries()].map(([week, v]) => ({ week, ...v })).sort((x, y) => y.week.localeCompare(x.week));
     const { data: watchRows } = await client
       .from("tool_watches")
@@ -502,5 +522,5 @@ export const getSegments = createServerFn({ method: "POST" })
       lastNotifiedAt: (w.last_notified_at ?? null) as string | null,
     }));
     const watches = watchList.filter((w) => w.confirmedAt).length;
-    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches, watches: watchList, mcpTrackingSince: firstMcpOpAt, activation };
+    return { rows: [...out.values()].sort((x, y) => y.callers - x.callers), confirmedWatches: watches, watches: watchList, mcpTrackingSince: firstMcpOpAt, activation, funnel };
   });

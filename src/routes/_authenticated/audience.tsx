@@ -144,6 +144,9 @@ function AudiencePage() {
                 <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="entry-points">
                   Entry points
                 </TabsTrigger>
+                <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="funnel">
+                  Funnel
+                </TabsTrigger>
                 <TabsTrigger className="font-mono text-[11px] uppercase tracking-widest" value="segments">
                   Segments
                 </TabsTrigger>
@@ -197,6 +200,10 @@ function AudiencePage() {
                 </tbody>
               </table>
             </Section>
+              </TabsContent>
+
+              <TabsContent value="funnel">
+                <FunnelPanel />
               </TabsContent>
 
               <TabsContent value="segments">
@@ -428,6 +435,58 @@ function AudiencePage() {
         )}
       </main>
     </AppShell>
+  );
+}
+
+function FunnelPanel() {
+  const fetchSegments = useServerFn(getSegments);
+  const q = useQuery({ queryKey: ["segments"], queryFn: () => fetchSegments() });
+  if (q.isLoading) return <p className="mt-6 font-mono text-xs text-muted-foreground">Loading funnel…</p>;
+  const f = q.data?.funnel;
+  if (!f) return <p className="mt-6 font-mono text-xs text-destructive">Could not load funnel.</p>;
+  const top = f.stages[0]?.count || 1;
+  return (
+    <Section title="Adoption funnel (30 days, external callers)" hint="Crawlers, directories/monitors and our own tests are excluded. Compare before/after each change.">
+      <div className="mb-4 rounded border border-border/60 bg-card/60 p-3 font-mono text-xs">
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Main KPI</div>
+        <div className="text-2xl">{f.weeklyKpi.value}</div>
+        <div className="text-muted-foreground">{f.weeklyKpi.definition}</div>
+      </div>
+      <table className="w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr><th className="px-3 py-2">Stage</th><th className="px-3 py-2 text-right">Callers</th><th className="px-3 py-2 text-right">% of total</th><th className="px-3 py-2">Definition</th></tr>
+        </thead>
+        <tbody>
+          {f.stages.map((s) => (
+            <tr key={s.key} className="border-t border-border/40">
+              <td className="px-3 py-2">{s.label}</td>
+              <td className="px-3 py-2 text-right">{s.count.toLocaleString("en-US")}</td>
+              <td className="px-3 py-2 text-right">{((s.count / top) * 100).toFixed(1)}%</td>
+              <td className="px-3 py-2 text-muted-foreground">{s.definition}</td>
+            </tr>
+          ))}
+          <tr className="border-t border-border/40">
+            <td className="px-3 py-2">D7 retention</td>
+            <td className="px-3 py-2 text-right">{f.d7.retained}/{f.d7.eligible}</td>
+            <td className="px-3 py-2 text-right">{f.d7.rate === null ? "—" : `${f.d7.rate}%`}</td>
+            <td className="px-3 py-2 text-muted-foreground">{f.d7.definition}</td>
+          </tr>
+        </tbody>
+      </table>
+      <table className="mt-4 w-full text-left font-mono text-xs">
+        <thead className="bg-card/60 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <tr><th className="px-3 py-2">Caller type</th><th className="px-3 py-2 text-right">Callers</th><th className="px-3 py-2 text-right">Searched</th><th className="px-3 py-2 text-right">Repeat 2+ days</th></tr>
+        </thead>
+        <tbody>
+          {f.byTier.map((t) => (
+            <tr key={t.tier} className="border-t border-border/40">
+              <td className="px-3 py-2">{t.tier === "anonymous" ? "Anonymous (no key)" : t.tier === "identified" ? "Identified (key or account)" : "Paying"}</td>
+              <td className="px-3 py-2 text-right">{t.callers}</td><td className="px-3 py-2 text-right">{t.searched}</td><td className="px-3 py-2 text-right">{t.repeat}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Section>
   );
 }
 

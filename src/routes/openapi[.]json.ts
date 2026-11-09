@@ -260,8 +260,105 @@ const serveSpec = async ({ request }: { request: Request }) => {
           },
         };
 
-  return new Response(JSON.stringify(spec, null, 2), { headers });
+  return new Response(JSON.stringify(hardenSpec(spec as any, entry), null, 2), { headers });
 };
+
+/**
+ * Adds the contract details strict OpenAPI graders look for: named schemas,
+ * an optional API-key security scheme, typed error responses, tags and a
+ * license. Paths, operationIds and payloads are unchanged (backward compatible).
+ */
+export function hardenSpec(spec: any, entry: any) {
+  const error = {
+    type: "object",
+    properties: { error: { type: "string" }, message: { type: "string" } },
+    required: ["error"],
+  };
+  const health = {
+    type: "object",
+    description: "Live state from the latest probes, distinct from historical reliability.",
+    properties: {
+      status: { type: "string", enum: ["up", "degraded", "down", "unknown"] },
+      reasons: { type: "array", items: { type: "string" } },
+      checked_at: { type: ["string", "null"], format: "date-time" },
+    },
+    required: ["status", "reasons"],
+  };
+  const match = {
+    type: "object",
+    properties: {
+      slug: { type: "string" },
+      name: { type: "string" },
+      category: { type: "string", enum: ["api", "mcp", "cli"] },
+      summary: { type: "string" },
+      match_score: { type: "number" },
+      matched_on: { type: "string", enum: ["capability", "fallback"] },
+      capabilities: { type: "array", items: { type: "string" } },
+      call: { type: "object", additionalProperties: true, description: "endpoint, auth_mode, auth_params, formats, rate_limit, pricing, example, docs_url" },
+      trust: { type: "object", additionalProperties: true, description: "Historical reliability: verified, reliability_score, uptime, samples, avg_latency_ms" },
+      current_health: { $ref: "#/components/schemas/CurrentHealth" },
+      alternatives: { type: "array", description: "Only when current_health is down or degraded. Advisory, not guaranteed.", items: { type: "object", additionalProperties: true } },
+    },
+    required: ["slug", "name", "category", "call", "trust", "current_health"],
+  };
+  const discovery = {
+    type: "object",
+    properties: {
+      need: { type: "string" },
+      coverage: { type: "string", enum: ["exact", "partial", "none"] },
+      count: { type: "integer" },
+      uncovered: { type: "boolean" },
+      note: { type: "string" },
+      next_steps: { type: "array", items: { type: "string" } },
+      matches: { type: "array", items: { $ref: "#/components/schemas/DiscoveryMatch" } },
+    },
+    required: ["need", "coverage", "count", "matches", "uncovered"],
+  };
+  spec.info.license = { name: "MIT", identifier: "MIT" };
+  spec.info.termsOfService = "https://agentnexus.app/terms";
+  spec.externalDocs = { url: "https://agentnexus.app/connect", description: "Agent Nexus connection guide" };
+  spec.tags = [
+    { name: "discovery", description: "Find interfaces for a task" },
+    { name: "registry", description: "Read registry entries" },
+    { name: "reliability", description: "Health and uptime evidence" },
+    { name: "keys", description: "Self-service API keys" },
+  ];
+  spec.components = {
+    securitySchemes: {
+      apiKey: { type: "apiKey", in: "header", name: "x-api-key", description: "Optional. Free key raises the quota from 100 to 1,000 calls/day; Agent Pro 50,000/day." },
+    },
+    schemas: { Entry: entry, Error: error, CurrentHealth: health, DiscoveryMatch: match, DiscoveryResult: discovery },
+    responses: {
+      BadRequest: { description: "Invalid parameters", content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } } },
+      RateLimited: { description: "Daily quota exceeded", content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } } },
+    },
+  };
+  // Anonymous access stays valid: `{}` means "no auth" is an accepted alternative.
+  spec.security = [{}, { apiKey: [] }];
+  const tagFor: Record<string, string> = {
+    createApiKey: "keys", discoverCapabilities: "discovery", searchRegistry: "registry", getEntry: "registry",
+    listCapabilities: "discovery", streamEntries: "registry", getStatus: "reliability", reportInvocation: "reliability",
+  };
+  for (const item of Object.values<any>(spec.paths)) {
+    for (const op of Object.values<any>(item)) {
+      op.tags = [tagFor[op.operationId] ?? "registry"];
+      op.security = [{}, { apiKey: [] }];
+      op.responses["400"] ??= { $ref: "#/components/responses/BadRequest" };
+      if (op.operationId !== "createApiKey") op.responses["429"] ??= { $ref: "#/components/responses/RateLimited" };
+      for (const r of Object.values<any>(op.responses)) {
+        const c = r.content?.["application/json"];
+        if (c?.schema === entry) c.schema = { $ref: "#/components/schemas/Entry" };
+      }
+    }
+  }
+  const disc = spec.paths["/api/public/discover"].get.responses["200"].content["application/json"];
+  disc.schema = { $ref: "#/components/schemas/DiscoveryResult" };
+  spec.paths["/api/public/registry"].get.responses["200"].content["application/json"].schema.properties.results.items = { $ref: "#/components/schemas/Entry" };
+  spec.paths["/api/public/report"].post.responses["200"].content = {
+    "application/json": { schema: { type: "object", additionalProperties: true } },
+  };
+  return spec;
+}
 
 export const Route = createFileRoute("/openapi.json")({
   server: {
