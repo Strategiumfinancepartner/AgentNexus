@@ -37,7 +37,14 @@ export const Route = createFileRoute("/api/public/health-check")({
         let deliveries: unknown = null;
         try { deliveries = await retryPendingDeliveries(supabaseAdmin as never); } catch (error) { console.error("delivery retry failed", error); }
 
-        return new Response(JSON.stringify({ success: true, ...summary, entitlements, data_quality: dataQuality, deliveries }), {
+        // Monthly publisher reports: only acts on the 1st (UTC), deduped per entry and month.
+        let monthly: unknown = null;
+        try {
+          const { runMonthlyReports } = await import("@/lib/publisher-monthly.server");
+          monthly = await runMonthlyReports(supabaseAdmin as never);
+        } catch (error) { console.error("monthly reports failed", error); }
+
+        return new Response(JSON.stringify({ success: true, ...summary, entitlements, data_quality: dataQuality, deliveries, monthly }), {
           headers: jsonHeaders,
         });
       },

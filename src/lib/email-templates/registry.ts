@@ -4,6 +4,7 @@ import { template as submissionDecisionTemplate } from './submission-decision'
 import { template as publisherHealthAlertTemplate } from './publisher-health-alert'
 import { template as toolChangeAlertTemplate } from './tool-change-alert'
 import { template as watchConfirmationTemplate } from './watch-confirmation'
+import { template as publisherMonthlyReportTemplate } from './publisher-monthly-report'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -28,4 +29,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'publisher-health-alert': publisherHealthAlertTemplate,
   'tool-change-alert': toolChangeAlertTemplate,
   'watch-confirmation': watchConfirmationTemplate,
+  'publisher-monthly-report': publisherMonthlyReportTemplate,
 }

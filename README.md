@@ -116,6 +116,8 @@ curl -s 'https://agentnexus.app/api/public/discover?need=send%20transactional%20
 
 - **[Remote Jobs API (Nova)](docs/case-studies/nova-remote-jobs-api.md)** — 14-day freshness pilot: 1.01M → 1.46M live listings, 32 → 82 sources, all 82 reporting `source_last_updated`, 100% probe reliability. Approved by Nova. [Web version](https://agentnexus.app/case-studies/nova)
 
+**Live demos & articles** — [5 live demos](https://agentnexus.app/demos) (geolocation, payments, web search, 3-way comparison, fallback when a service is down) computed from the registry at page load. Articles: [How AI agents discover tools](docs/articles/how-ai-agents-discover-tools.md) · [MCP reliability](docs/articles/mcp-reliability-availability.md) · [Discovery & trust layer](docs/articles/discovery-and-trust-layer.md).
+
 ## Tiers
 
 | Tier | Who it is for | Daily calls |

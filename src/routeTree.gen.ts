@@ -82,7 +82,11 @@ import { Route as AuthenticatedRegistryRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedSignalsRouteImport } from './routes/_authenticated/signals'
 import { Route as AuthenticatedSubmitRouteImport } from './routes/_authenticated/submit'
 import { Route as ApiMcpOauthRouteImport } from './routes/api/mcp-oauth'
+import { Route as ArticlesIndexRouteImport } from './routes/articles.index'
+import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as CaseStudiesNovaRouteImport } from './routes/case-studies.nova'
+import { Route as DemosIndexRouteImport } from './routes/demos.index'
+import { Route as DemosSlugRouteImport } from './routes/demos.$slug'
 import { Route as GuidesApiFallbacksRouteImport } from './routes/guides.api-fallbacks'
 import { Route as IsDownSlugRouteImport } from './routes/is-down.$slug'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
@@ -531,9 +535,29 @@ const ApiMcpOauthRoute = ApiMcpOauthRouteImport.update({
   path: '/api/mcp-oauth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArticlesIndexRoute = ArticlesIndexRouteImport.update({
+  id: '/articles/',
+  path: '/articles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
+  id: '/articles/$slug',
+  path: '/articles/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CaseStudiesNovaRoute = CaseStudiesNovaRouteImport.update({
   id: '/case-studies/nova',
   path: '/case-studies/nova',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemosIndexRoute = DemosIndexRouteImport.update({
+  id: '/demos/',
+  path: '/demos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemosSlugRoute = DemosSlugRouteImport.update({
+  id: '/demos/$slug',
+  path: '/demos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuidesApiFallbacksRoute = GuidesApiFallbacksRouteImport.update({
@@ -820,13 +844,17 @@ export interface FileRoutesByFullPath {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
   '/case-studies/nova': typeof CaseStudiesNovaRoute
+  '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
   '/registry/$slug': typeof RegistrySlugRoute
+  '/articles/': typeof ArticlesIndexRoute
+  '/demos/': typeof DemosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
@@ -934,13 +962,17 @@ export interface FileRoutesByTo {
   '/signals': typeof AuthenticatedSignalsRoute
   '/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
   '/case-studies/nova': typeof CaseStudiesNovaRoute
+  '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
   '/registry/$slug': typeof RegistrySlugRoute
+  '/articles': typeof ArticlesIndexRoute
+  '/demos': typeof DemosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
@@ -1050,13 +1082,17 @@ export interface FileRoutesById {
   '/_authenticated/signals': typeof AuthenticatedSignalsRoute
   '/_authenticated/submit': typeof AuthenticatedSubmitRoute
   '/api/mcp-oauth': typeof ApiMcpOauthRoute
+  '/articles/$slug': typeof ArticlesSlugRoute
   '/case-studies/nova': typeof CaseStudiesNovaRoute
+  '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
   '/mcp/server-card.json': typeof McpServerCardDotjsonRoute
   '/registry/$slug': typeof RegistrySlugRoute
+  '/articles/': typeof ArticlesIndexRoute
+  '/demos/': typeof DemosIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/.well-known/mcp/server-card.json': typeof Char91DotwellKnownChar93McpServerCardChar91DotChar93jsonRoute
@@ -1166,13 +1202,17 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/articles/$slug'
     | '/case-studies/nova'
+    | '/demos/$slug'
     | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
     | '/registry/$slug'
+    | '/articles/'
+    | '/demos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/.well-known/mcp/server-card.json'
@@ -1280,13 +1320,17 @@ export interface FileRouteTypes {
     | '/signals'
     | '/submit'
     | '/api/mcp-oauth'
+    | '/articles/$slug'
     | '/case-studies/nova'
+    | '/demos/$slug'
     | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
     | '/registry/$slug'
+    | '/articles'
+    | '/demos'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/.well-known/mcp/server-card.json'
@@ -1395,13 +1439,17 @@ export interface FileRouteTypes {
     | '/_authenticated/signals'
     | '/_authenticated/submit'
     | '/api/mcp-oauth'
+    | '/articles/$slug'
     | '/case-studies/nova'
+    | '/demos/$slug'
     | '/guides/api-fallbacks'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
     | '/mcp/server-card.json'
     | '/registry/$slug'
+    | '/articles/'
+    | '/demos/'
     | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/.well-known/mcp/server-card.json'
@@ -1505,9 +1553,13 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93X402ManifestChar91DotChar93jsonRoute: typeof Char91DotwellKnownChar93X402ManifestChar91DotChar93jsonRoute
   Char91DotwellKnownChar93X402Char91DotChar93jsonRoute: typeof Char91DotwellKnownChar93X402Char91DotChar93jsonRoute
   ApiMcpOauthRoute: typeof ApiMcpOauthRoute
+  ArticlesSlugRoute: typeof ArticlesSlugRoute
   CaseStudiesNovaRoute: typeof CaseStudiesNovaRoute
+  DemosSlugRoute: typeof DemosSlugRoute
   GuidesApiFallbacksRoute: typeof GuidesApiFallbacksRoute
   RegistrySlugRoute: typeof RegistrySlugRoute
+  ArticlesIndexRoute: typeof ArticlesIndexRoute
+  DemosIndexRoute: typeof DemosIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicA2aRoute: typeof ApiPublicA2aRoute
@@ -2041,11 +2093,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpOauthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/articles/': {
+      id: '/articles/'
+      path: '/articles'
+      fullPath: '/articles/'
+      preLoaderRoute: typeof ArticlesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/articles/$slug': {
+      id: '/articles/$slug'
+      path: '/articles/$slug'
+      fullPath: '/articles/$slug'
+      preLoaderRoute: typeof ArticlesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/case-studies/nova': {
       id: '/case-studies/nova'
       path: '/case-studies/nova'
       fullPath: '/case-studies/nova'
       preLoaderRoute: typeof CaseStudiesNovaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demos/': {
+      id: '/demos/'
+      path: '/demos'
+      fullPath: '/demos/'
+      preLoaderRoute: typeof DemosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demos/$slug': {
+      id: '/demos/$slug'
+      path: '/demos/$slug'
+      fullPath: '/demos/$slug'
+      preLoaderRoute: typeof DemosSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/api-fallbacks': {
@@ -2544,9 +2624,13 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotwellKnownChar93X402Char91DotChar93jsonRoute:
     Char91DotwellKnownChar93X402Char91DotChar93jsonRoute,
   ApiMcpOauthRoute: ApiMcpOauthRoute,
+  ArticlesSlugRoute: ArticlesSlugRoute,
   CaseStudiesNovaRoute: CaseStudiesNovaRoute,
+  DemosSlugRoute: DemosSlugRoute,
   GuidesApiFallbacksRoute: GuidesApiFallbacksRoute,
   RegistrySlugRoute: RegistrySlugRoute,
+  ArticlesIndexRoute: ArticlesIndexRoute,
+  DemosIndexRoute: DemosIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicA2aRoute: ApiPublicA2aRoute,
