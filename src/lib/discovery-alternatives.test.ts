@@ -20,7 +20,7 @@ describe("alternatives", () => {
   it("suggests only currently-up services with shared capability, same auth first", () => {
     const alts = pickAlternatives(down, [down, upOauth, upSame, unrelated], t);
     expect(alts.map((a) => a.slug)).toEqual(["mailer-up", "mailer-oauth"]);
-    expect(alts[0].disclaimer).toMatch(/Not guaranteed/);
+    expect(alts[0]?.disclaimer).toMatch(/Not guaranteed/);
   });
   it("returns none when no compatible service is up", () => {
     expect(pickAlternatives(down, [down, unrelated, e("x", { health_ok: false })], t)).toEqual([]);
@@ -29,7 +29,7 @@ describe("alternatives", () => {
     const r = buildDiscovery([down, upSame], { need: "send email", tokens: t });
     const d = r.matches.find((m) => m.slug === "mailer-down")!;
     const u = r.matches.find((m) => m.slug === "mailer-up")!;
-    expect(d.alternatives?.[0].slug).toBe("mailer-up");
+    expect(d.alternatives?.[0]?.slug).toBe("mailer-up");
     expect(u.alternatives).toBeUndefined();
   });
 });
