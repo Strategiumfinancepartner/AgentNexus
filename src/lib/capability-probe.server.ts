@@ -15,7 +15,13 @@ export type CapabilityProbe = {
   ok: boolean | null;
   detail: string;
   tools: string[];
+  /** MCP protocol version the server agreed to in initialize. */
+  protocolVersion?: string | null;
+  /** Declared input/output schema per tool, as returned by tools/list. */
+  toolSchemas?: Record<string, ToolSchema>;
 };
+
+export type ToolSchema = { input: unknown; output: unknown };
 
 const notProbeable = (detail: string): CapabilityProbe => ({
   probeable: false,
@@ -139,7 +145,7 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
 
   try {
     return await withTimeout(async (signal) => {
-      await call(
+      const init = await call(
         {
           jsonrpc: "2.0",
           id: 1,
@@ -152,6 +158,11 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
         },
         signal,
       ).catch(() => null);
+      let protocolVersion: string | null = null;
+      if (init && init.ok) {
+        const initPayload = parseJsonRpc((await init.text().catch(() => "")).slice(0, 50_000));
+        protocolVersion = readProtocolVersion(initPayload);
+      }
 
       const response = await call({ jsonrpc: "2.0", id: 2, method: "tools/list" }, signal);
       const text = (await response.text()).slice(0, 200_000);
@@ -167,6 +178,7 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
 
       const payload = parseJsonRpc(text);
       const tools = extractToolNames(payload);
+      const toolSchemas: Record<string, ToolSchema> = extractToolSchemas(payload);
       if (tools.length > 0) {
         // MCP 2025-06-18: tools/list is paginated. Follow nextCursor to the end
         // (bounded) so a tool on page two never looks like capability loss.
@@ -184,14 +196,17 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
           for (const name of extractToolNames(nextPayload)) {
             if (!tools.includes(name)) tools.push(name);
           }
+          Object.assign(toolSchemas, extractToolSchemas(nextPayload));
           pages += 1;
           cursor = readNextCursor(nextPayload);
         }
         return {
           probeable: true,
           ok: true,
-          detail: `tools/list returned ${tools.length} tool${tools.length > 1 ? "s" : ""}${pages > 1 ? ` across ${pages} pages` : ""}`,
+          detail: `tools/list returned ${tools.length} tool${tools.length > 1 ? "s" : ""}${pages > 1 ? ` across ${pages} pages` : ""}${protocolVersion ? ` (protocol ${protocolVersion})` : ""}`,
           tools,
+          protocolVersion,
+          toolSchemas,
         };
       }
       if (payload && typeof payload === "object" && "error" in payload) {
@@ -269,6 +284,69 @@ function extractToolNames(payload: unknown): string[] {
     .map((tool) => (tool as { name?: unknown })?.name)
     .filter((name): name is string => typeof name === "string" && name.length > 0)
     .slice(0, 60);
+}
+
+export function readProtocolVersion(payload: unknown): string | null {
+  const v = (payload as { result?: { protocolVersion?: unknown } } | null)?.result?.protocolVersion;
+  return typeof v === "string" && v.length > 0 && v.length < 40 ? v : null;
+}
+
+export function extractToolSchemas(payload: unknown): Record<string, ToolSchema> {
+  const tools = (payload as { result?: { tools?: unknown } } | null)?.result?.tools;
+  const out: Record<string, ToolSchema> = {};
+  if (!Array.isArray(tools)) return out;
+  for (const tool of tools.slice(0, 200)) {
+    const t = tool as { name?: unknown; inputSchema?: unknown; outputSchema?: unknown };
+    if (typeof t?.name !== "string" || !t.name) continue;
+    out[t.name] = { input: t.inputSchema ?? null, output: t.outputSchema ?? null };
+  }
+  return out;
+}
+
+type Props = { properties?: Record<string, { type?: unknown; enum?: unknown[] }>; required?: string[] };
+
+function diffSide(tool: string, side: string, before: unknown, after: unknown, out: string[]) {
+  const b = (before ?? {}) as Props;
+  const a = (after ?? {}) as Props;
+  const bp = b.properties ?? {};
+  const ap = a.properties ?? {};
+  for (const key of Object.keys(bp)) {
+    if (!(key in ap)) { out.push(`${tool}.${side}.${key} removed`); continue; }
+    const bt = JSON.stringify(bp[key]?.type ?? null);
+    const at = JSON.stringify(ap[key]?.type ?? null);
+    if (bt !== at) out.push(`${tool}.${side}.${key} type ${bt} -> ${at}`);
+    if (Array.isArray(bp[key]?.enum)) {
+      const next = new Set((ap[key]?.enum ?? []).map((v) => JSON.stringify(v)));
+      for (const v of bp[key]!.enum!) {
+        if (!next.has(JSON.stringify(v))) out.push(`${tool}.${side}.${key} enum lost ${JSON.stringify(v)}`);
+      }
+    }
+  }
+  if (side === "input") {
+    const wasRequired = new Set(b.required ?? []);
+    for (const key of a.required ?? []) {
+      if (!wasRequired.has(key)) out.push(`${tool}.input.${key} became required`);
+    }
+  }
+}
+
+/**
+ * Breaking changes between two declared tool schema snapshots, without calling
+ * any tool: removed tools, removed/retyped fields, lost enum members, and new
+ * required inputs. Additive changes are not breaking and are not reported.
+ */
+export function diffToolSchemas(
+  before: Record<string, ToolSchema> | null | undefined,
+  after: Record<string, ToolSchema>,
+): string[] {
+  if (!before) return [];
+  const out: string[] = [];
+  for (const tool of Object.keys(before)) {
+    if (!(tool in after)) { out.push(`${tool} removed`); continue; }
+    diffSide(tool, "input", before[tool]?.input, after[tool]?.input, out);
+    diffSide(tool, "output", before[tool]?.output, after[tool]?.output, out);
+  }
+  return out.slice(0, 50);
 }
 
 /** An HTTP API is "capability ok" when it answers a machine contract or an auth challenge. */

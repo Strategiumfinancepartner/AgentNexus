@@ -57,6 +57,13 @@
       "when": 1793881838671,
       "tag": "0007_alert_drop_percent",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794321492388,
+      "tag": "0008_mcp_probe_protocol_and_schema_diff",
+      "breakpoints": true
     }
   ]
 }

@@ -42,7 +42,7 @@ async function serve({ params, request }: { params: { slug: string }; request: R
   const { data: e } = await client
     .from("entries")
     .select(
-      "id, slug, name, category, endpoint, auth_mode, auth_params, input_format, output_format, rate_limit, pricing, verified, verified_at, health_ok, health_status_code, health_latency_ms, health_checked_at, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_checked_at, discovered_tools, schema_ok, schema_detail, schema_checked_at, data_ok, data_detail, data_checked_at, down_since",
+      "id, slug, name, category, endpoint, auth_mode, auth_params, input_format, output_format, rate_limit, pricing, verified, verified_at, health_ok, health_status_code, health_latency_ms, health_checked_at, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_checked_at, discovered_tools, schema_ok, schema_detail, schema_checked_at, data_ok, data_detail, data_checked_at, down_since, mcp_protocol_version, tool_schema_changes, tool_schema_changed_at",
     )
     .eq("status", "approved")
     .eq("slug", slug)
@@ -101,6 +101,9 @@ async function serve({ params, request }: { params: { slug: string }; request: R
       validated: e.schema_ok,
       detail: e.schema_detail,
       checked_at: e.schema_checked_at,
+      negotiated_protocol_version: e.mcp_protocol_version ?? null,
+      declared_tool_schema_breaking_changes: e.tool_schema_changes ?? [],
+      declared_tool_schema_changed_at: e.tool_schema_changed_at ?? null,
     },
     data_quality: e.data_checked_at ? (() => { try { return { ok: e.data_ok, checked_at: e.data_checked_at, ...JSON.parse(e.data_detail ?? "{}") }; } catch { return { ok: e.data_ok, checked_at: e.data_checked_at }; } })() : null,
     outage: { confirmed_down_since: e.down_since ?? null, rule: "down only after 2 consecutive failed hourly checks" },

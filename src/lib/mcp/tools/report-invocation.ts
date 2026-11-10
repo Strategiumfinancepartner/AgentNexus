@@ -12,10 +12,17 @@ export default defineTool({
     status_code: z.number().int().min(100).max(599).optional().describe("HTTP status observed."),
     error: z.string().trim().max(500).optional().describe("Error message or failure reason."),
     latency_ms: z.number().int().min(0).max(600_000).optional().describe("Observed latency."),
+    is_error: z
+      .boolean()
+      .optional()
+      .describe("For MCP tools: the isError flag of the tools/call result. true means the call ran but failed, even over HTTP 200; it is recorded as a failure."),
   },
   outputSchema: { slug: z.string(), recorded: z.boolean() },
   annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
-  handler: async ({ slug, outcome, status_code, error, latency_ms }, ctx) => {
+  handler: async ({ slug, outcome: declared, status_code, error: reported, latency_ms, is_error }, ctx) => {
+    // A tools/call result with isError=true ran and failed: never a success.
+    const outcome = is_error === true ? "failure" : declared;
+    const error = is_error === true ? `isError=true${reported ? `: ${reported}` : ""}` : reported;
     const { consumeRateLimit, recordInvocationReport } = await import("@/lib/telemetry.server");
     const userId = (ctx.isAuthenticated() ? ctx.getUserId() : null) ?? null;
     const allowed = await consumeRateLimit("mcp_report", userId ?? "mcp:anonymous", 120, 3600);

@@ -163,6 +163,7 @@ export type Database = {
           id: string
           input_format: string
           invocation_example: string
+          mcp_protocol_version: string | null
           name: string
           output_format: string
           pricing: string
@@ -182,6 +183,9 @@ export type Database = {
           submitted_by_actor: string | null
           summary: string
           tags: string[]
+          tool_schema_changed_at: string | null
+          tool_schema_changes: string[] | null
+          tool_schemas: Json | null
           updated_at: string
           verified: boolean
           verified_at: string | null
@@ -216,6 +220,7 @@ export type Database = {
           id?: string
           input_format?: string
           invocation_example?: string
+          mcp_protocol_version?: string | null
           name: string
           output_format?: string
           pricing?: string
@@ -235,6 +240,9 @@ export type Database = {
           submitted_by_actor?: string | null
           summary: string
           tags?: string[]
+          tool_schema_changed_at?: string | null
+          tool_schema_changes?: string[] | null
+          tool_schemas?: Json | null
           updated_at?: string
           verified?: boolean
           verified_at?: string | null
@@ -269,6 +277,7 @@ export type Database = {
           id?: string
           input_format?: string
           invocation_example?: string
+          mcp_protocol_version?: string | null
           name?: string
           output_format?: string
           pricing?: string
@@ -288,6 +297,9 @@ export type Database = {
           submitted_by_actor?: string | null
           summary?: string
           tags?: string[]
+          tool_schema_changed_at?: string | null
+          tool_schema_changes?: string[] | null
+          tool_schemas?: Json | null
           updated_at?: string
           verified?: boolean
           verified_at?: string | null

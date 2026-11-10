@@ -2,7 +2,7 @@ import { notifyWatchers } from "@/lib/watch.server";
 import { probeLivenessOnce as probeOnce } from "@/lib/liveness-probe.server";
 /** Server-only health + capability probing for registry entries. */
 
-import { hasPlaceholder, probeCapabilities } from "@/lib/capability-probe.server";
+import { diffToolSchemas, hasPlaceholder, probeCapabilities, type ToolSchema } from "@/lib/capability-probe.server";
 import { SCHEMA_PROFILES, runSchemaProbe, type SchemaProbe } from "@/lib/schema-probe.server";
 import { readDataQuality } from "./data-quality";
 
@@ -183,7 +183,7 @@ export async function runHealthChecks(
 }> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since")
+    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since, tool_schemas")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -301,6 +301,16 @@ export async function runHealthChecks(
       update['capability_detail'] = capability.detail;
       update['capability_checked_at'] = checkedAt;
       if (capability.tools.length > 0) update['discovered_tools'] = capability.tools;
+      if (capability.protocolVersion) update['mcp_protocol_version'] = capability.protocolVersion;
+      if (capability.toolSchemas && Object.keys(capability.toolSchemas).length > 0) {
+        const prevSchemas = (row as any).tool_schemas as Record<string, ToolSchema> | null;
+        const changes = diffToolSchemas(prevSchemas, capability.toolSchemas);
+        update['tool_schemas'] = capability.toolSchemas;
+        if (changes.length > 0) {
+          update['tool_schema_changes'] = changes;
+          update['tool_schema_changed_at'] = checkedAt;
+        }
+      }
     }
     if (schema) {
       update['schema_ok'] = schema.ok;
