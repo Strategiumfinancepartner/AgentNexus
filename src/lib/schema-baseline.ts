@@ -9,7 +9,39 @@ type Schemas = Record<string, ToolSchema>;
 export type SchemaState = {
   baselines: Record<string, Schemas>;
   pending?: { version: string; schemas: Schemas } | null;
+  // Recent observations (24h window) used to tell a converging deploy from a split fleet.
+  seen?: { at: string; version: string; hash: string }[];
 };
+
+export const FLEET_WINDOW_MS = 24 * 3600_000;
+export const FLEET_MIN_SPAN_MS = 6 * 3600_000;
+
+export type FleetView = {
+  window_hours: 24;
+  distinct_shapes_24h: number;
+  observations_24h: number;
+  verdict: "single_shape" | "converging" | "split_fleet";
+};
+
+// One shape = stable. Several shapes that keep alternating for 6h+ (an older shape
+// reappears after a newer one) = split fleet behind one endpoint, not drift.
+export function fleetView(state: SchemaState, version: string | null, nowMs: number): FleetView {
+  const v = version ?? "unknown";
+  const obs = (state.seen ?? []).filter((o) => o.version === v && nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS);
+  const distinct = new Set(obs.map((o) => o.hash)).size;
+  let verdict: FleetView["verdict"] = distinct <= 1 ? "single_shape" : "converging";
+  if (distinct >= 2) {
+    const firstSeen = new Map<string, number>();
+    let alternated = false;
+    obs.forEach((o, i) => {
+      if (!firstSeen.has(o.hash)) firstSeen.set(o.hash, i);
+      else if (i > 0 && obs[i - 1].hash !== o.hash) alternated = true;
+    });
+    const span = Date.parse(obs[obs.length - 1].at) - Date.parse(obs[0].at);
+    if (alternated && span >= FLEET_MIN_SPAN_MS) verdict = "split_fleet";
+  }
+  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, verdict };
+}
 
 function stable(v: unknown): string {
   if (Array.isArray(v)) return `[${v.map(stable).join(",")}]`;
@@ -36,9 +68,13 @@ export function advanceSchemaBaseline(
   legacySchemas: Schemas | null,
   version: string | null,
   schemas: Schemas,
+  nowMs: number = Date.now(),
 ): { state: SchemaState; changes: string[]; status: "baseline" | "stable" | "pending_confirmation" | "confirmed_drift" } {
   const v = version ?? "unknown";
-  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null };
+  const seen = [...(prevState?.seen ?? []), { at: new Date(nowMs).toISOString(), version: v, hash: fnv(stable(schemas)) }]
+    .filter((o) => nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS)
+    .slice(-200);
+  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen };
   if (!prevState && legacySchemas && Object.keys(legacySchemas).length > 0) state.baselines[v] = legacySchemas;
   const base = state.baselines[v];
   if (!base) { state.baselines[v] = schemas; state.pending = null; return { state, changes: [], status: "baseline" }; }

@@ -2,7 +2,7 @@ import { notifyWatchers } from "@/lib/watch.server";
 import { probeLivenessOnce as probeOnce } from "@/lib/liveness-probe.server";
 /** Server-only health + capability probing for registry entries. */
 
-import { advanceSchemaBaseline, schemaSubject } from "@/lib/schema-baseline";
+import { advanceSchemaBaseline, schemaSubject, fleetView } from "@/lib/schema-baseline";
 import { diffToolSchemas, hasPlaceholder, probeCapabilities, type ToolSchema } from "@/lib/capability-probe.server";
 import { SCHEMA_PROFILES, runSchemaProbe, type SchemaProbe } from "@/lib/schema-probe.server";
 import { readDataQuality } from "./data-quality";
@@ -309,7 +309,7 @@ export async function runHealthChecks(
         const changes = adv.changes;
         update['tool_schemas'] = capability.toolSchemas;
         update['tool_schema_state'] = adv.state;
-        update['tool_schema_subject'] = JSON.stringify({ ...schemaSubject(row.endpoint ?? "", capability.protocolVersion ?? null, capability.toolSchemas), status: adv.status });
+        update['tool_schema_subject'] = JSON.stringify({ ...schemaSubject(row.endpoint ?? "", capability.protocolVersion ?? null, capability.toolSchemas), status: adv.status, fleet: fleetView(adv.state, capability.protocolVersion ?? null, Date.now()) });
         if (changes.length > 0) {
           update['tool_schema_changes'] = changes;
           update['tool_schema_changed_at'] = checkedAt;

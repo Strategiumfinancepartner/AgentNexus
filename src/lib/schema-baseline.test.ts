@@ -30,3 +30,18 @@ describe("schema baseline per subject", () => {
     expect(schemaSubject("e", "v1", A).key).not.toBe(schemaSubject("e", "v2", A).key);
   });
 });
+
+import { fleetView as _fv, advanceSchemaBaseline as _adv } from "./schema-baseline";
+describe("split fleet detection", () => {
+  const A = { t: { inputSchema: { a: 1 } } } as any;
+  const B = { t: { inputSchema: { b: 1 } } } as any;
+  const run = (seq: any[], stepMs: number) => {
+    let st: any = null; const t0 = Date.parse("2026-11-10T00:00:00Z");
+    seq.forEach((s, i) => { st = _adv(st, null, "2025-06-18", s, t0 + i * stepMs).state; });
+    return _fv(st, "2025-06-18", t0 + (seq.length - 1) * stepMs);
+  };
+  it("one shape is single_shape", () => { expect(run([A, A, A], 3600_000).verdict).toBe("single_shape"); });
+  it("A then B that settles is converging", () => { const f = run([A, B, B, B], 3600_000); expect(f.distinct_shapes_24h).toBe(2); expect(f.verdict).toBe("converging"); });
+  it("A/B alternating for 8h is split_fleet", () => { expect(run([A, B, A, B, A, B, A, B, A], 3600_000).verdict).toBe("split_fleet"); });
+  it("short flip-flop under 6h is not split_fleet", () => { expect(run([A, B, A], 3600_000).verdict).toBe("converging"); });
+});

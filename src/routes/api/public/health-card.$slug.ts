@@ -105,7 +105,7 @@ async function serve({ params, request }: { params: { slug: string }; request: R
       declared_tool_schema_breaking_changes: e.tool_schema_changes ?? [],
       declared_tool_schema_changed_at: e.tool_schema_changed_at ?? null,
       comparison_subject: (() => { try { return e.tool_schema_subject ? JSON.parse(e.tool_schema_subject) : null; } catch { return null; } })(),
-      drift_rule: "diffs compare only within the same (endpoint, negotiated protocol version); a new shape must repeat on 2 consecutive probes, so rolling-deploy flip-flops are not reported",
+      drift_rule: "diffs compare only within the same (endpoint, negotiated protocol version); a new shape must repeat on 2 consecutive probes, so rolling-deploy flip-flops are not reported; comparison_subject.fleet counts distinct shapes per subject over 24h, and shapes that keep alternating for 6h+ are reported as split_fleet rather than drift",
     },
     data_quality: e.data_checked_at ? (() => { try { return { ok: e.data_ok, checked_at: e.data_checked_at, ...JSON.parse(e.data_detail ?? "{}") }; } catch { return { ok: e.data_ok, checked_at: e.data_checked_at }; } })() : null,
     outage: { confirmed_down_since: e.down_since ?? null, rule: "down only after 2 consecutive failed hourly checks" },
