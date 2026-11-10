@@ -1,0 +1,1 @@
+ALTER TABLE public.entries ADD COLUMN IF NOT EXISTS tool_schema_state jsonb, ADD COLUMN IF NOT EXISTS tool_schema_subject text;

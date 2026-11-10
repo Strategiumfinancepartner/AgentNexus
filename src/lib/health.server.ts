@@ -2,6 +2,7 @@ import { notifyWatchers } from "@/lib/watch.server";
 import { probeLivenessOnce as probeOnce } from "@/lib/liveness-probe.server";
 /** Server-only health + capability probing for registry entries. */
 
+import { advanceSchemaBaseline, schemaSubject } from "@/lib/schema-baseline";
 import { diffToolSchemas, hasPlaceholder, probeCapabilities, type ToolSchema } from "@/lib/capability-probe.server";
 import { SCHEMA_PROFILES, runSchemaProbe, type SchemaProbe } from "@/lib/schema-probe.server";
 import { readDataQuality } from "./data-quality";
@@ -183,7 +184,7 @@ export async function runHealthChecks(
 }> {
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since, tool_schemas")
+    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since, tool_schemas, tool_schema_state")
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
@@ -304,8 +305,11 @@ export async function runHealthChecks(
       if (capability.protocolVersion) update['mcp_protocol_version'] = capability.protocolVersion;
       if (capability.toolSchemas && Object.keys(capability.toolSchemas).length > 0) {
         const prevSchemas = (row as any).tool_schemas as Record<string, ToolSchema> | null;
-        const changes = diffToolSchemas(prevSchemas, capability.toolSchemas);
+        const adv = advanceSchemaBaseline((row as any).tool_schema_state ?? null, prevSchemas, capability.protocolVersion ?? null, capability.toolSchemas);
+        const changes = adv.changes;
         update['tool_schemas'] = capability.toolSchemas;
+        update['tool_schema_state'] = adv.state;
+        update['tool_schema_subject'] = JSON.stringify({ ...schemaSubject(row.endpoint ?? "", capability.protocolVersion ?? null, capability.toolSchemas), status: adv.status });
         if (changes.length > 0) {
           update['tool_schema_changes'] = changes;
           update['tool_schema_changed_at'] = checkedAt;

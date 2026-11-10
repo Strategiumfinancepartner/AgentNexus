@@ -185,6 +185,8 @@ export type Database = {
           tags: string[]
           tool_schema_changed_at: string | null
           tool_schema_changes: string[] | null
+          tool_schema_state: Json | null
+          tool_schema_subject: string | null
           tool_schemas: Json | null
           updated_at: string
           verified: boolean
@@ -242,6 +244,8 @@ export type Database = {
           tags?: string[]
           tool_schema_changed_at?: string | null
           tool_schema_changes?: string[] | null
+          tool_schema_state?: Json | null
+          tool_schema_subject?: string | null
           tool_schemas?: Json | null
           updated_at?: string
           verified?: boolean
@@ -299,6 +303,8 @@ export type Database = {
           tags?: string[]
           tool_schema_changed_at?: string | null
           tool_schema_changes?: string[] | null
+          tool_schema_state?: Json | null
+          tool_schema_subject?: string | null
           tool_schemas?: Json | null
           updated_at?: string
           verified?: boolean

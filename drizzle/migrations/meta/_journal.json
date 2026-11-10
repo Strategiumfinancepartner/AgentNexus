@@ -64,6 +64,13 @@
       "when": 1794321492388,
       "tag": "0008_mcp_probe_protocol_and_schema_diff",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1794325056269,
+      "tag": "0009_tool_schema_subject_baselines",
+      "breakpoints": true
     }
   ]
 }
