@@ -116,6 +116,11 @@ async function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>): Promise
   }
 }
 
+export function readNextCursor(payload: unknown): string | null {
+  const c = (payload as { result?: { nextCursor?: unknown } } | null)?.result?.nextCursor;
+  return typeof c === "string" && c.length > 0 ? c : null;
+}
+
 /** JSON-RPC `tools/list` against a streamable-HTTP or SSE MCP endpoint. */
 async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
   const call = (body: unknown, signal: AbortSignal) =>
@@ -163,10 +168,29 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
       const payload = parseJsonRpc(text);
       const tools = extractToolNames(payload);
       if (tools.length > 0) {
+        // MCP 2025-06-18: tools/list is paginated. Follow nextCursor to the end
+        // (bounded) so a tool on page two never looks like capability loss.
+        let pages = 1;
+        let cursor = readNextCursor(payload);
+        const seen = new Set<string>();
+        while (cursor && pages < 20 && !seen.has(cursor)) {
+          seen.add(cursor);
+          const next = await call(
+            { jsonrpc: "2.0", id: 2 + pages, method: "tools/list", params: { cursor } },
+            signal,
+          ).catch(() => null);
+          if (!next || !next.ok) break;
+          const nextPayload = parseJsonRpc((await next.text()).slice(0, 200_000));
+          for (const name of extractToolNames(nextPayload)) {
+            if (!tools.includes(name)) tools.push(name);
+          }
+          pages += 1;
+          cursor = readNextCursor(nextPayload);
+        }
         return {
           probeable: true,
           ok: true,
-          detail: `tools/list returned ${tools.length} tool${tools.length > 1 ? "s" : ""}`,
+          detail: `tools/list returned ${tools.length} tool${tools.length > 1 ? "s" : ""}${pages > 1 ? ` across ${pages} pages` : ""}`,
           tools,
         };
       }
