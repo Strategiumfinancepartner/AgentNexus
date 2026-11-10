@@ -112,6 +112,8 @@ import { Route as ApiPublicReportRouteImport } from './routes/api/public/report'
 import { Route as ApiPublicStatusRouteImport } from './routes/api/public/status'
 import { Route as ApiPublicSubmissionRouteImport } from './routes/api/public/submission'
 import { Route as ApiPublicWatchRouteImport } from './routes/api/public/watch'
+import { Route as GuidesConnectIndexRouteImport } from './routes/guides.connect.index'
+import { Route as GuidesConnectClientRouteImport } from './routes/guides.connect.$client'
 import { Route as McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/agent-card[.]json'
 import { Route as McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRouteImport } from './routes/mcp/[.well-known]/agent[.]json'
 import { Route as McpChar91DotwellKnownChar93McpRouteImport } from './routes/mcp/[.well-known]/mcp'
@@ -690,6 +692,16 @@ const ApiPublicWatchRoute = ApiPublicWatchRouteImport.update({
   path: '/api/public/watch',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesConnectIndexRoute = GuidesConnectIndexRouteImport.update({
+  id: '/guides/connect/',
+  path: '/guides/connect/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuidesConnectClientRoute = GuidesConnectClientRouteImport.update({
+  id: '/guides/connect/$client',
+  path: '/guides/connect/$client',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute =
   McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRouteImport.update({
     id: '/.well-known/agent-card.json',
@@ -874,6 +886,7 @@ export interface FileRoutesByFullPath {
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
   '/api/public/watch': typeof ApiPublicWatchRoute
+  '/guides/connect/$client': typeof GuidesConnectClientRoute
   '/mcp/.well-known/agent-card.json': typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/mcp/.well-known/agent.json': typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
@@ -882,6 +895,7 @@ export interface FileRoutesByFullPath {
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/mcp/v1/$action': typeof McpV1ActionRoute
+  '/guides/connect/': typeof GuidesConnectIndexRoute
   '/mcp/v1/': typeof McpV1IndexRoute
   '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -992,6 +1006,7 @@ export interface FileRoutesByTo {
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
   '/api/public/watch': typeof ApiPublicWatchRoute
+  '/guides/connect/$client': typeof GuidesConnectClientRoute
   '/mcp/.well-known/agent-card.json': typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/mcp/.well-known/agent.json': typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
@@ -1000,6 +1015,7 @@ export interface FileRoutesByTo {
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/mcp/v1/$action': typeof McpV1ActionRoute
+  '/guides/connect': typeof GuidesConnectIndexRoute
   '/mcp/v1': typeof McpV1IndexRoute
   '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -1112,6 +1128,7 @@ export interface FileRoutesById {
   '/api/public/status': typeof ApiPublicStatusRoute
   '/api/public/submission': typeof ApiPublicSubmissionRoute
   '/api/public/watch': typeof ApiPublicWatchRoute
+  '/guides/connect/$client': typeof GuidesConnectClientRoute
   '/mcp/.well-known/agent-card.json': typeof McpChar91DotwellKnownChar93AgentCardChar91DotChar93jsonRoute
   '/mcp/.well-known/agent.json': typeof McpChar91DotwellKnownChar93AgentChar91DotChar93jsonRoute
   '/mcp/.well-known/mcp': typeof McpChar91DotwellKnownChar93McpRoute
@@ -1120,6 +1137,7 @@ export interface FileRoutesById {
   '/mcp/.well-known/oauth-protected-resource': typeof McpChar91DotwellKnownChar93OauthProtectedResourceRoute
   '/mcp/.well-known/owners.json': typeof McpChar91DotwellKnownChar93OwnersChar91DotChar93jsonRoute
   '/mcp/v1/$action': typeof McpV1ActionRoute
+  '/guides/connect/': typeof GuidesConnectIndexRoute
   '/mcp/v1/': typeof McpV1IndexRoute
   '/api/public/health-card/$slug': typeof ApiPublicHealthCardSlugRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -1232,6 +1250,7 @@ export interface FileRouteTypes {
     | '/api/public/status'
     | '/api/public/submission'
     | '/api/public/watch'
+    | '/guides/connect/$client'
     | '/mcp/.well-known/agent-card.json'
     | '/mcp/.well-known/agent.json'
     | '/mcp/.well-known/mcp'
@@ -1240,6 +1259,7 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
     | '/mcp/v1/$action'
+    | '/guides/connect/'
     | '/mcp/v1/'
     | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
@@ -1350,6 +1370,7 @@ export interface FileRouteTypes {
     | '/api/public/status'
     | '/api/public/submission'
     | '/api/public/watch'
+    | '/guides/connect/$client'
     | '/mcp/.well-known/agent-card.json'
     | '/mcp/.well-known/agent.json'
     | '/mcp/.well-known/mcp'
@@ -1358,6 +1379,7 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
     | '/mcp/v1/$action'
+    | '/guides/connect'
     | '/mcp/v1'
     | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
@@ -1469,6 +1491,7 @@ export interface FileRouteTypes {
     | '/api/public/status'
     | '/api/public/submission'
     | '/api/public/watch'
+    | '/guides/connect/$client'
     | '/mcp/.well-known/agent-card.json'
     | '/mcp/.well-known/agent.json'
     | '/mcp/.well-known/mcp'
@@ -1477,6 +1500,7 @@ export interface FileRouteTypes {
     | '/mcp/.well-known/oauth-protected-resource'
     | '/mcp/.well-known/owners.json'
     | '/mcp/v1/$action'
+    | '/guides/connect/'
     | '/mcp/v1/'
     | '/api/public/health-card/$slug'
     | '/api/public/payments/webhook'
@@ -1575,6 +1599,8 @@ export interface RootRouteChildren {
   ApiPublicStatusRoute: typeof ApiPublicStatusRoute
   ApiPublicSubmissionRoute: typeof ApiPublicSubmissionRoute
   ApiPublicWatchRoute: typeof ApiPublicWatchRoute
+  GuidesConnectClientRoute: typeof GuidesConnectClientRoute
+  GuidesConnectIndexRoute: typeof GuidesConnectIndexRoute
   ApiPublicHealthCardSlugRoute: typeof ApiPublicHealthCardSlugRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -2303,6 +2329,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicWatchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/connect/': {
+      id: '/guides/connect/'
+      path: '/guides/connect'
+      fullPath: '/guides/connect/'
+      preLoaderRoute: typeof GuidesConnectIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/connect/$client': {
+      id: '/guides/connect/$client'
+      path: '/guides/connect/$client'
+      fullPath: '/guides/connect/$client'
+      preLoaderRoute: typeof GuidesConnectClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp/.well-known/agent-card.json': {
       id: '/mcp/.well-known/agent-card.json'
       path: '/.well-known/agent-card.json'
@@ -2646,6 +2686,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicStatusRoute: ApiPublicStatusRoute,
   ApiPublicSubmissionRoute: ApiPublicSubmissionRoute,
   ApiPublicWatchRoute: ApiPublicWatchRoute,
+  GuidesConnectClientRoute: GuidesConnectClientRoute,
+  GuidesConnectIndexRoute: GuidesConnectIndexRoute,
   ApiPublicHealthCardSlugRoute: ApiPublicHealthCardSlugRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

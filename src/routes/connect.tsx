@@ -197,6 +197,9 @@ function Connect() {
             <Link to="/guides/api-fallbacks" className="mt-6 inline-block text-sm text-primary hover:underline">
               Read the API fallback walkthrough →
             </Link>
+            <Link to="/guides/connect" className="mt-3 block text-sm text-primary hover:underline">
+              Step-by-step guides: Muse Spark, Codex, VS Code, Gemini CLI… →
+            </Link>
           </section>
 
           <section className="border-t border-border/60 py-12">
