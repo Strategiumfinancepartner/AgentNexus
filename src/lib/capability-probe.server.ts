@@ -19,6 +19,8 @@ export type CapabilityProbe = {
   protocolVersion?: string | null;
   /** Declared input/output schema per tool, as returned by tools/list. */
   toolSchemas?: Record<string, ToolSchema>;
+  /** True when a nextCursor was returned but a later page could not be read: the tool list is partial. */
+  paginationTruncated?: boolean;
 };
 
 export type ToolSchema = { input: unknown; output: unknown };
@@ -185,20 +187,35 @@ async function probeMcp(endpoint: string): Promise<CapabilityProbe> {
         let pages = 1;
         let cursor = readNextCursor(payload);
         const seen = new Set<string>();
+        let truncated = false;
         while (cursor && pages < 20 && !seen.has(cursor)) {
           seen.add(cursor);
           const next = await call(
             { jsonrpc: "2.0", id: 2 + pages, method: "tools/list", params: { cursor } },
             signal,
           ).catch(() => null);
-          if (!next || !next.ok) break;
-          const nextPayload = parseJsonRpc((await next.text()).slice(0, 200_000));
+          if (!next || !next.ok) { truncated = true; break; }
+          const nextPayload = parseJsonRpc((await next.text().catch(() => "")).slice(0, 200_000));
+          if (!nextPayload || (typeof nextPayload === "object" && "error" in nextPayload)) { truncated = true; break; }
           for (const name of extractToolNames(nextPayload)) {
             if (!tools.includes(name)) tools.push(name);
           }
           Object.assign(toolSchemas, extractToolSchemas(nextPayload));
           pages += 1;
           cursor = readNextCursor(nextPayload);
+        }
+        // A cursor still pending after the loop (page cap or repeated cursor) is also a partial check.
+        if (cursor) truncated = true;
+        if (truncated) {
+          return {
+            probeable: true,
+            ok: true,
+            detail: `PARTIAL: only ${pages} page${pages > 1 ? "s" : ""} of tools/list checked (pagination failed); ${tools.length} tool${tools.length > 1 ? "s" : ""} seen${protocolVersion ? ` (protocol ${protocolVersion})` : ""}`,
+            tools,
+            protocolVersion,
+            toolSchemas,
+            paginationTruncated: true,
+          };
         }
         return {
           probeable: true,

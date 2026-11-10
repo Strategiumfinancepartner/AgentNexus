@@ -301,9 +301,11 @@ export async function runHealthChecks(
       update['capability_ok'] = capability.ok;
       update['capability_detail'] = capability.detail;
       update['capability_checked_at'] = checkedAt;
-      if (capability.tools.length > 0) update['discovered_tools'] = capability.tools;
+      // A partial tools/list must never overwrite the full list or feed schema drift.
+      const partial = capability.paginationTruncated === true;
+      if (!partial && capability.tools.length > 0) update['discovered_tools'] = capability.tools;
       if (capability.protocolVersion) update['mcp_protocol_version'] = capability.protocolVersion;
-      if (capability.toolSchemas && Object.keys(capability.toolSchemas).length > 0) {
+      if (!partial && capability.toolSchemas && Object.keys(capability.toolSchemas).length > 0) {
         const prevSchemas = (row as any).tool_schemas as Record<string, ToolSchema> | null;
         const adv = advanceSchemaBaseline((row as any).tool_schema_state ?? null, prevSchemas, capability.protocolVersion ?? null, capability.toolSchemas);
         const changes = adv.changes;
@@ -330,7 +332,7 @@ export async function runHealthChecks(
       await notifyWatchers(supabaseAdmin, { id: row.id, slug: row.slug, name: r.name ?? row.slug }, {
         up: result.ok ? true : downSince ? false : true,
         schema_ok: schema ? schema.ok : r.schema_ok ?? null,
-        tools: capability.probeable && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
+        tools: capability.probeable && !capability.paginationTruncated && capability.tools.length > 0 ? capability.tools : r.discovered_tools,
         ...readDataQuality(r.data_detail),
       });
       const { notifyPublisher } = await import("@/lib/publisher-alerts.server");
