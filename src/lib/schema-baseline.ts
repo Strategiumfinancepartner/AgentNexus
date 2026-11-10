@@ -35,9 +35,9 @@ export function fleetView(state: SchemaState, version: string | null, nowMs: num
     let alternated = false;
     obs.forEach((o, i) => {
       if (!firstSeen.has(o.hash)) firstSeen.set(o.hash, i);
-      else if (i > 0 && obs[i - 1].hash !== o.hash) alternated = true;
+      else if (i > 0 && obs[i - 1]!.hash !== o.hash) alternated = true;
     });
-    const span = Date.parse(obs[obs.length - 1].at) - Date.parse(obs[0].at);
+    const span = Date.parse(obs[obs.length - 1]!.at) - Date.parse(obs[0]!.at);
     if (alternated && span >= FLEET_MIN_SPAN_MS) verdict = "split_fleet";
   }
   return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, verdict };
