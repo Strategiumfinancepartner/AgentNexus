@@ -16,7 +16,7 @@ each block is final copy.
 - Machine docs: `/llms.txt`, `/agents.txt`
 - Category: developer tools / discovery / registry
 - License: proprietary, free read access
-- Contact: admin@agentnexus.app
+- Contact: support@agentnexus.app
 
 ## One-line description
 

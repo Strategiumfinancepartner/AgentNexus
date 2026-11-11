@@ -9,7 +9,7 @@ description = "LlamaIndex tool spec that lets agents discover APIs, MCP servers 
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Agent Nexus", email = "hello@agentnexus.app" }]
+authors = [{ name = "Agent Nexus", email = "support@agentnexus.app" }]
 keywords = ["llama-index", "llamaindex", "agents", "tools", "mcp", "api", "registry", "discovery"]
 classifiers = [
   "Development Status :: 4 - Beta",

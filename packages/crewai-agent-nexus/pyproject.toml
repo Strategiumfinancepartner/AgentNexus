@@ -9,7 +9,7 @@ description = "CrewAI tools that let agents discover APIs, MCP servers and CLIs 
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Agent Nexus", email = "hello@agentnexus.app" }]
+authors = [{ name = "Agent Nexus", email = "support@agentnexus.app" }]
 keywords = ["crewai", "agents", "tools", "mcp", "api", "registry", "discovery"]
 classifiers = [
   "Development Status :: 4 - Beta",

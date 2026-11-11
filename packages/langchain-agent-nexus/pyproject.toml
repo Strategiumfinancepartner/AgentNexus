@@ -9,7 +9,7 @@ description = "LangChain tools for the Agent Nexus registry: discover and inspec
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Agent Nexus", email = "hello@agentnexus.app" }]
+authors = [{ name = "Agent Nexus", email = "support@agentnexus.app" }]
 keywords = ["langchain", "agents", "tools", "mcp", "api", "registry", "discovery"]
 classifiers = [
   "Intended Audience :: Developers",
