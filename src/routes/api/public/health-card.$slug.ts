@@ -9,8 +9,8 @@ const headers = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "public, max-age=120",
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, HEAD, OPTIONS",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "content-type, x-api-key, authorization",
 };
 
 const json = (body: unknown, status = 200) =>
@@ -147,6 +147,10 @@ export const Route = createFileRoute("/api/public/health-card/$slug")({
       OPTIONS: async () => new Response(null, { status: 204, headers }),
       GET: async (ctx: any) => serve(ctx),
       HEAD: async (ctx: any) => serve(ctx),
+      POST: async (ctx: any) => {
+        const { serveHealthReceipt } = await import("@/lib/health-receipt.server");
+        return serveHealthReceipt(ctx.request, () => serve(ctx));
+      },
     },
   },
 });

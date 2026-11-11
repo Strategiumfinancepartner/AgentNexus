@@ -55,6 +55,23 @@ async function signingKey(): Promise<CryptoKey | null> {
   }
 }
 
+/** Compact JWS for request-specific receipts. Never use the public-card cache. */
+export async function signHealthReceipt(payload: Record<string, unknown>): Promise<string> {
+  const key = await signingKey();
+  if (!key) throw new Error("Receipt signing unavailable");
+  const header = b64urlText(JSON.stringify({ alg: "ES256", kid: SIGNING_KID, typ: "agentnexus-health-receipt+jwt" }));
+  const input = `${header}.${b64urlText(canonicalJson(payload))}`;
+  const signature = await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" }, key, new TextEncoder().encode(input),
+  );
+  // Check the configured private key actually matches the published verifier key.
+  const publicKey = await crypto.subtle.importKey("jwk", { ...PUBLIC_JWK, key_ops: ["verify"] }, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+  if (!await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, publicKey, signature, new TextEncoder().encode(input))) {
+    throw new Error("Receipt signing key mismatch");
+  }
+  return `${input}.${b64url(signature)}`;
+}
+
 /** RFC 8785 JSON Canonicalization Scheme — what A2A verifiers rebuild. */
 export function canonicalJson(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "null";
