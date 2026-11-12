@@ -11,6 +11,8 @@ export type SchemaState = {
   pending?: { version: string; schemas: Schemas } | null;
   // Recent observations (24h window) used to tell a converging deploy from a split fleet.
   seen?: { at: string; version: string; hash: string }[];
+  // Last confirmed shape transition per protocol version; kept beyond the 24h window.
+  transitions?: Record<string, { from_hash: string; to_hash: string; transitioned_at: string }>;
 };
 
 export const FLEET_WINDOW_MS = 24 * 3600_000;
@@ -23,6 +25,7 @@ export type FleetView = {
   complete_observations_24h: number;
   last_complete_at: string | null;
   verdict: "unobserved_24h" | "single_shape" | "converging" | "split_fleet";
+  last_transition: { from_hash: string; to_hash: string; transitioned_at: string } | null;
 };
 
 // No complete samples = unobserved, not stable. Several shapes alternating for 6h+ (an older shape
@@ -48,7 +51,7 @@ export function fleetView(state: SchemaState, version: string | null, nowMs: num
     const span = first && last ? Date.parse(last.at) - Date.parse(first.at) : 0;
     if (alternated && span >= FLEET_MIN_SPAN_MS) verdict = "split_fleet";
   }
-  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, complete_observations_24h: obs.length, last_complete_at: lastComplete?.at ?? null, verdict };
+  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, complete_observations_24h: obs.length, last_complete_at: lastComplete?.at ?? null, verdict, last_transition: state.transitions?.[v] ?? null };
 }
 
 // Recompute at read time: failed/partial probes do not refresh the stored subject.
@@ -62,7 +65,7 @@ export function comparisonSubjectView(stored: string | null, state: SchemaState 
       ...subject,
       fleet: state && Array.isArray(state.seen)
         ? fleetView(state, subject.protocol_version ?? null, nowMs)
-        : subject.fleet ? { ...subject.fleet, complete_observations_24h: null, last_complete_at: null } : null,
+        : subject.fleet ? { ...subject.fleet, complete_observations_24h: null, last_complete_at: null, last_transition: null } : null,
     };
   } catch { return null; }
 }
@@ -98,7 +101,7 @@ export function advanceSchemaBaseline(
   const seen = [...(prevState?.seen ?? []), { at: new Date(nowMs).toISOString(), version: v, hash: fnv(stable(schemas)) }]
     .filter((o) => nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS)
     .slice(-200);
-  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen };
+  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen, ...(prevState?.transitions ? { transitions: { ...prevState.transitions } } : {}) };
   if (!prevState && legacySchemas && Object.keys(legacySchemas).length > 0) state.baselines[v] = legacySchemas;
   const base = state.baselines[v];
   if (!base) { state.baselines[v] = schemas; state.pending = null; return { state, changes: [], status: "baseline" }; }
@@ -106,6 +109,7 @@ export function advanceSchemaBaseline(
   if (state.pending && state.pending.version === v && stable(state.pending.schemas) === stable(schemas)) {
     const changes = diffToolSchemas(base, schemas);
     state.baselines[v] = schemas; state.pending = null;
+    state.transitions = { ...(state.transitions ?? {}), [v]: { from_hash: fnv(stable(base)), to_hash: fnv(stable(schemas)), transitioned_at: new Date(nowMs).toISOString() } };
     return { state, changes, status: "confirmed_drift" };
   }
   state.pending = { version: v, schemas };

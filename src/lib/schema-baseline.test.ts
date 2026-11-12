@@ -123,3 +123,20 @@ describe("split fleet detection", () => {
   it("A/B alternating for 8h is split_fleet", () => { expect(run([A, B, A, B, A, B, A, B, A], 3600_000).verdict).toBe("split_fleet"); });
   it("short flip-flop under 6h is not split_fleet", () => { expect(run([A, B, A], 3600_000).verdict).toBe("converging"); });
 });
+
+import { advanceSchemaBaseline as adv, fleetView as fv } from "./schema-baseline";
+describe("last_transition", () => {
+  it("records confirmed drift and keeps it after the 24h window", () => {
+    const a = { t: { name: "t" } } as any, b = { t: { name: "t" }, u: { name: "u" } } as any;
+    const t = Date.parse("2026-11-10T00:00:00Z");
+    let s = adv(null, null, "v1", a, t).state;
+    s = adv(s, null, "v1", b, t + 3600_000).state;
+    expect(fv(s, "v1", t).last_transition).toBeNull();
+    s = adv(s, null, "v1", b, t + 7200_000).state;
+    s = adv(s, null, "v1", b, t + 30 * 3600_000).state;
+    const f = fv(s, "v1", t + 30 * 3600_000);
+    expect(f.last_transition?.transitioned_at).toBe("2026-11-10T02:00:00.000Z");
+    expect(f.last_transition?.from_hash).not.toBe(f.last_transition?.to_hash);
+    expect(f.distinct_shapes_24h).toBe(1);
+  });
+});
