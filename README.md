@@ -30,8 +30,11 @@ and on the [M8ven Trust Index](https://m8ven.ai/mcp/strategiumfinancepartner-age
 | Old and new builds alternate during a rolling deployment | Declared tool-schema comparisons are scoped to an endpoint and negotiated protocol version; a new shape requires two consecutive matching observations before drift is confirmed | Reduces false change reports from an A → B → A sequence |
 | One endpoint continues serving different tool shapes | Complete observations feed a 24-hour distinct-shape count; recurring shapes spanning at least six hours yield `split_fleet` | Makes persistent inconsistency visible separately from the drift verdict |
 | A later MCP tool-list page fails | Follows `nextCursor` for up to 20 pages; unfinished pagination is labelled `PARTIAL` with the number of pages checked and `tool_list_complete: false` | Preserves the last complete list and excludes partial observations from schema baselines and fleet counts |
+| Complete observations stop arriving | Health cards expose `schema.comparison_subject.fleet.complete_observations_24h` and `last_complete_at`; the rolling count is recomputed at read time, not frozen at the last successful probe | Makes aging evidence visible instead of presenting historical stability as current assurance |
 
 The fleet finding describes observed shapes, not the identity or exact number of workers behind a load balancer. Checks are scheduled observations, not continuous guarantees. Local CLI/stdio listings expose package availability evidence rather than claiming that a user's running process is healthy.
+
+`observations_24h` remains a compatibility alias for the complete-only count. `last_complete_at` is the latest retained complete observation for the comparison subject, even if older than 24 hours, or `null` when unavailable. Missing legacy history produces `null` for the new fields, not invented evidence. A `single_shape` verdict alone does not establish freshness: inspect the denominator and timestamp alongside `last_probe.tool_list_complete`.
 
 Inspect the implementation: [capability and pagination probes](src/lib/capability-probe.server.ts) · [schema baselines and fleet history](src/lib/schema-baseline.ts) · [complete-observation gate](src/lib/health.server.ts).
 

@@ -20,6 +20,8 @@ export type FleetView = {
   window_hours: 24;
   distinct_shapes_24h: number;
   observations_24h: number;
+  complete_observations_24h: number;
+  last_complete_at: string | null;
   verdict: "single_shape" | "converging" | "split_fleet";
 };
 
@@ -27,7 +29,11 @@ export type FleetView = {
 // reappears after a newer one) = split fleet behind one endpoint, not drift.
 export function fleetView(state: SchemaState, version: string | null, nowMs: number): FleetView {
   const v = version ?? "unknown";
-  const obs = (state.seen ?? []).filter((o) => o.version === v && nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS);
+  // Only complete tools/list probes enter seen (the caller gates partial probes).
+  const complete = (state.seen ?? []).filter((o) => o.version === v && Number.isFinite(Date.parse(o.at)) && Date.parse(o.at) <= nowMs)
+    .sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
+  const lastComplete = complete.at(-1);
+  const obs = complete.filter((o) => nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS);
   const distinct = new Set(obs.map((o) => o.hash)).size;
   let verdict: FleetView["verdict"] = distinct <= 1 ? "single_shape" : "converging";
   if (distinct >= 2) {
@@ -35,12 +41,30 @@ export function fleetView(state: SchemaState, version: string | null, nowMs: num
     let alternated = false;
     obs.forEach((o, i) => {
       if (!firstSeen.has(o.hash)) firstSeen.set(o.hash, i);
-      else if (i > 0 && obs[i - 1]!.hash !== o.hash) alternated = true;
+      else if (i > 0 && obs[i - 1]?.hash !== o.hash) alternated = true;
     });
-    const span = Date.parse(obs[obs.length - 1]!.at) - Date.parse(obs[0]!.at);
+    const first = obs[0];
+    const last = obs.at(-1);
+    const span = first && last ? Date.parse(last.at) - Date.parse(first.at) : 0;
     if (alternated && span >= FLEET_MIN_SPAN_MS) verdict = "split_fleet";
   }
-  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, verdict };
+  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, complete_observations_24h: obs.length, last_complete_at: lastComplete?.at ?? null, verdict };
+}
+
+// Recompute at read time: failed/partial probes do not refresh the stored subject.
+// Missing legacy history is unknown, not a fabricated zero or a fresh timestamp.
+export function comparisonSubjectView(stored: string | null, state: SchemaState | null, nowMs: number) {
+  if (!stored) return null;
+  try {
+    const subject = JSON.parse(stored);
+    if (!subject || typeof subject !== "object" || Array.isArray(subject)) return null;
+    return {
+      ...subject,
+      fleet: state && Array.isArray(state.seen)
+        ? fleetView(state, subject.protocol_version ?? null, nowMs)
+        : subject.fleet ? { ...subject.fleet, complete_observations_24h: null, last_complete_at: null } : null,
+    };
+  } catch { return null; }
 }
 
 function stable(v: unknown): string {

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAnon } from "@/lib/mcp/supabase";
+import { comparisonSubjectView } from "@/lib/schema-baseline";
 
 /**
  * Agent-facing health card: the live evidence an agent needs to rank an
@@ -42,7 +43,7 @@ async function serve({ params, request }: { params: { slug: string }; request: R
   const { data: e } = await client
     .from("entries")
     .select(
-      "id, slug, name, category, endpoint, auth_mode, auth_params, input_format, output_format, rate_limit, pricing, verified, verified_at, health_ok, health_status_code, health_latency_ms, health_checked_at, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_detail, capability_checked_at, discovered_tools, schema_ok, schema_detail, schema_checked_at, data_ok, data_detail, data_checked_at, down_since, mcp_protocol_version, tool_schema_changes, tool_schema_changed_at, tool_schema_subject",
+      "id, slug, name, category, endpoint, auth_mode, auth_params, input_format, output_format, rate_limit, pricing, verified, verified_at, health_ok, health_status_code, health_latency_ms, health_checked_at, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_detail, capability_checked_at, discovered_tools, schema_ok, schema_detail, schema_checked_at, data_ok, data_detail, data_checked_at, down_since, mcp_protocol_version, tool_schema_changes, tool_schema_changed_at, tool_schema_subject, tool_schema_state",
     )
     .eq("status", "approved")
     .eq("slug", slug)
@@ -106,8 +107,9 @@ async function serve({ params, request }: { params: { slug: string }; request: R
       negotiated_protocol_version: e.mcp_protocol_version ?? null,
       declared_tool_schema_breaking_changes: e.tool_schema_changes ?? [],
       declared_tool_schema_changed_at: e.tool_schema_changed_at ?? null,
-      comparison_subject: (() => { try { return e.tool_schema_subject ? JSON.parse(e.tool_schema_subject) : null; } catch { return null; } })(),
+      comparison_subject: comparisonSubjectView(e.tool_schema_subject ?? null, e.tool_schema_state ?? null, now),
       drift_rule: "diffs compare only within the same (endpoint, negotiated protocol version); a new shape must repeat on 2 consecutive probes, so rolling-deploy flip-flops are not reported; comparison_subject.fleet counts distinct shapes per subject over 24h, and shapes that keep alternating for 6h+ are reported as split_fleet rather than drift",
+      fleet_evidence_rule: "complete_observations_24h counts only complete tool-list observations in the rolling 24h window, recomputed when this card is read; observations_24h remains a compatibility alias. last_complete_at is the latest retained complete observation for this subject, even outside the window, or null when unavailable. A single_shape verdict is not proof of fresh evidence: inspect the count and timestamp; partial or failed probes never refresh them.",
     },
     data_quality: e.data_checked_at ? (() => { try { return { ok: e.data_ok, checked_at: e.data_checked_at, ...JSON.parse(e.data_detail ?? "{}") }; } catch { return { ok: e.data_ok, checked_at: e.data_checked_at }; } })() : null,
     outage: { confirmed_down_since: e.down_since ?? null, rule: "down only after 2 consecutive failed hourly checks" },

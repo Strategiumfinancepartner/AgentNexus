@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceSchemaBaseline, schemaSubject } from "./schema-baseline";
+import { advanceSchemaBaseline, schemaSubject, fleetView, comparisonSubjectView, type SchemaState } from "./schema-baseline";
 
 const A = { t: { input: { type: "object", properties: { q: { type: "string" } } } } } as any;
 const B = { t: { input: { type: "object", properties: { q: { type: "number" } } } } } as any;
@@ -28,6 +28,49 @@ describe("schema baseline per subject", () => {
   });
   it("subject key changes with version", () => {
     expect(schemaSubject("e", "v1", A).key).not.toBe(schemaSubject("e", "v2", A).key);
+  });
+});
+
+describe("complete fleet evidence freshness", () => {
+  const t0 = Date.parse("2026-11-12T00:00:00Z");
+  const state = (): SchemaState => advanceSchemaBaseline(null, null, "v1", A, t0).state;
+  const stored = () => JSON.stringify({ ...schemaSubject("https://example.com/mcp", "v1", A), status: "stable", fleet: fleetView(state(), "v1", t0) });
+
+  it("exposes the complete-only count without removing the legacy alias", () => {
+    const f = fleetView(state(), "v1", t0);
+    expect(f.complete_observations_24h).toBe(1);
+    expect(f.observations_24h).toBe(1);
+  });
+  it("does not refresh the last complete timestamp during twelve hours without complete probes", () => {
+    const f = comparisonSubjectView(stored(), state(), t0 + 12 * 3600_000)?.fleet;
+    expect(f.last_complete_at).toBe("2026-11-12T00:00:00.000Z");
+    expect(f.complete_observations_24h).toBe(1);
+  });
+  it("ages a stored sample out at read time without a new successful probe", () => {
+    const f = comparisonSubjectView(stored(), state(), t0 + 24 * 3600_000 + 1)?.fleet;
+    expect(f.complete_observations_24h).toBe(0);
+    expect(f.observations_24h).toBe(0);
+    expect(f.distinct_shapes_24h).toBe(0);
+    expect(f.last_complete_at).toBe("2026-11-12T00:00:00.000Z");
+  });
+  it("keeps protocol versions separate and finds the latest timestamp independently of order", () => {
+    const st: SchemaState = { baselines: {}, seen: [
+      { at: "2026-11-12T02:00:00Z", version: "v1", hash: "a" },
+      { at: "2026-11-12T03:00:00Z", version: "v2", hash: "b" },
+      { at: "2026-11-12T01:00:00Z", version: "v1", hash: "a" },
+    ] };
+    const f = fleetView(st, "v1", t0 + 4 * 3600_000);
+    expect(f.complete_observations_24h).toBe(2);
+    expect(f.last_complete_at).toBe("2026-11-12T02:00:00Z");
+  });
+  it("does not fabricate evidence for an empty or legacy history", () => {
+    expect(fleetView({ baselines: {} }, "v1", t0).last_complete_at).toBeNull();
+    const subject = comparisonSubjectView(stored(), null, t0);
+    expect(subject.fleet.complete_observations_24h).toBeNull();
+    expect(subject.fleet.last_complete_at).toBeNull();
+    expect(subject.fleet.observations_24h).toBe(1);
+    expect(subject.key).toBe(schemaSubject("https://example.com/mcp", "v1", A).key);
+    expect(comparisonSubjectView("invalid", state(), t0)).toBeNull();
   });
 });
 
