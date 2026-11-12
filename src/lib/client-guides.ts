@@ -171,6 +171,29 @@ print(client.chat.completions.create(model="muse-spark-1.3", messages=messages).
     verify: TEST_PROMPT,
     docs: "https://opencode.ai/docs/mcp-servers/",
   },
+  {
+    slug: "workbuddy",
+    client: "WorkBuddy",
+    vendor: "Tencent",
+    summary: "Remote MCP (Streamable HTTP) in WorkBuddy's MCP settings. No install, no local server.",
+    steps: [
+      {
+        title: "Open MCP settings",
+        text: "In WorkBuddy, open Settings, then MCP, and choose to add a remote server (Streamable HTTP).",
+      },
+      {
+        title: "Add Agent Nexus",
+        text: "Paste this configuration, or fill the URL field. A free key (1,000 calls/day) is optional: add it as an Authorization header.",
+        code: JSON.stringify({ mcpServers: { "agent-nexus": { type: "streamableHttp", url: MCP, headers: { Authorization: "Bearer nx_your_key_optional" } } } }, null, 2),
+      },
+      {
+        title: "Approve the tools",
+        text: "Enable the server and approve the read-only Agent Nexus tools when WorkBuddy asks.",
+      },
+    ],
+    verify: TEST_PROMPT,
+    docs: "https://www.workbuddy.ai",
+  },
 ];
 
 export function getClientGuide(slug: string) {

@@ -86,3 +86,10 @@ describe("sticky AI agent identity", () => {
     expect(classifyCaller(sticky("node", "ClaudeBot/1.0 claudebot@anthropic.com"), [])).toBe("developer");
   });
 });
+
+import { classifyCaller as classifyWB } from "./segments";
+import { it as itWB, expect as expectWB } from "vitest";
+itWB("classifies WorkBuddy desktop agent as ai_agent but its probe as monitor", () => {
+  expectWB(classifyWB("WorkBuddy/5.9.3", ["mcp"])).toBe("ai_agent");
+  expectWB(classifyWB("Mozilla/5.0 (compatible; WorkBuddyAPIProbe/1.0)", ["mcp"])).toBe("monitor");
+});

@@ -21,7 +21,7 @@ export function isInternalCaller(actor: string, userAgent: string): boolean {
 const CRAWLER =
   /(amazonbot|googlebot|googleother|google-extended|google-inspectiontool|bingbot|barkrowler|gptbot|oai-searchbot|claudebot|bytespider|petalbot|yandex|ahrefs|semrush|applebot|duckduck|baiduspider|spider|crawl|facebookexternalhit|mj12bot|dotbot)/i;
 const AI_AGENT =
-  /(codex|openai-mcp|claude-user|claude-code|anthropic|zed\/|opencode|cursor|windsurf|cline|gemini|copilot|chatgpt-user|perplexity-user|continue)/i;
+  /(codex|openai-mcp|claude-user|claude-code|anthropic|zed\/|opencode|cursor|windsurf|cline|gemini|copilot|chatgpt-user|perplexity-user|continue|workbuddy\/)/i;
 const MONITOR =
   /(bot|probe|monitor|health|collector|index|observatory|scanner|rating|trust|watch|verif|engine|oracle|sentinel|mcpbeat|clono|glimind|aidoing|registry|postman|checker|scoring|evidence|bureau|ledger|intelligence|network|gateway)/i;
 
