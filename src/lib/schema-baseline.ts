@@ -22,10 +22,10 @@ export type FleetView = {
   observations_24h: number;
   complete_observations_24h: number;
   last_complete_at: string | null;
-  verdict: "single_shape" | "converging" | "split_fleet";
+  verdict: "unobserved_24h" | "single_shape" | "converging" | "split_fleet";
 };
 
-// One shape = stable. Several shapes that keep alternating for 6h+ (an older shape
+// No complete samples = unobserved, not stable. Several shapes alternating for 6h+ (an older shape
 // reappears after a newer one) = split fleet behind one endpoint, not drift.
 export function fleetView(state: SchemaState, version: string | null, nowMs: number): FleetView {
   const v = version ?? "unknown";
@@ -35,7 +35,7 @@ export function fleetView(state: SchemaState, version: string | null, nowMs: num
   const lastComplete = complete.at(-1);
   const obs = complete.filter((o) => nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS);
   const distinct = new Set(obs.map((o) => o.hash)).size;
-  let verdict: FleetView["verdict"] = distinct <= 1 ? "single_shape" : "converging";
+  let verdict: FleetView["verdict"] = obs.length === 0 ? "unobserved_24h" : distinct === 1 ? "single_shape" : "converging";
   if (distinct >= 2) {
     const firstSeen = new Map<string, number>();
     let alternated = false;

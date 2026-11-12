@@ -52,6 +52,40 @@ describe("complete fleet evidence freshness", () => {
     expect(f.observations_24h).toBe(0);
     expect(f.distinct_shapes_24h).toBe(0);
     expect(f.last_complete_at).toBe("2026-11-12T00:00:00.000Z");
+    expect(f.verdict).toBe("unobserved_24h");
+  });
+  it("reports an explicitly empty complete history as unobserved, without inventing a timestamp", () => {
+    const f = comparisonSubjectView(stored(), { baselines: {}, seen: [] }, t0)?.fleet;
+    expect(f.verdict).toBe("unobserved_24h");
+    expect(f.complete_observations_24h).toBe(0);
+    expect(f.last_complete_at).toBeNull();
+  });
+  it("keeps the inclusive 24-hour boundary and becomes unobserved one millisecond later", () => {
+    expect(fleetView(state(), "v1", t0 + 24 * 3600_000).verdict).toBe("single_shape");
+    expect(fleetView(state(), "v1", t0 + 24 * 3600_000 + 1).verdict).toBe("unobserved_24h");
+  });
+  it("returns to single_shape when a new complete observation arrives", () => {
+    const resumedAt = t0 + 25 * 3600_000;
+    const resumed = advanceSchemaBaseline(state(), null, "v1", A, resumedAt);
+    const f = comparisonSubjectView(stored(), resumed.state, resumedAt)?.fleet;
+    expect(f.verdict).toBe("single_shape");
+    expect(f.complete_observations_24h).toBe(1);
+    expect(f.last_complete_at).toBe("2026-11-13T01:00:00.000Z");
+    expect(resumed.status).toBe("stable");
+    expect(resumed.changes).toEqual([]);
+  });
+  it("ages a split fleet to unobserved without declaring drift or an outage", () => {
+    const st: SchemaState = { baselines: {}, seen: [
+      { at: new Date(t0).toISOString(), version: "v1", hash: "a" },
+      { at: new Date(t0 + 3 * 3600_000).toISOString(), version: "v1", hash: "b" },
+      { at: new Date(t0 + 6 * 3600_000).toISOString(), version: "v1", hash: "a" },
+    ] };
+    expect(fleetView(st, "v1", t0 + 6 * 3600_000).verdict).toBe("split_fleet");
+    const f = comparisonSubjectView(stored(), st, t0 + 30 * 3600_000 + 1)?.fleet;
+    expect(f.verdict).toBe("unobserved_24h");
+    expect(f.complete_observations_24h).toBe(0);
+    expect(f.last_complete_at).toBe("2026-11-12T06:00:00.000Z");
+    expect(st.seen).toHaveLength(3);
   });
   it("keeps protocol versions separate and finds the latest timestamp independently of order", () => {
     const st: SchemaState = { baselines: {}, seen: [
@@ -69,6 +103,7 @@ describe("complete fleet evidence freshness", () => {
     expect(subject.fleet.complete_observations_24h).toBeNull();
     expect(subject.fleet.last_complete_at).toBeNull();
     expect(subject.fleet.observations_24h).toBe(1);
+    expect(subject.fleet.verdict).toBe("single_shape");
     expect(subject.key).toBe(schemaSubject("https://example.com/mcp", "v1", A).key);
     expect(comparisonSubjectView("invalid", state(), t0)).toBeNull();
   });
