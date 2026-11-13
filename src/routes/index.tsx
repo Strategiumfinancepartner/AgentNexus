@@ -300,6 +300,9 @@ function Index() {
             <Link to="/guides/api-fallbacks" className="transition-colors hover:text-foreground">
               API fallback guide
             </Link>
+            <Link to="/guides/n8n-health-check" className="transition-colors hover:text-foreground">
+              n8n template
+            </Link>
             <Link to="/best-email-apis" className="transition-colors hover:text-foreground">
               Best email APIs
             </Link>

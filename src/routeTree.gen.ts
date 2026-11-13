@@ -88,6 +88,7 @@ import { Route as CaseStudiesNovaRouteImport } from './routes/case-studies.nova'
 import { Route as DemosIndexRouteImport } from './routes/demos.index'
 import { Route as DemosSlugRouteImport } from './routes/demos.$slug'
 import { Route as GuidesApiFallbacksRouteImport } from './routes/guides.api-fallbacks'
+import { Route as GuidesN8nHealthCheckRouteImport } from './routes/guides.n8n-health-check'
 import { Route as IsDownSlugRouteImport } from './routes/is-down.$slug'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
 import { Route as McpServerCardRouteImport } from './routes/mcp/server-card'
@@ -567,6 +568,11 @@ const GuidesApiFallbacksRoute = GuidesApiFallbacksRouteImport.update({
   path: '/guides/api-fallbacks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesN8nHealthCheckRoute = GuidesN8nHealthCheckRouteImport.update({
+  id: '/guides/n8n-health-check',
+  path: '/guides/n8n-health-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IsDownSlugRoute = IsDownSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -860,6 +866,7 @@ export interface FileRoutesByFullPath {
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
+  '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
@@ -980,6 +987,7 @@ export interface FileRoutesByTo {
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
+  '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
@@ -1102,6 +1110,7 @@ export interface FileRoutesById {
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
+  '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
   '/mcp/server-card': typeof McpServerCardRoute
@@ -1224,6 +1233,7 @@ export interface FileRouteTypes {
     | '/case-studies/nova'
     | '/demos/$slug'
     | '/guides/api-fallbacks'
+    | '/guides/n8n-health-check'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
@@ -1344,6 +1354,7 @@ export interface FileRouteTypes {
     | '/case-studies/nova'
     | '/demos/$slug'
     | '/guides/api-fallbacks'
+    | '/guides/n8n-health-check'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
@@ -1465,6 +1476,7 @@ export interface FileRouteTypes {
     | '/case-studies/nova'
     | '/demos/$slug'
     | '/guides/api-fallbacks'
+    | '/guides/n8n-health-check'
     | '/is-down/$slug'
     | '/mcp/$slug'
     | '/mcp/server-card'
@@ -1581,6 +1593,7 @@ export interface RootRouteChildren {
   CaseStudiesNovaRoute: typeof CaseStudiesNovaRoute
   DemosSlugRoute: typeof DemosSlugRoute
   GuidesApiFallbacksRoute: typeof GuidesApiFallbacksRoute
+  GuidesN8nHealthCheckRoute: typeof GuidesN8nHealthCheckRoute
   RegistrySlugRoute: typeof RegistrySlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
   DemosIndexRoute: typeof DemosIndexRoute
@@ -2161,6 +2174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesApiFallbacksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/n8n-health-check': {
+      id: '/guides/n8n-health-check'
+      path: '/guides/n8n-health-check'
+      fullPath: '/guides/n8n-health-check'
+      preLoaderRoute: typeof GuidesN8nHealthCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/is-down/$slug': {
       id: '/is-down/$slug'
       path: '/$slug'
@@ -2668,6 +2688,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaseStudiesNovaRoute: CaseStudiesNovaRoute,
   DemosSlugRoute: DemosSlugRoute,
   GuidesApiFallbacksRoute: GuidesApiFallbacksRoute,
+  GuidesN8nHealthCheckRoute: GuidesN8nHealthCheckRoute,
   RegistrySlugRoute: RegistrySlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,
   DemosIndexRoute: DemosIndexRoute,

@@ -1,0 +1,54 @@
+{
+  "name": "Agent Nexus - check email provider health before sending",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://agentnexus.app/api/public/discover",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "need", "value": "send a transactional email" },
+            { "name": "category", "value": "api" },
+            { "name": "limit", "value": "3" }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.AGENTNEXUS_API_KEY || '' }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2",
+      "name": "Agent Nexus discovery",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "const preferred = 'smtp2go-api';\nconst matches = $input.first().json.matches || [];\nconst current = matches.find(m => m.slug === preferred);\nconst healthy = m => m.current_health && m.current_health.status === 'up';\nif (current && healthy(current)) {\n  return [{ json: { decision: 'use_preferred', provider: current.slug, endpoint: current.call.endpoint, checked_at: current.current_health.checked_at } }];\n}\nconst alt = matches.find(m => m.slug !== preferred && healthy(m));\nreturn [{ json: {\n  decision: alt ? 'needs_approval' : 'stop',\n  preferred_status: current ? current.current_health : 'not_returned',\n  suggested_alternative: alt ? { slug: alt.slug, name: alt.name, docs: alt.call.docs_url, reliability_score: alt.trust.reliability_score } : null,\n  note: 'Advisory only. Do not switch providers automatically: confirm credentials, sending domain and duplicate-send protection first.'\n} }];"
+      },
+      "id": "a3",
+      "name": "Decide (advisory)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 0]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Agent Nexus discovery", "type": "main", "index": 0 }]] },
+    "Agent Nexus discovery": { "main": [[{ "node": "Decide (advisory)", "type": "main", "index": 0 }]] }
+  },
+  "settings": {},
+  "meta": { "templateCredsSetupCompleted": true }
+}

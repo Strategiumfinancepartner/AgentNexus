@@ -22,6 +22,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/is-down",
           "/connect",
           "/guides/api-fallbacks",
+          "/guides/n8n-health-check",
           "/guides/connect",
           "/guides/connect/meta-muse-spark",
           "/guides/connect/codex",
@@ -48,7 +49,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/privacy",
         ];
         // Page-specific content dates; only set when that page's content really changed.
-        const STATIC_LASTMOD: Record<string, string> = { "/pricing": "2026-10-21", "/guides/api-fallbacks": "2026-10-23" };
+        const STATIC_LASTMOD: Record<string, string> = { "/pricing": "2026-10-21", "/guides/api-fallbacks": "2026-10-23", "/guides/n8n-health-check": "2026-11-13" };
         const urls = [
           ...staticPaths.map(
             (p) =>
