@@ -66,13 +66,19 @@ A receipt is a signed reference point, not execution authorization, a guarantee 
 | --- | --- |
 | Python | [`pip install agentnexus-client`](https://pypi.org/project/agentnexus-client/) · [examples](packages/agentnexus-client-py/README.md) |
 | JavaScript / TypeScript | [`npm install agentnexus-client`](https://www.npmjs.com/package/agentnexus-client) · [examples](packages/agentnexus-js/README.md) |
-| n8n | [`n8n-nodes-agentnexus`](https://www.npmjs.com/package/n8n-nodes-agentnexus) |
+| n8n | [`n8n-nodes-agentnexus`](https://www.npmjs.com/package/n8n-nodes-agentnexus) · [guide + ready-to-import workflow](https://agentnexus.app/guides/n8n-health-check) |
 | LangChain | [`langchain-agent-nexus`](https://pypi.org/project/langchain-agent-nexus/) |
 | CrewAI | [`crewai-agent-nexus`](https://pypi.org/project/crewai-agent-nexus/) |
 | LlamaIndex | [`llama-index-tools-agent-nexus`](https://pypi.org/project/llama-index-tools-agent-nexus/) |
 | Gemini CLI | [Extension manifest](gemini-extension.json) · install with `gemini extensions install https://github.com/Strategiumfinancepartner/AgentNexus` |
 
 Use only the package names linked above; unrelated projects also use the AgentNexus name. A [free key](https://agentnexus.app/free-key) gives 1,000 calls/day shared across compatible clients; keep it private. Anonymous discovery remains available at 100 calls/day per source address.
+
+### n8n: health-checked email workflow
+
+Workflow builders can import a free template that asks Agent Nexus for a live email provider, checks its current health before sending, and stops (or switches to a fallback you approve) instead of sending into an outage. No key is needed to try it.
+
+[Step-by-step guide](https://agentnexus.app/guides/n8n-health-check) · [Download the n8n template (JSON)](https://agentnexus.app/templates/n8n-agent-nexus-email-health-check.json)
 
 ### Complete your first task
 
