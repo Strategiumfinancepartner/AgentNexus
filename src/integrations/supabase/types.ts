@@ -538,6 +538,27 @@ export type Database = {
           },
         ]
       }
+      health_receipt_nonces: {
+        Row: {
+          nonce_hash: string
+          principal: string
+          reserved_at: string
+          retain_until: string
+        }
+        Insert: {
+          nonce_hash: string
+          principal: string
+          reserved_at?: string
+          retain_until?: string
+        }
+        Update: {
+          nonce_hash?: string
+          principal?: string
+          reserved_at?: string
+          retain_until?: string
+        }
+        Relationships: []
+      }
       invocation_reports: {
         Row: {
           created_at: string
@@ -1116,6 +1137,10 @@ export type Database = {
           _user_agent: string
         }
         Returns: undefined
+      }
+      reserve_health_receipt_nonce: {
+        Args: { p_nonce_hash: string; p_principal: string }
+        Returns: boolean
       }
       resolve_entry_alias: { Args: { _slug: string }; Returns: string }
       trigger_health_check_run: { Args: never; Returns: undefined }

@@ -48,6 +48,11 @@ MCP read-only:  ${origin}/api/public/mcp   (no auth, no consent screen, Streamab
 Submit your own interface: call submit_entry with a free key (1 submission/key/24h, human-reviewed before publication)
 
 ## Native protocols
+Signed health: POST ${origin}/api/public/health-card/{slug} (verified API key in header, JSON nonce required)
+Outcomes: cache_hit, fresh_probe, nonce_reuse, verifier_error. POST signs stored probes (cache_hit), not a fresh provider check.
+Context: probe_time, expiry, signing key_id, advisory route_decision. Unverifiable errors carry null evidence dates.
+Replay: atomic principal-scoped nonce reservation for 24h; caller must also consume accepted nonces offline.
+Guide: ${origin}/guides/health-receipts. Evidence only, never provider execution authorization.
 MCP (Streamable HTTP):  ${origin}/mcp        (OAuth 2.1 with dynamic client registration for write tools)
 MCP discovery:          ${origin}/.well-known/mcp.json
 MCP server manifest:    ${origin}/server.json

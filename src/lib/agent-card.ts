@@ -18,6 +18,8 @@ export function agentCard(origin: string) {
     contact: "mailto:support@agentnexus.app",
     contactEmail: "support@agentnexus.app",
     documentationUrl: `${origin}/connect`,
+    healthReceiptDocumentationUrl: `${origin}/guides/health-receipts`,
+    healthReceiptJwksUrl: `${origin}/.well-known/jwks.json`,
     privacyPolicyUrl: `${origin}/privacy`,
     termsOfServiceUrl: `${origin}/terms`,
     preferredTransport: "JSONRPC",

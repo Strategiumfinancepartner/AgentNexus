@@ -116,6 +116,7 @@ function Connect() {
 
           <section className="border-t border-border/60 py-10">
             <KeyCallout />
+            <p className="mt-5 text-sm leading-7 text-muted-foreground">Optional signed health receipts distinguish cached evidence, fresh observations, replay and verification errors. Evidence only, not execution authority. <Link to="/guides/health-receipts" className="underline">Receipt contract and verification</Link></p>
           </section>
 
 

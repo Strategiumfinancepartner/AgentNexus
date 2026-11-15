@@ -49,10 +49,12 @@ An optional authenticated POST to an entry's health-card URL returns an **ES256-
 - **Completeness is part of the signed evidence.** Incomplete MCP pagination cannot produce an `up` receipt verdict.
 - **Verification is explicit.** Check the signature against the published JWKS, expected caller and target, nonce, expiry, and your own evidence-age policy.
 - **Fail closed.** Invalid callers are rejected; unavailable signing returns an error rather than unsigned evidence. Receipt responses are private and not cached.
+- **Typed outcomes, not a boolean.** `cache_hit` identifies stored observations, `fresh_probe` requires observations performed during the probe request, `nonce_reuse` rejects replay, and `verifier_error` identifies unavailable verification. Each result carries probe time, expiry, signing key ID and an advisory route decision. POST reads stored scheduled probes, so normal issuance is `cache_hit`, not a newly executed probe.
+- **Replay protection.** A durable, atomic ledger rejects reuse of a nonce by the same verified key principal for 24 hours, across routes and simultaneous requests. HTTP 409 returns a signed `nonce_reuse`; HTTP 503 returns `verifier_error` without a receipt or trustworthy probe timestamps. Clients must also atomically consume expected nonces when accepting receipts offline.
 
 A receipt is a signed reference point, not execution authorization, a guarantee of future availability or proof of task completion. An unchanged schema hash does **not** prove that a downstream failure was caused by the caller; a changed hash does **not** by itself prove a breaking change. Diagnose failures using the actual request, response and provider evidence.
 
-[Receipt contract and verification guide](docs/health-receipts.md) · [Public signing keys](https://agentnexus.app/.well-known/jwks.json) · [Live health card example](https://agentnexus.app/api/public/health-card/anthropic-api)
+[Receipt contract and verification guide](docs/health-receipts.md) · [Site guide](https://agentnexus.app/guides/health-receipts) · [Public signing keys](https://agentnexus.app/.well-known/jwks.json) · [Live health card example](https://agentnexus.app/api/public/health-card/anthropic-api)
 
 ---
 

@@ -297,6 +297,7 @@ function Index() {
             </a>
           </span>
           <nav className="flex flex-wrap items-center gap-5">
+            <Link to="/guides/health-receipts" className="transition-colors hover:text-foreground">Signed health receipts</Link>
             <Link to="/guides/api-fallbacks" className="transition-colors hover:text-foreground">
               API fallback guide
             </Link>

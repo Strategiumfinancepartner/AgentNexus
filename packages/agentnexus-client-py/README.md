@@ -34,6 +34,10 @@ print(best["name"], best["call"]["endpoint"], best["trust"]["reliability_score"]
 
 Anonymous use works out of the box. Set `AGENT_NEXUS_API_KEY` to use a key.
 
+## Signed health evidence
+
+`health_card(slug)` remains an anonymous GET. For caller-bound ES256 receipts, use the authenticated HTTP POST described in the [receipt guide](https://agentnexus.app/guides/health-receipts). Outcomes distinguish `cache_hit`, `fresh_probe`, `nonce_reuse` and `verifier_error`, carrying observation time, expiry, signing key ID and an advisory decision. POST uses stored probes, not a fresh provider check. Verify and atomically consume expected nonces before trusting the evidence; a receipt never authorizes execution. This SDK does not provide receipt verification or a nonce store.
+
 ## Command line
 
 ```bash

@@ -152,6 +152,14 @@ Includes transactional senders (e.g. SMTP2GO) and address verification (MailVeri
 
 ## Machine interfaces
 
+## Signed health evidence (API key required)
+
+POST ${origin}/api/public/health-card/{slug} with x-api-key and JSON {"nonce":"<fresh random URL-safe value, 16-128 chars>"}.
+Typed outcomes: cache_hit (stored probes; normal POST), fresh_probe (request-time observations only; POST does not run fresh probes), nonce_reuse (409, signed rejection), verifier_error (503, no receipt).
+Each result carries probe_time, expiry, key_id (signing kid), route_decision; failed verification uses null evidence dates. Nonces are atomically reserved per verified key principal for 24h across routes.
+Verify ES256 against ${origin}/.well-known/jwks.json, expected caller/target/schema/scope/nonce, expiry and evidence age; consume accepted nonces atomically at the caller. Advisory evidence only, no provider authorization or automatic routing.
+Guide: ${origin}/guides/health-receipts
+
 - MCP server, read-only, NO AUTH (Streamable HTTP): ${origin}/api/public/mcp
   tools: discover_capabilities, search_registry, get_entry, list_entries, list_categories, submit_entry
   auth: none — connect headlessly, no human consent step (submit_entry requires a free self-service key)

@@ -1,6 +1,7 @@
 import { buildReceiptClaims, receiptRequestSchema, RECEIPT_ISSUER, type ReceiptCard } from "./health-receipt";
-import { signHealthReceipt } from "./agent-card-signature.server";
+import { signHealthReceipt, SIGNING_KID } from "./agent-card-signature.server";
 import { resolveApiKey, enforceQuota } from "./quota.server";
+import { reserveReceiptNonce } from "./health-receipt-nonce.server";
 
 export const receiptHeaders = {
   "Content-Type": "application/json",
@@ -16,7 +17,10 @@ export async function serveHealthReceipt(request: Request, getCard: () => Promis
   const credential = request.headers.get("x-api-key")?.trim() || request.headers.get("authorization")?.match(/^Bearer\s+(nx_\S+)$/i)?.[1];
   if (!credential || credential.length > 512) return json({ error: "A valid Agent Nexus API key in x-api-key or Authorization is required" }, 401);
   const authRequest = new Request(`${RECEIPT_ISSUER}/`, { headers: { "x-api-key": credential } });
-  const caller = await resolveApiKey(authRequest);
+  const failed = () => json({ error: "Receipt verification unavailable; no unsigned fallback", outcome: "verifier_error",
+    probe_time: null, expiry: null, key_id: SIGNING_KID, route_decision: "retry_verification", receipt: null }, 503);
+  let caller;
+  try { caller = await resolveApiKey(authRequest); } catch { return failed(); }
   if (!caller) return json({ error: "Unknown, revoked or unverifiable API key" }, 401);
   if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return json({ error: "Use application/json" }, 415);
   const text = await request.text();
@@ -24,18 +28,21 @@ export async function serveHealthReceipt(request: Request, getCard: () => Promis
   let nonce: string;
   try { nonce = receiptRequestSchema.parse(JSON.parse(text)).nonce; }
   catch { return json({ error: "Provide only a nonce: 16-128 URL-safe characters" }, 400); }
-  const quota = await enforceQuota(authRequest);
+  let quota;
+  try { quota = await enforceQuota(authRequest); } catch { return failed(); }
   if (!quota.allowed) return json({ error: "Daily quota exceeded" }, 429, quota.headers);
-  const response = await getCard();
-  if (!response.ok) return json(await response.json(), response.status);
-  const card = await response.json() as ReceiptCard;
-  if (!card.transport.endpoint?.startsWith("https://")) return json({ error: "Receipts require an HTTPS invocation endpoint" }, 422);
   try {
-    const claims = buildReceiptClaims(card, caller.actor, nonce);
+    const response = await getCard();
+    if (!response.ok) return json(await response.json(), response.status);
+    const card = await response.json() as ReceiptCard;
+    if (!card.transport.endpoint?.startsWith("https://")) return json({ error: "Receipts require an HTTPS invocation endpoint" }, 422);
+    const reserved = await reserveReceiptNonce(caller.actor, nonce);
+    const claims = buildReceiptClaims(card, caller.actor, nonce, Date.now(), { keyId: SIGNING_KID, outcome: reserved ? "cache_hit" : "nonce_reuse" });
     const receipt = await signHealthReceipt(claims);
     return json({ receipt, format: "compact-jws", principal: caller.actor, jwks_url: `${RECEIPT_ISSUER}/.well-known/jwks.json`,
-      verification: "Verify ES256 with trusted Agent Nexus JWKS; match caller, endpoint, schema hash, scope and your nonce; check expiry, evidence age and verdict. This is evidence, not provider authorization or an execution guarantee." }, 200, quota.headers);
+      outcome: claims.outcome, probe_time: claims.probe_time, expiry: claims.exp, key_id: claims.key_id, route_decision: claims.route_decision,
+      verification: "Verify ES256 with trusted Agent Nexus JWKS; match caller, endpoint, schema hash, scope and nonce; check expiry, evidence age, verdict and outcome. Decisions are advisory only. No provider call is authorized or executed." }, reserved ? 200 : 409, quota.headers);
   } catch {
-    return json({ error: "Signed receipt unavailable; do not invoke on an unsigned fallback" }, 503);
+    return failed();
   }
 }

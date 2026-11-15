@@ -88,6 +88,7 @@ import { Route as CaseStudiesNovaRouteImport } from './routes/case-studies.nova'
 import { Route as DemosIndexRouteImport } from './routes/demos.index'
 import { Route as DemosSlugRouteImport } from './routes/demos.$slug'
 import { Route as GuidesApiFallbacksRouteImport } from './routes/guides.api-fallbacks'
+import { Route as GuidesHealthReceiptsRouteImport } from './routes/guides.health-receipts'
 import { Route as GuidesN8nHealthCheckRouteImport } from './routes/guides.n8n-health-check'
 import { Route as IsDownSlugRouteImport } from './routes/is-down.$slug'
 import { Route as McpSlugRouteImport } from './routes/mcp/$slug'
@@ -568,6 +569,11 @@ const GuidesApiFallbacksRoute = GuidesApiFallbacksRouteImport.update({
   path: '/guides/api-fallbacks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesHealthReceiptsRoute = GuidesHealthReceiptsRouteImport.update({
+  id: '/guides/health-receipts',
+  path: '/guides/health-receipts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesN8nHealthCheckRoute = GuidesN8nHealthCheckRouteImport.update({
   id: '/guides/n8n-health-check',
   path: '/guides/n8n-health-check',
@@ -866,6 +872,7 @@ export interface FileRoutesByFullPath {
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
+  '/guides/health-receipts': typeof GuidesHealthReceiptsRoute
   '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
@@ -987,6 +994,7 @@ export interface FileRoutesByTo {
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
+  '/guides/health-receipts': typeof GuidesHealthReceiptsRoute
   '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
@@ -1110,6 +1118,7 @@ export interface FileRoutesById {
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
+  '/guides/health-receipts': typeof GuidesHealthReceiptsRoute
   '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
   '/is-down/$slug': typeof IsDownSlugRoute
   '/mcp/$slug': typeof McpSlugRoute
@@ -1233,6 +1242,7 @@ export interface FileRouteTypes {
     | '/case-studies/nova'
     | '/demos/$slug'
     | '/guides/api-fallbacks'
+    | '/guides/health-receipts'
     | '/guides/n8n-health-check'
     | '/is-down/$slug'
     | '/mcp/$slug'
@@ -1354,6 +1364,7 @@ export interface FileRouteTypes {
     | '/case-studies/nova'
     | '/demos/$slug'
     | '/guides/api-fallbacks'
+    | '/guides/health-receipts'
     | '/guides/n8n-health-check'
     | '/is-down/$slug'
     | '/mcp/$slug'
@@ -1476,6 +1487,7 @@ export interface FileRouteTypes {
     | '/case-studies/nova'
     | '/demos/$slug'
     | '/guides/api-fallbacks'
+    | '/guides/health-receipts'
     | '/guides/n8n-health-check'
     | '/is-down/$slug'
     | '/mcp/$slug'
@@ -1593,6 +1605,7 @@ export interface RootRouteChildren {
   CaseStudiesNovaRoute: typeof CaseStudiesNovaRoute
   DemosSlugRoute: typeof DemosSlugRoute
   GuidesApiFallbacksRoute: typeof GuidesApiFallbacksRoute
+  GuidesHealthReceiptsRoute: typeof GuidesHealthReceiptsRoute
   GuidesN8nHealthCheckRoute: typeof GuidesN8nHealthCheckRoute
   RegistrySlugRoute: typeof RegistrySlugRoute
   ArticlesIndexRoute: typeof ArticlesIndexRoute
@@ -2174,6 +2187,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesApiFallbacksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/health-receipts': {
+      id: '/guides/health-receipts'
+      path: '/guides/health-receipts'
+      fullPath: '/guides/health-receipts'
+      preLoaderRoute: typeof GuidesHealthReceiptsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides/n8n-health-check': {
       id: '/guides/n8n-health-check'
       path: '/guides/n8n-health-check'
@@ -2688,6 +2708,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaseStudiesNovaRoute: CaseStudiesNovaRoute,
   DemosSlugRoute: DemosSlugRoute,
   GuidesApiFallbacksRoute: GuidesApiFallbacksRoute,
+  GuidesHealthReceiptsRoute: GuidesHealthReceiptsRoute,
   GuidesN8nHealthCheckRoute: GuidesN8nHealthCheckRoute,
   RegistrySlugRoute: RegistrySlugRoute,
   ArticlesIndexRoute: ArticlesIndexRoute,

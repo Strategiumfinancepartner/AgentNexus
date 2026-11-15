@@ -23,6 +23,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           "/connect",
           "/guides/api-fallbacks",
           "/guides/n8n-health-check",
+          "/guides/health-receipts",
           "/guides/connect",
           "/guides/connect/meta-muse-spark",
           "/guides/connect/codex",

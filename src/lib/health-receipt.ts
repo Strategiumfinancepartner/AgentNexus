@@ -3,6 +3,13 @@ import { z } from "zod";
 export const RECEIPT_ISSUER = "https://agentnexus.app";
 export const RECEIPT_TTL_S = 120;
 export const EVIDENCE_TTL_S = 86_400;
+export const receiptOutcomeSchema = z.enum(["fresh_probe", "cache_hit", "nonce_reuse", "verifier_error"]);
+export type ReceiptOutcome = z.infer<typeof receiptOutcomeSchema>;
+export const routeDecisionSchema = z.enum(["inspect_evidence", "reject_replay", "retry_verification"]);
+export type ReceiptContext = {
+  outcome: ReceiptOutcome; probe_time: string | null; expiry: number | null;
+  key_id: string | null; route_decision: z.infer<typeof routeDecisionSchema>;
+};
 export const receiptRequestSchema = z.object({
   nonce: z.string().min(16).max(128).regex(/^[A-Za-z0-9_-]+$/),
 }).strict();
@@ -15,6 +22,10 @@ export const receiptClaimsSchema = z.object({
   protocol_version: z.string().nullable(), tool_list_complete: z.boolean().nullable(),
   nonce: z.string().min(16).max(128), jti: z.string().uuid(),
   iat: z.number().int(), exp: z.number().int(),
+  outcome: receiptOutcomeSchema.optional(),
+  probe_time: z.string().datetime({ offset: true }).nullable().optional(),
+  key_id: z.string().min(1).optional(),
+  route_decision: routeDecisionSchema.optional(),
   evidence: z.object({ liveness: observation, capability: observation, schema: observation }),
   probe_verdict: z.enum(["up", "down", "degraded", "unknown", "stale"]),
   probe: z.object({ liveness_ok: z.boolean().nullable(), capability_ok: z.boolean().nullable(), schema_ok: z.boolean().nullable() }),
@@ -27,7 +38,7 @@ export type ReceiptCard = {
   schema: { hash: string; checked_at: string | null; validated: boolean | null; negotiated_protocol_version: string | null };
 };
 
-export function buildReceiptClaims(card: ReceiptCard, principal: string, nonce: string, nowMs = Date.now()): HealthReceiptClaims {
+export function buildReceiptClaims(card: ReceiptCard, principal: string, nonce: string, nowMs = Date.now(), context?: { keyId: string; outcome?: ReceiptOutcome; probeStartedMs?: number }): HealthReceiptClaims {
   if (!card.transport.endpoint) throw new Error("No invocation endpoint");
   const iat = Math.floor(nowMs / 1000);
   const evidenceAt = (at: string | null) => {
@@ -49,11 +60,19 @@ export function buildReceiptClaims(card: ReceiptCard, principal: string, nonce: 
   else if (card.last_probe.capability_ok === false || card.schema.validated === false || (mcp && card.last_probe.tool_list_complete !== true)) verdict = "degraded";
   else if (mcp && card.last_probe.capability_ok !== true) verdict = "unknown";
   const deadlines = required.flatMap((e) => e.at ? [Math.floor(Date.parse(e.at) / 1000) + EVIDENCE_TTL_S] : []);
+  // Recent stored evidence is still cached. Every required observation must be
+  // performed during this request before a producer may claim fresh_probe.
+  const probeStartedMs = context?.probeStartedMs;
+  const freshlyObserved = probeStartedMs !== undefined && required.every((e) => e.at !== null && Date.parse(e.at) >= probeStartedMs);
+  const outcome = context?.outcome ?? (freshlyObserved ? "fresh_probe" : "cache_hit");
+  if (outcome === "fresh_probe" && !freshlyObserved) throw new Error("Fresh probe requires request-time evidence");
   return receiptClaimsSchema.parse({
     iss: RECEIPT_ISSUER, aud: principal, sub: principal, scope: "health:read", endpoint: card.transport.endpoint,
     slug: card.slug, schema_hash: card.schema.hash, protocol_version: card.schema.negotiated_protocol_version,
     tool_list_complete: card.last_probe.tool_list_complete, nonce, jti: crypto.randomUUID(), iat,
     exp: Math.min(iat + RECEIPT_TTL_S, ...deadlines), evidence, probe_verdict: verdict,
+    ...(context ? { outcome, probe_time: evidence.liveness.at, key_id: context.keyId,
+      route_decision: outcome === "nonce_reuse" ? "reject_replay" : outcome === "verifier_error" ? "retry_verification" : "inspect_evidence" } : {}),
     probe: { liveness_ok: card.last_probe.ok, capability_ok: card.last_probe.capability_ok, schema_ok: card.schema.validated },
   });
 }
@@ -64,7 +83,7 @@ export type ReceiptExpectation = {
 };
 
 /** Caller supplies a pinned/trusted issuer JWKS key, never a URL from the token. */
-export async function verifyHealthReceipt(token: string, jwk: Omit<JsonWebKey, "key_ops"> & { kid?: string; key_ops?: readonly string[] }, expected: ReceiptExpectation): Promise<HealthReceiptClaims> {
+async function verifyReceiptEvidence(token: string, jwk: Omit<JsonWebKey, "key_ops"> & { kid?: string; key_ops?: readonly string[] }, expected: ReceiptExpectation, inspectOnly = false): Promise<HealthReceiptClaims> {
   const parts = token.split(".");
   if (parts.length !== 3 || token.length > 16_384) throw new Error("Invalid receipt");
   const [headerPart, payloadPart, signaturePart] = parts;
@@ -76,8 +95,13 @@ export async function verifyHealthReceipt(token: string, jwk: Omit<JsonWebKey, "
   if (!await crypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, decode(signaturePart), new TextEncoder().encode(`${headerPart}.${payloadPart}`))) throw new Error("Invalid signature");
   const claims = receiptClaimsSchema.parse(JSON.parse(new TextDecoder().decode(decode(payloadPart))));
   const now = Math.floor((expected.nowMs ?? Date.now()) / 1000);
+  if (claims.key_id !== undefined && claims.key_id !== header.kid) throw new Error("Wrong signing key context");
+  const decision = claims.outcome === "nonce_reuse" ? "reject_replay" : claims.outcome === "verifier_error" ? "retry_verification" : "inspect_evidence";
+  if (claims.outcome !== undefined && (claims.route_decision !== decision || claims.probe_time !== claims.evidence.liveness.at)) throw new Error("Inconsistent receipt context");
   if (claims.aud !== expected.principal || claims.sub !== expected.principal) throw new Error("Wrong caller");
   if (claims.scope !== expected.scope || claims.endpoint !== expected.endpoint || claims.schema_hash !== expected.schemaHash || claims.nonce !== expected.nonce) throw new Error("Wrong invocation context");
+  if (inspectOnly) return claims;
+  if (claims.outcome === "nonce_reuse" || claims.outcome === "verifier_error") throw new Error("Rejected receipt outcome");
   if (claims.iat > now || claims.exp <= now || claims.exp <= claims.iat || claims.exp - claims.iat > RECEIPT_TTL_S) throw new Error("Expired or invalid receipt lifetime");
   if (claims.probe_verdict !== "up" || claims.probe.liveness_ok !== true || claims.tool_list_complete === false || claims.probe.capability_ok === false || claims.probe.schema_ok === false) throw new Error("Unsafe probe verdict");
   if (!Number.isFinite(expected.maxEvidenceAgeS) || expected.maxEvidenceAgeS < 0) throw new Error("Invalid freshness policy");
@@ -89,4 +113,32 @@ export async function verifyHealthReceipt(token: string, jwk: Omit<JsonWebKey, "
     if (at > claims.iat || now - at >= limit || evidence.age_s === null || Math.abs(evidence.age_s - (claims.iat - at)) > 1) throw new Error("Stale or inconsistent evidence");
   }
   return claims;
+}
+
+export async function verifyHealthReceipt(token: string, jwk: Parameters<typeof verifyReceiptEvidence>[1], expected: ReceiptExpectation): Promise<HealthReceiptClaims> {
+  return verifyReceiptEvidence(token, jwk, expected);
+}
+
+/** Atomic consumption belongs to the caller's durable store, never a global Set.
+ * Unverified claims are not echoed as trustworthy error context. */
+export async function verifyHealthReceiptResult(
+  token: string, jwk: Parameters<typeof verifyHealthReceipt>[1], expected: ReceiptExpectation,
+  consumeNonce: (principal: string, nonce: string) => Promise<boolean>,
+): Promise<ReceiptContext & { claims: HealthReceiptClaims | null; policy_accepted?: boolean }> {
+  try {
+    const claims = await verifyReceiptEvidence(token, jwk, expected, true);
+    if (claims.outcome === "nonce_reuse") return { outcome: "nonce_reuse", probe_time: claims.evidence.liveness.at,
+      expiry: claims.exp, key_id: jwk.kid ?? null, route_decision: "reject_replay", claims };
+    // Keep authenticated stale/down evidence inspectable without turning it
+    // into an invocation approval; strict policy checks remain mandatory.
+    try { await verifyHealthReceipt(token, jwk, expected); }
+    catch { return { outcome: claims.outcome ?? "cache_hit", probe_time: claims.evidence.liveness.at,
+      expiry: claims.exp, key_id: jwk.kid ?? null, route_decision: "inspect_evidence", claims, policy_accepted: false }; }
+    const reused = !await consumeNonce(expected.principal, expected.nonce);
+    return { outcome: reused ? "nonce_reuse" : claims.outcome ?? "cache_hit", probe_time: claims.evidence.liveness.at,
+      expiry: claims.exp, key_id: jwk.kid ?? null, route_decision: reused ? "reject_replay" : "inspect_evidence", claims, policy_accepted: !reused };
+  } catch {
+    return { outcome: "verifier_error", probe_time: null, expiry: null, key_id: jwk.kid ?? null,
+      route_decision: "retry_verification", claims: null };
+  }
 }

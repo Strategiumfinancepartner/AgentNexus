@@ -43,7 +43,7 @@ const serveSpec = async ({ request }: { request: Request }) => {
             title: "Agent Nexus (agentnexus.app)",
             version: "0.4.0",
             description:
-              "Continuously verified registry of the APIs, MCP servers and CLIs that AI agents call. Every endpoint below is anonymous: no key, no account.",
+              "Independent discovery, verification and trust infrastructure for services AI agents use. Public reads are anonymous; signed health-receipt POSTs require a verified API key.",
             contact: { url: `${origin}/connect` },
           },
           servers: [{ url: origin }],
@@ -356,6 +356,32 @@ export function hardenSpec(spec: any, entry: any) {
   spec.paths["/api/public/registry"].get.responses["200"].content["application/json"].schema.properties.results.items = { $ref: "#/components/schemas/Entry" };
   spec.paths["/api/public/report"].post.responses["200"].content = {
     "application/json": { schema: { type: "object", additionalProperties: true } },
+  };
+  const receiptResult = {
+    type: "object", required: ["outcome", "probe_time", "expiry", "key_id", "route_decision", "receipt"],
+    properties: {
+      outcome: { type: "string", enum: ["fresh_probe", "cache_hit", "nonce_reuse", "verifier_error"] },
+      probe_time: { type: ["string", "null"], format: "date-time", description: "Liveness observation time; null when unverifiable, never issue time." },
+      expiry: { type: ["integer", "null"], description: "Unix seconds, signed exp; null when unverifiable." },
+      key_id: { type: "string", description: "Signing key kid, not caller API key." },
+      route_decision: { type: "string", enum: ["inspect_evidence", "reject_replay", "retry_verification"], description: "Advisory only. Never execution authorization or automatic routing." },
+      receipt: { type: ["string", "null"], description: "ES256 compact JWS; null on verifier_error." },
+      principal: { type: "string" }, jwks_url: { type: "string", format: "uri" },
+    },
+  };
+  spec.components.schemas.HealthReceiptResult = receiptResult;
+  const receiptResponse = (description: string) => ({ description, content: { "application/json": { schema: { $ref: "#/components/schemas/HealthReceiptResult" } } } });
+  spec.paths["/api/public/health-card/{slug}"] = {
+    get: { operationId: "getHealthCard", tags: ["reliability"], summary: "Public observed health and contract evidence", security: [{}],
+      parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string", pattern: "^[a-z0-9-]{1,80}$" } }],
+      responses: { "200": { description: "Public health card", content: { "application/json": { schema: { type: "object", additionalProperties: true } } } }, "404": { description: "Unknown approved entry" } } },
+    post: { operationId: "issueHealthReceipt", tags: ["reliability"], summary: "Signed caller-bound health receipt with typed replay outcome",
+      description: "Uses stored scheduled observations (cache_hit), not a fresh provider probe. fresh_probe requires request-time observations. Principal-scoped atomic nonce retention is 24h; clients also consume accepted nonces offline. Private, no-store; evidence only.",
+      security: [{ apiKey: [] }], parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string", pattern: "^[a-z0-9-]{1,80}$" } }],
+      requestBody: { required: true, content: { "application/json": { schema: { type: "object", additionalProperties: false, required: ["nonce"], properties: { nonce: { type: "string", minLength: 16, maxLength: 128, pattern: "^[A-Za-z0-9_-]+$" } } } } } },
+      responses: { "200": receiptResponse("Signed cache_hit evidence"), "409": receiptResponse("Signed nonce_reuse rejection"), "503": receiptResponse("verifier_error, no unsigned fallback"),
+        "400": { $ref: "#/components/responses/BadRequest" }, "401": { description: "Invalid or missing API key" }, "404": { description: "Unknown approved entry" }, "413": { description: "Body too large" }, "415": { description: "JSON required" }, "422": { description: "HTTPS invocation endpoint required" }, "429": { $ref: "#/components/responses/RateLimited" } },
+    },
   };
   return spec;
 }
