@@ -127,7 +127,7 @@ async function serve({ params, request }: { params: { slug: string }; request: R
       fleet_evidence_rule: "complete_observations_24h counts only complete tool-list observations in the rolling 24h window, recomputed when this card is read; observations_24h remains a compatibility alias. When this count is zero, fleet.verdict is unobserved_24h, not single_shape; this means no complete observations in the window, not an outage or confirmed drift. last_complete_at is the latest retained complete observation for this subject, even outside the window, or null when unavailable. Missing legacy history keeps the new fields null and is not inferred to be an empty observed window. A single_shape verdict is not a continuous availability guarantee; partial or failed probes never refresh the count or timestamp. fleet.last_transition records the last confirmed shape change for this subject (from_hash, to_hash, transitioned_at), kept beyond the 24h window; null means no confirmed transition has been recorded since transition tracking began, not proof that the shape never changed.",
     },
     data_quality: e.data_checked_at ? (() => { try { return { ok: e.data_ok, checked_at: e.data_checked_at, ...JSON.parse(e.data_detail ?? "{}") }; } catch { return { ok: e.data_ok, checked_at: e.data_checked_at }; } })() : null,
-    outage: { confirmed_down_since: e.down_since ?? null, rule: "down only after 2 consecutive failed hourly checks" },
+    outage: { confirmed_down_since: e.down_since ?? null, rule: "down only after 2 consecutive failed checks; a failed service is rechecked on the next hourly cycle, ahead of the normal rotation" },
     publisher_proof: {
       verified: Boolean(e.verified),
       verified_at: e.verified_at,

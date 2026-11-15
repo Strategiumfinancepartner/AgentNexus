@@ -3,6 +3,7 @@ import { probeLivenessOnce as probeOnce } from "@/lib/liveness-probe.server";
 /** Server-only health + capability probing for registry entries. */
 
 import { advanceSchemaBaseline, schemaSubject, fleetView } from "@/lib/schema-baseline";
+import { FAILED_RECHECK_MAX, mergeRecheckQueue } from "@/lib/recheck-queue";
 import { diffToolSchemas, hasPlaceholder, probeCapabilities, type ToolSchema } from "@/lib/capability-probe.server";
 import { SCHEMA_PROFILES, runSchemaProbe, type SchemaProbe } from "@/lib/schema-probe.server";
 import { readDataQuality } from "./data-quality";
@@ -182,15 +183,25 @@ export async function runHealthChecks(
   schema_failed: number;
   docs_probed: number;
 }> {
+  const cols = "id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since, tool_schemas, tool_schema_state";
+  // Services whose last check failed jump the rotation, so a failure is
+  // rechecked on the next hourly cycle instead of waiting its normal turn.
+  const { data: failing } = await supabaseAdmin
+    .from("entries")
+    .select(cols)
+    .eq("status", "approved")
+    .gt("consecutive_failures", 0)
+    .order("health_checked_at", { ascending: true, nullsFirst: true })
+    .limit(Math.min(FAILED_RECHECK_MAX, limit));
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .select("id, slug, name, endpoint, category, probe_url, docs_url, schema_ok, schema_detail, data_detail, discovered_tools, consecutive_failures, down_since, tool_schemas, tool_schema_state")
+    .select(cols)
     .eq("status", "approved")
     .order("health_checked_at", { ascending: true, nullsFirst: true })
     .limit(limit);
   if (error) throw new Error(error.message);
 
-  const rows = (data ?? []) as EntryRow[];
+  const rows = mergeRecheckQueue((failing ?? []) as EntryRow[], (data ?? []) as EntryRow[], limit);
   let ok = 0;
   let failed = 0;
   let skipped = 0;

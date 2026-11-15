@@ -195,7 +195,7 @@ Agent Nexus · support@agentnexus.app
 
 Publisher-plan entries get alerts on what actually breaks agents, not just "it answers":
 
-- **Confirmed outage**: sent only after 2 consecutive failed checks, plus a recovery notice. Checks are hourly, so outages shorter than an hour can be missed.
+- **Confirmed outage**: sent only after 2 consecutive failed checks, plus a recovery notice. The scheduler runs hourly over a rotation of the catalog (each service is re-verified roughly every 18 hours on average); a service whose last check failed jumps the queue and is rechecked on the next hourly cycle, so an outage is usually confirmed within about an hour of the first failure. Outages shorter than that can be missed.
 - **Structure change**: the response no longer matches its documented contract.
 - **Field-level change report**: confirmed tool-schema changes are listed field by field. Breaking changes (`declared_tool_schema_breaking_changes`: removed, retyped, lost enum value, newly required) are public; for Publisher entries the health card also lists additive changes in `declared_tool_schema_additive_changes` (new tool, new optional field, gained enum value, input became optional), labeled non-breaking by default. The consumer decides whether a change matters; `null` means not exposed, not "nothing changed".
 - **Stale data per source**: e.g. "12 of 83 sources not updated for 24h+", with your own age and volume thresholds. One alert per change, no repeats.

@@ -80,7 +80,7 @@ export const ARTICLES: Article[] = [
       {
         heading: "Confirm before you alert",
         body: [
-          "One failed probe is often a network blip. Agent Nexus only declares an outage after two consecutive failed probes, and records recovery separately. That keeps alerts actionable for publishers and avoids agents abandoning a working service.",
+          "One failed probe is often a network blip. Agent Nexus only declares an outage after two consecutive failed probes, and records recovery separately. A service whose last probe failed is rechecked on the next hourly cycle, ahead of the normal rotation. That keeps alerts actionable for publishers and avoids agents abandoning a working service.",
         ],
       },
       {

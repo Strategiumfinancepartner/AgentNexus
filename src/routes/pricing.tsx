@@ -72,7 +72,7 @@ const plans = [
     points: [
       "Verified badge earned by a real call test",
       "Listing report: how often agents find, open and come back to your entry, robots counted apart",
-      "Outage alerts, sent only once 2 checks in a row fail, plus a recovery notice",
+      "Outage alerts, sent only once 2 checks in a row fail, plus a recovery notice; a failed service is rechecked on the next hourly cycle",
       "Structure-change alerts when your responses stop matching their contract",
       "Field-level change report: breaking changes plus added fields labeled non-breaking, on your public health card",
       "Stale-data alerts per source, with your own age and volume thresholds",
