@@ -50,7 +50,7 @@ Submit your own interface: call submit_entry with a free key (1 submission/key/2
 ## Native protocols
 Signed health: POST ${origin}/api/public/health-card/{slug} (verified API key in header, JSON nonce required)
 Outcomes: cache_hit, fresh_probe, nonce_reuse, verifier_error. POST signs stored probes (cache_hit), not a fresh provider check.
-Context: probe_time, expiry, signing key_id, advisory route_decision. Unverifiable errors carry null evidence dates.
+Context: probe_time, expiry, signing key_id, advisory route_decision, evidence_source (pipeline and canonical card URL), verifier_build (receipt evaluator), decision_expiry (Unix seconds, bounded by exp). Cache observations with original dates, never reuse expired decisions. Unverifiable errors carry null source/evidence dates/decision expiry; unsigned build is diagnostic only.
 Replay: atomic principal-scoped nonce reservation for 24h; caller must also consume accepted nonces offline.
 Guide: ${origin}/guides/health-receipts. Evidence only, never provider execution authorization.
 MCP (Streamable HTTP):  ${origin}/mcp        (OAuth 2.1 with dynamic client registration for write tools)

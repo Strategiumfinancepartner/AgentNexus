@@ -358,11 +358,14 @@ export function hardenSpec(spec: any, entry: any) {
     "application/json": { schema: { type: "object", additionalProperties: true } },
   };
   const receiptResult = {
-    type: "object", required: ["outcome", "probe_time", "expiry", "key_id", "route_decision", "receipt"],
+    type: "object", required: ["outcome", "probe_time", "expiry", "key_id", "route_decision", "receipt", "evidence_source", "verifier_build", "decision_expiry"],
     properties: {
       outcome: { type: "string", enum: ["fresh_probe", "cache_hit", "nonce_reuse", "verifier_error"] },
       probe_time: { type: ["string", "null"], format: "date-time", description: "Liveness observation time; null when unverifiable, never issue time." },
       expiry: { type: ["integer", "null"], description: "Unix seconds, signed exp; null when unverifiable." },
+      decision_expiry: { type: ["integer", "null"], description: "Signed advisory deadline in Unix seconds, no later than exp. Expired decisions cannot pass acceptance policy; observations remain inspectable. Null on unverifiable errors." },
+      verifier_build: { type: "string", description: "Versioned issuer receipt evaluator, not provider or caller software. Signed on success; diagnostic only in unsigned errors." },
+      evidence_source: { type: ["object", "null"], required: ["kind", "url"], additionalProperties: false, properties: { kind: { type: "string", enum: ["stored_probe", "request_probe"] }, url: { type: "string", format: "uri" } }, description: "Signed observation pipeline and canonical Agent Nexus health-card URL; not an invocation target. Null when unverifiable." },
       key_id: { type: "string", description: "Signing key kid, not caller API key." },
       route_decision: { type: "string", enum: ["inspect_evidence", "reject_replay", "retry_verification"], description: "Advisory only. Never execution authorization or automatic routing." },
       receipt: { type: ["string", "null"], description: "ES256 compact JWS; null on verifier_error." },

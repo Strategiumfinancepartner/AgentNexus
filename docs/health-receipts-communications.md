@@ -2,13 +2,13 @@
 
 ## Reply to the technical comment
 
-Agreed. We keep fresh_probe, cache_hit, nonce_reuse and verifier_error distinct, with probe time, expiry, signing key ID and an advisory route decision. Stored observations stay cache_hit, never a fresh probe just because they were signed again. Replay is checked atomically per caller; unverifiable errors carry no trusted probe timestamp. Evidence only, never execution authority.
+Agreed. The receipt binds evidence source, verifier build and an explicit decision expiry alongside the typed outcome. Agents can cache the observation, preserving its original timestamp, without renewing the advisory decision. A fresh signature never makes stored evidence a fresh probe. Evidence only, never execution authority.
 
 ## X post
 
 A fresh signature is not a fresh health check.
 
-Agent Nexus keeps cached evidence, fresh probes, nonce reuse and verification errors distinct, with observation time, expiry and signing key ID. Decisions stay advisory.
+Agent Nexus keeps cached evidence, fresh probes, nonce reuse and verification errors distinct. Signed receipts bind the evidence source, verifier build and decision expiry. Cache the observation, not execution authority.
 
 https://agentnexus.app/guides/health-receipts
 
@@ -16,7 +16,7 @@ https://agentnexus.app/guides/health-receipts
 
 An AI agent should not have to interpret every failed health receipt as the same problem.
 
-Agent Nexus distinguishes stored observations (cache_hit), request-time observations (fresh_probe), replay rejection (nonce_reuse) and unavailable verification (verifier_error). Probe time, expiry, signing key ID and advisory decisions remain attached. A newly signed stored observation is still cached evidence, not a fresh probe.
+Agent Nexus distinguishes stored observations (cache_hit), request-time observations (fresh_probe), replay rejection (nonce_reuse) and unavailable verification (verifier_error). Probe time, expiry, signing key ID, evidence source, verifier build and explicit advisory decision expiry remain attached. Agents can cache observations with their original dates, but an expired decision cannot pass acceptance policy. A newly signed stored observation is still cached evidence, not a fresh probe.
 
 The authenticated health-card POST signs scheduled observations. It does not execute a provider tool, authorize a downstream call or route to an alternative. Replay reservations are atomic, and callers also need their own nonce-consumption policy for offline verification.
 

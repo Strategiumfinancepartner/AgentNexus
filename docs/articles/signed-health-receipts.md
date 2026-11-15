@@ -7,7 +7,7 @@ tags: ai, mcp, security, api
 
 # Signed health receipts
 
-Caller-bound health evidence with typed replay outcomes, observation dates and explicit verification limits.
+Caller-bound health evidence with typed outcomes, evidence provenance, verifier build and explicit advisory decision expiry.
 
 ## Evidence, not execution authority
 
@@ -19,7 +19,7 @@ cache_hit means stored scheduled observations. fresh_probe requires every requir
 
 ## Dates and decisions stay attached
 
-Each result includes probe_time, expiry, key_id and route_decision. The key ID identifies the signing key, not the caller's secret. Signed results bind these fields to the receipt. Unverifiable failures expose null probe time and expiry rather than invented evidence. inspect_evidence, reject_replay and retry_verification are advisory decisions, never automatic provider routing.
+Each result includes probe_time, expiry, key_id, route_decision, evidence_source, verifier_build and decision_expiry. The source names stored_probe or request_probe and the canonical health-card URL; it is not permission to fetch an arbitrary URL. The build identifies the versioned Agent Nexus receipt evaluator, not the provider software. All are signed. decision_expiry is a Unix-second deadline bounded by receipt expiry and evidence age; it can be shorter. An expired decision leaves the observation inspectable but cannot pass acceptance policy. Unverifiable failures expose null source, probe time and decision expiry; their build is only local diagnostic context. Decisions remain advisory, never execution authority.
 
 ## Replay protection across simultaneous requests
 

@@ -156,7 +156,7 @@ Includes transactional senders (e.g. SMTP2GO) and address verification (MailVeri
 
 POST ${origin}/api/public/health-card/{slug} with x-api-key and JSON {"nonce":"<fresh random URL-safe value, 16-128 chars>"}.
 Typed outcomes: cache_hit (stored probes; normal POST), fresh_probe (request-time observations only; POST does not run fresh probes), nonce_reuse (409, signed rejection), verifier_error (503, no receipt).
-Each result carries probe_time, expiry, key_id (signing kid), route_decision; failed verification uses null evidence dates. Nonces are atomically reserved per verified key principal for 24h across routes.
+Each result carries probe_time, expiry, key_id (signing kid), route_decision, evidence_source (stored_probe/request_probe plus canonical card URL), verifier_build (receipt evaluator version), decision_expiry (Unix seconds, no later than exp). Cache observations with original dates, not expired decisions. Failed verification uses null source/evidence dates/decision expiry; unsigned build is diagnostic only. Nonces are atomically reserved per verified key principal for 24h across routes.
 Verify ES256 against ${origin}/.well-known/jwks.json, expected caller/target/schema/scope/nonce, expiry and evidence age; consume accepted nonces atomically at the caller. Advisory evidence only, no provider authorization or automatic routing.
 Guide: ${origin}/guides/health-receipts
 

@@ -10,7 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Architecture
-- Health-card POSTs bind ES256, verified principal, scope, endpoint, schema, nonce and typed outcomes to probe time, expiry, signing kid and advisory decision. Atomic service-only nonce hashes persist 24h; stored probes are cache_hit, fresh_probe requires request-time evidence, errors have null dates. Why: replay and stale/failed truth stay distinct; public GETs and execution authority stay unchanged.
+- Health receipts bind ES256, principal, scope, target, schema, nonce, typed outcome, probe time, kid, source, evaluator build and decision_expiry <= exp. Stored probes stay cache_hit; fresh_probe needs request-time evidence; errors have null evidence/dates; legacy provenance stays unknown. Atomic nonces persist 24h. Why: caching never renews decisions or grants authority; public GETs stay unchanged.
 - Repository first-task examples run standalone with Python's standard library, validate a returned provider contract against a recipe-specific HTTPS allowlist, and require a complete downstream response before success. Why: GitHub onboarding must demonstrate real execution without credentials, arbitrary endpoint execution, or fabricated conversion evidence.
 - Power Platform response definitions expose discovery call/trust contracts and named status health fields. Why: imported actions must return actionable provider endpoints and health evidence instead of opaque objects.
 - Authenticated and anonymous MCP transports share minimal operational instructions without quota, key, email or auxiliary-link guidance; optional offers stay in tool results and quota notices. Why: review metadata must remain capability-focused and consistent across transports.

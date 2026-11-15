@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildReceiptClaims, verifyHealthReceipt, verifyHealthReceiptResult, receiptRequestSchema, type ReceiptCard, type ReceiptExpectation } from "./health-receipt";
+import { buildReceiptClaims, verifyHealthReceipt, verifyHealthReceiptResult, receiptRequestSchema, RECEIPT_VERIFIER_BUILD, type HealthReceiptClaims, type ReceiptCard, type ReceiptExpectation } from "./health-receipt";
 import * as signing from "./agent-card-signature.server";
 import { signHealthReceipt, PUBLIC_JWK } from "./agent-card-signature.server";
 import { serveHealthReceipt } from "./health-receipt.server";
@@ -18,10 +18,11 @@ const card: ReceiptCard = {
 };
 const expected: ReceiptExpectation = { principal: "key:caller-a", endpoint: "https://example.com/mcp", schemaHash: card.schema.hash, nonce: "0123456789abcdef", scope: "health:read", maxEvidenceAgeS: 300, nowMs };
 const encode = (v: unknown) => btoa(JSON.stringify(v)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-async function fixture(outcome?: "fresh_probe" | "cache_hit" | "nonce_reuse", probeStartedMs?: number) {
+async function fixture(outcome?: "fresh_probe" | "cache_hit" | "nonce_reuse", probeStartedMs?: number, transform?: (claims: HealthReceiptClaims) => HealthReceiptClaims) {
   const pair = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
   const jwk = { ...await crypto.subtle.exportKey("jwk", pair.publicKey), kid: "test-key" };
-  const claims = buildReceiptClaims(card, expected.principal, expected.nonce, nowMs, outcome ? { keyId: "test-key", outcome, ...(probeStartedMs !== undefined ? { probeStartedMs } : {}) } : undefined);
+  const built = buildReceiptClaims(card, expected.principal, expected.nonce, nowMs, outcome ? { keyId: "test-key", outcome, ...(probeStartedMs !== undefined ? { probeStartedMs } : {}) } : undefined);
+  const claims = transform ? transform(built) : built;
   const input = `${encode({ alg: "ES256", kid: "test-key", typ: "agentnexus-health-receipt+jwt" })}.${encode(claims)}`;
   const sig = new Uint8Array(await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, pair.privateKey, new TextEncoder().encode(input)));
   const signature = btoa(String.fromCharCode(...sig)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -151,7 +152,7 @@ describe("typed health receipt outcomes", () => {
     const { token, jwk } = await fixture("cache_hit");
     const consume = vi.fn();
     const result = await verifyHealthReceiptResult(token + "bad", jwk, expected, consume);
-    expect(result).toEqual({ outcome: "verifier_error", probe_time: null, expiry: null, key_id: "test-key", route_decision: "retry_verification", claims: null });
+    expect(result).toEqual({ outcome: "verifier_error", probe_time: null, expiry: null, key_id: "test-key", route_decision: "retry_verification", claims: null, evidence_source: null, verifier_build: RECEIPT_VERIFIER_BUILD, decision_expiry: null });
     expect(consume).not.toHaveBeenCalled();
   });
   it("nonce-store failure yields verifier_error, not nonce_reuse", async () => {
@@ -186,7 +187,7 @@ describe("typed health receipt outcomes", () => {
     const response = await issue(true);
     expect(response.status).toBe(200);
     expect(response.headers.get("cache-control")).toBe("private, no-store");
-    expect(await response.json()).toMatchObject({ outcome: "cache_hit", probe_time: at, key_id: signing.SIGNING_KID, route_decision: "inspect_evidence", receipt: "signed-fixture" });
+    expect(await response.json()).toMatchObject({ outcome: "cache_hit", probe_time: at, key_id: signing.SIGNING_KID, route_decision: "inspect_evidence", receipt: "signed-fixture", evidence_source: { kind: "stored_probe", url: "https://agentnexus.app/api/public/health-card/example-mcp" }, verifier_build: "agentnexus-health-receipt/2", decision_expiry: Math.floor(Date.parse(at) / 1000) + 86_400 });
     expect(reserveReceiptNonce).toHaveBeenLastCalledWith("key:caller-a", expected.nonce);
   });
   it("issuer returns signed nonce_reuse and HTTP 409", async () => {
@@ -197,6 +198,52 @@ describe("typed health receipt outcomes", () => {
   it("issuer returns verifier_error and HTTP 503 when replay checking fails", async () => {
     const response = await issue(new Error("unavailable"));
     expect(response.status).toBe(503);
-    expect(await response.json()).toMatchObject({ outcome: "verifier_error", probe_time: null, expiry: null, key_id: signing.SIGNING_KID, route_decision: "retry_verification", receipt: null });
+    expect(await response.json()).toMatchObject({ outcome: "verifier_error", probe_time: null, expiry: null, key_id: signing.SIGNING_KID, route_decision: "retry_verification", receipt: null, evidence_source: null, verifier_build: "agentnexus-health-receipt/2", decision_expiry: null });
+  });
+});
+
+describe("receipt provenance and decision lifetime", () => {
+  it("binds the stored evidence source to the canonical entry, not its invocation endpoint", async () => {
+    const { token, jwk } = await fixture("cache_hit");
+    expect((await verifyHealthReceipt(token, jwk, expected)).evidence_source).toEqual({ kind: "stored_probe", url: "https://agentnexus.app/api/public/health-card/example-mcp" });
+  });
+  it("identifies request-time evidence separately", () => {
+    expect(buildReceiptClaims(card, expected.principal, expected.nonce, nowMs, { keyId: "test-key", probeStartedMs: nowMs - 60_000 }).evidence_source?.kind).toBe("request_probe");
+  });
+  it("binds the evaluator build under the signature", async () => {
+    const { token, jwk, claims } = await fixture("cache_hit");
+    expect(claims.verifier_build).toBe("agentnexus-health-receipt/2");
+    const parts = token.split(".");
+    await expect(verifyHealthReceipt(`${parts[0]}.${encode({ ...claims, verifier_build: "forged-build" })}.${parts[2]}`, jwk, expected)).rejects.toThrow("signature");
+  });
+  it("allows a decision to expire before its receipt without discarding cached observations", async () => {
+    const deadline = Math.floor(nowMs / 1000) + 30;
+    const { token, jwk } = await fixture("cache_hit", undefined, (c) => ({ ...c, decision_expiry: deadline }));
+    await verifyHealthReceipt(token, jwk, { ...expected, nowMs: nowMs + 29_000 });
+    await expect(verifyHealthReceipt(token, jwk, { ...expected, nowMs: nowMs + 30_000 })).rejects.toThrow("Expired advisory decision");
+    const consume = vi.fn();
+    const result = await verifyHealthReceiptResult(token, jwk, { ...expected, nowMs: nowMs + 30_000 }, consume);
+    expect(result).toMatchObject({ outcome: "cache_hit", probe_time: at, decision_expiry: deadline, policy_accepted: false });
+    expect(consume).not.toHaveBeenCalled();
+  });
+  it("cannot extend a decision beyond receipt expiry", async () => {
+    const { token, jwk } = await fixture("cache_hit", undefined, (c) => ({ ...c, decision_expiry: c.exp + 1 }));
+    await expect(verifyHealthReceipt(token, jwk, expected)).rejects.toThrow("Decision expiry exceeds receipt lifetime");
+    expect(() => buildReceiptClaims(card, expected.principal, expected.nonce, nowMs, { keyId: "test-key", decisionExpiry: Math.floor(nowMs / 1000) + 121 })).toThrow("Decision expiry");
+  });
+  it("stale observations cannot renew decision expiry by signing again", () => {
+    const old = new Date(nowMs - 86_400_000).toISOString();
+    const claims = buildReceiptClaims({ ...card, last_probe: { ...card.last_probe, at: old } }, expected.principal, expected.nonce, nowMs, { keyId: "test-key" });
+    expect(claims.decision_expiry).toBe(Math.floor(nowMs / 1000));
+    expect(claims.evidence.liveness.at).toBe(old);
+  });
+  it("rejects signed provenance pointing at another entry", async () => {
+    const { token, jwk } = await fixture("cache_hit", undefined, (c) => ({ ...c, evidence_source: { kind: "stored_probe", url: "https://agentnexus.app/api/public/health-card/other" } }));
+    await expect(verifyHealthReceipt(token, jwk, expected)).rejects.toThrow("Wrong evidence source");
+  });
+  it("legacy receipts remain readable without invented source or build", async () => {
+    const { token, jwk } = await fixture(undefined, undefined, ({ evidence_source, verifier_build, decision_expiry, ...legacy }) => legacy);
+    const result = await verifyHealthReceiptResult(token, jwk, expected, async () => true);
+    expect(result).toMatchObject({ outcome: "cache_hit", evidence_source: null, verifier_build: null, decision_expiry: Math.floor(nowMs / 1000) + 120, policy_accepted: true });
   });
 });
