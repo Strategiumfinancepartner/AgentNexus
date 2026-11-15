@@ -74,6 +74,7 @@ const plans = [
       "Listing report: how often agents find, open and come back to your entry, robots counted apart",
       "Outage alerts, sent only once 2 checks in a row fail, plus a recovery notice",
       "Structure-change alerts when your responses stop matching their contract",
+      "Field-level change report: breaking changes plus added fields labeled non-breaking, on your public health card",
       "Stale-data alerts per source, with your own age and volume thresholds",
       "Per-source volume alerts: a source dropping to zero, or losing a share you choose",
       "Email and signed webhook, retried until delivered, with a test button and alert history",

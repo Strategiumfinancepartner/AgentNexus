@@ -43,7 +43,7 @@ async function serve({ params, request }: { params: { slug: string }; request: R
   const { data: e } = await client
     .from("entries")
     .select(
-      "id, slug, name, category, endpoint, auth_mode, auth_params, input_format, output_format, rate_limit, pricing, verified, verified_at, health_ok, health_status_code, health_latency_ms, health_checked_at, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_detail, capability_checked_at, discovered_tools, schema_ok, schema_detail, schema_checked_at, data_ok, data_detail, data_checked_at, down_since, mcp_protocol_version, tool_schema_changes, tool_schema_changed_at, tool_schema_subject, tool_schema_state",
+      "id, slug, name, category, endpoint, auth_mode, auth_params, input_format, output_format, rate_limit, pricing, verified, verified_at, health_ok, health_status_code, health_latency_ms, health_checked_at, checks_total, checks_ok, avg_latency_ms, capability_ok, capability_detail, capability_checked_at, discovered_tools, schema_ok, schema_detail, schema_checked_at, data_ok, data_detail, data_checked_at, down_since, mcp_protocol_version, tool_schema_changes, tool_schema_changed_at, tool_schema_subject, tool_schema_state, submitted_by",
     )
     .eq("status", "approved")
     .eq("slug", slug)
@@ -54,6 +54,18 @@ async function serve({ params, request }: { params: { slug: string }; request: R
       404,
     );
   }
+
+  // Additive (non-breaking) diffs are a Publisher feature: shown only while the
+  // entry owner holds a live Publisher subscription.
+  let publisherMonitored = false;
+  if (e.submitted_by) {
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { publisherUserIds } = await import("@/lib/publisher-entitlements.server");
+      publisherMonitored = (await publisherUserIds(supabaseAdmin as any)).has(e.submitted_by);
+    } catch { publisherMonitored = false; }
+  }
+  const additive = (e.tool_schema_state?.additive ?? {})[e.mcp_protocol_version ?? "unknown"] ?? null;
 
   const { data: failures } = await client
     .from("health_checks")
@@ -107,6 +119,9 @@ async function serve({ params, request }: { params: { slug: string }; request: R
       negotiated_protocol_version: e.mcp_protocol_version ?? null,
       declared_tool_schema_breaking_changes: e.tool_schema_changes ?? [],
       declared_tool_schema_changed_at: e.tool_schema_changed_at ?? null,
+      declared_tool_schema_additive_changes: publisherMonitored ? (additive?.changes ?? []) : null,
+      declared_tool_schema_additive_changed_at: publisherMonitored ? (additive?.at ?? null) : null,
+      additive_changes_rule: "additive changes (new tools, new optional fields, gained enum values, inputs that became optional) are labeled non-breaking by default; the consumer decides whether they matter. Exposed for Publisher-monitored entries; null means not exposed for this entry, not that nothing changed.",
       comparison_subject: comparisonSubjectView(e.tool_schema_subject ?? null, e.tool_schema_state ?? null, now),
       drift_rule: "diffs compare only within the same (endpoint, negotiated protocol version); a new shape must repeat on 2 consecutive probes, so rolling-deploy flip-flops are not reported; comparison_subject.fleet counts distinct shapes per subject over 24h, and shapes that keep alternating for 6h+ are reported as split_fleet rather than drift",
       fleet_evidence_rule: "complete_observations_24h counts only complete tool-list observations in the rolling 24h window, recomputed when this card is read; observations_24h remains a compatibility alias. When this count is zero, fleet.verdict is unobserved_24h, not single_shape; this means no complete observations in the window, not an outage or confirmed drift. last_complete_at is the latest retained complete observation for this subject, even outside the window, or null when unavailable. Missing legacy history keeps the new fields null and is not inferred to be an empty observed window. A single_shape verdict is not a continuous availability guarantee; partial or failed probes never refresh the count or timestamp. fleet.last_transition records the last confirmed shape change for this subject (from_hash, to_hash, transitioned_at), kept beyond the 24h window; null means no confirmed transition has been recorded since transition tracking began, not proof that the shape never changed.",

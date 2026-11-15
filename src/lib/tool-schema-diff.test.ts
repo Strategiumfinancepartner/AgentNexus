@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { diffToolSchemas, extractToolSchemas, readProtocolVersion } from "./capability-probe.server";
+import { diffAdditiveToolSchemas, diffToolSchemas, extractToolSchemas, readProtocolVersion } from "./capability-probe.server";
 
 const s = (props: Record<string, unknown>, required: string[] = []) => ({ type: "object", properties: props, required });
 
@@ -29,5 +29,11 @@ describe("declared tool schema diff", () => {
     expect(readProtocolVersion({ result: { protocolVersion: "2025-03-26" } })).toBe("2025-03-26");
     expect(readProtocolVersion({ result: {} })).toBeNull();
     expect(Object.keys(extractToolSchemas({ result: { tools: [{ name: "x", inputSchema: {} }] } }))).toEqual(["x"]);
+  });
+  it("labels additive changes separately as non-breaking", () => {
+    const before = { a: { input: s({ x: { type: "string", enum: ["a"] } }, ["x"]), output: null } };
+    const after = { a: { input: s({ x: { type: "string", enum: ["a", "b"] }, y: { type: "string" } }), output: null }, b: { input: null, output: null } };
+    expect(diffAdditiveToolSchemas(before, after)).toEqual(['a.input.x enum gained "b"', "a.input.y added (optional)", "a.input.x became optional", "b added"]);
+    expect(diffToolSchemas(before, after)).toEqual([]);
   });
 });

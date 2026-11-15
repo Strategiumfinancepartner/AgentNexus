@@ -366,6 +366,38 @@ export function diffToolSchemas(
   return out.slice(0, 50);
 }
 
+/**
+ * Non-breaking (additive) changes between two declared snapshots: new tools,
+ * new optional fields, gained enum members and inputs that stopped being
+ * required. Labeled compatible by default; the consumer still decides.
+ */
+export function diffAdditiveToolSchemas(
+  before: Record<string, ToolSchema> | null | undefined,
+  after: Record<string, ToolSchema>,
+): string[] {
+  if (!before) return [];
+  const out: string[] = [];
+  for (const tool of Object.keys(after)) {
+    if (!(tool in before)) { out.push(`${tool} added`); continue; }
+    for (const side of ["input", "output"] as const) {
+      const b = (before[tool]?.[side] ?? {}) as Props;
+      const a = (after[tool]?.[side] ?? {}) as Props;
+      const bp = b.properties ?? {};
+      const ap = a.properties ?? {};
+      const req = new Set(a.required ?? []);
+      for (const key of Object.keys(ap)) {
+        if (!(key in bp)) { if (side === "output" || !req.has(key)) out.push(`${tool}.${side}.${key} added (optional)`); continue; }
+        if (Array.isArray(ap[key]?.enum) && Array.isArray(bp[key]?.enum)) {
+          const prev = new Set(bp[key]!.enum!.map((v) => JSON.stringify(v)));
+          for (const v of ap[key]!.enum!) if (!prev.has(JSON.stringify(v))) out.push(`${tool}.${side}.${key} enum gained ${JSON.stringify(v)}`);
+        }
+      }
+      if (side === "input") for (const key of b.required ?? []) if (!req.has(key) && key in ap) out.push(`${tool}.input.${key} became optional`);
+    }
+  }
+  return out.slice(0, 50);
+}
+
 /** An HTTP API is "capability ok" when it answers a machine contract or an auth challenge. */
 async function probeHttpApi(endpoint: string): Promise<CapabilityProbe> {
   try {

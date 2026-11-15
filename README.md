@@ -197,6 +197,7 @@ Publisher-plan entries get alerts on what actually breaks agents, not just "it a
 
 - **Confirmed outage**: sent only after 2 consecutive failed checks, plus a recovery notice. Checks are hourly, so outages shorter than an hour can be missed.
 - **Structure change**: the response no longer matches its documented contract.
+- **Field-level change report**: confirmed tool-schema changes are listed field by field. Breaking changes (`declared_tool_schema_breaking_changes`: removed, retyped, lost enum value, newly required) are public; for Publisher entries the health card also lists additive changes in `declared_tool_schema_additive_changes` (new tool, new optional field, gained enum value, input became optional), labeled non-breaking by default. The consumer decides whether a change matters; `null` means not exposed, not "nothing changed".
 - **Stale data per source**: e.g. "12 of 83 sources not updated for 24h+", with your own age and volume thresholds. One alert per change, no repeats.
 - **Per-source volume**: an alert when any single source drops to zero live records (even if the overall total looks healthy), when it loses more than a chosen share since the previous hourly check (80% by default), and when it comes back.
 - **Delivery**: email and webhook signed with `x-agentnexus-signature: sha256=<HMAC-SHA256 of raw body>`; failed sends are retried up to 5 times; test button and 30-alert history on your entry page.

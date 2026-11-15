@@ -1,4 +1,4 @@
-import { diffToolSchemas, type ToolSchema } from "@/lib/capability-probe.server";
+import { diffAdditiveToolSchemas, diffToolSchemas, type ToolSchema } from "@/lib/capability-probe.server";
 
 // Schema drift is compared per subject (endpoint + negotiated protocol version),
 // and a new shape must be seen on 2 consecutive probes before it counts as drift.
@@ -13,6 +13,8 @@ export type SchemaState = {
   seen?: { at: string; version: string; hash: string }[];
   // Last confirmed shape transition per protocol version; kept beyond the 24h window.
   transitions?: Record<string, { from_hash: string; to_hash: string; transitioned_at: string }>;
+  // Non-breaking changes of the last confirmed transition per protocol version.
+  additive?: Record<string, { changes: string[]; at: string }>;
 };
 
 export const FLEET_WINDOW_MS = 24 * 3600_000;
@@ -101,7 +103,7 @@ export function advanceSchemaBaseline(
   const seen = [...(prevState?.seen ?? []), { at: new Date(nowMs).toISOString(), version: v, hash: fnv(stable(schemas)) }]
     .filter((o) => nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS)
     .slice(-200);
-  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen, ...(prevState?.transitions ? { transitions: { ...prevState.transitions } } : {}) };
+  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen, ...(prevState?.transitions ? { transitions: { ...prevState.transitions } } : {}), ...(prevState?.additive ? { additive: { ...prevState.additive } } : {}) };
   if (!prevState && legacySchemas && Object.keys(legacySchemas).length > 0) state.baselines[v] = legacySchemas;
   const base = state.baselines[v];
   if (!base) { state.baselines[v] = schemas; state.pending = null; return { state, changes: [], status: "baseline" }; }
@@ -110,6 +112,7 @@ export function advanceSchemaBaseline(
     const changes = diffToolSchemas(base, schemas);
     state.baselines[v] = schemas; state.pending = null;
     state.transitions = { ...(state.transitions ?? {}), [v]: { from_hash: fnv(stable(base)), to_hash: fnv(stable(schemas)), transitioned_at: new Date(nowMs).toISOString() } };
+    state.additive = { ...(state.additive ?? {}), [v]: { changes: diffAdditiveToolSchemas(base, schemas), at: new Date(nowMs).toISOString() } };
     return { state, changes, status: "confirmed_drift" };
   }
   state.pending = { version: v, schemas };
