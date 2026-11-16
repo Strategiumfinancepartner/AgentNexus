@@ -60,6 +60,8 @@ A receipt is a signed reference point, not execution authorization, a guarantee 
 
 ## Connect an agent in one line
 
+**New here? [Short tutorial for AI assistants](https://agentnexus.app/guides/ai-quickstart)** · [Repository tutorial](docs/articles/ai-assistant-quickstart.md). Covers remote MCP clients and HTTP tool runners for OpenAI, Mistral, Gemini, DeepSeek, Grok and local models. Client support varies; simply pasting a URL into a chat does not enable tools. Connect, run a real discovery, inspect dated evidence, then complete a safe read-only task. Health evidence never grants execution authority.
+
 **Start with a completed task, not just a search:** obtain Berlin's weather through a discovered public API. The example below needs Python 3 only, with no account, key, extra packages, or payment. Agent Nexus finds the service; the example calls the provider directly.
 
 ### Official integrations

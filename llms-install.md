@@ -1,5 +1,9 @@
 # Installing Agent Nexus (for AI assistants such as Cline)
 
+Short multi-assistant tutorial: https://agentnexus.app/guides/ai-quickstart
+Client-specific setup: https://agentnexus.app/connect
+Models without native MCP can use discovery through their application's HTTP function-tool runner. A chat without tool execution cannot connect by merely reading a URL.
+
 Agent Nexus is a remote MCP server. Nothing to install, no API key, no account.
 
 Add this to the MCP settings file:

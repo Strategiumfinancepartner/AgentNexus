@@ -87,6 +87,7 @@ import { Route as ArticlesSlugRouteImport } from './routes/articles.$slug'
 import { Route as CaseStudiesNovaRouteImport } from './routes/case-studies.nova'
 import { Route as DemosIndexRouteImport } from './routes/demos.index'
 import { Route as DemosSlugRouteImport } from './routes/demos.$slug'
+import { Route as GuidesAiQuickstartRouteImport } from './routes/guides.ai-quickstart'
 import { Route as GuidesApiFallbacksRouteImport } from './routes/guides.api-fallbacks'
 import { Route as GuidesHealthReceiptsRouteImport } from './routes/guides.health-receipts'
 import { Route as GuidesN8nHealthCheckRouteImport } from './routes/guides.n8n-health-check'
@@ -564,6 +565,11 @@ const DemosSlugRoute = DemosSlugRouteImport.update({
   path: '/demos/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesAiQuickstartRoute = GuidesAiQuickstartRouteImport.update({
+  id: '/guides/ai-quickstart',
+  path: '/guides/ai-quickstart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuidesApiFallbacksRoute = GuidesApiFallbacksRouteImport.update({
   id: '/guides/api-fallbacks',
   path: '/guides/api-fallbacks',
@@ -871,6 +877,7 @@ export interface FileRoutesByFullPath {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
+  '/guides/ai-quickstart': typeof GuidesAiQuickstartRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/guides/health-receipts': typeof GuidesHealthReceiptsRoute
   '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
@@ -993,6 +1000,7 @@ export interface FileRoutesByTo {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
+  '/guides/ai-quickstart': typeof GuidesAiQuickstartRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/guides/health-receipts': typeof GuidesHealthReceiptsRoute
   '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
@@ -1117,6 +1125,7 @@ export interface FileRoutesById {
   '/articles/$slug': typeof ArticlesSlugRoute
   '/case-studies/nova': typeof CaseStudiesNovaRoute
   '/demos/$slug': typeof DemosSlugRoute
+  '/guides/ai-quickstart': typeof GuidesAiQuickstartRoute
   '/guides/api-fallbacks': typeof GuidesApiFallbacksRoute
   '/guides/health-receipts': typeof GuidesHealthReceiptsRoute
   '/guides/n8n-health-check': typeof GuidesN8nHealthCheckRoute
@@ -1241,6 +1250,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/case-studies/nova'
     | '/demos/$slug'
+    | '/guides/ai-quickstart'
     | '/guides/api-fallbacks'
     | '/guides/health-receipts'
     | '/guides/n8n-health-check'
@@ -1363,6 +1373,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/case-studies/nova'
     | '/demos/$slug'
+    | '/guides/ai-quickstart'
     | '/guides/api-fallbacks'
     | '/guides/health-receipts'
     | '/guides/n8n-health-check'
@@ -1486,6 +1497,7 @@ export interface FileRouteTypes {
     | '/articles/$slug'
     | '/case-studies/nova'
     | '/demos/$slug'
+    | '/guides/ai-quickstart'
     | '/guides/api-fallbacks'
     | '/guides/health-receipts'
     | '/guides/n8n-health-check'
@@ -1604,6 +1616,7 @@ export interface RootRouteChildren {
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   CaseStudiesNovaRoute: typeof CaseStudiesNovaRoute
   DemosSlugRoute: typeof DemosSlugRoute
+  GuidesAiQuickstartRoute: typeof GuidesAiQuickstartRoute
   GuidesApiFallbacksRoute: typeof GuidesApiFallbacksRoute
   GuidesHealthReceiptsRoute: typeof GuidesHealthReceiptsRoute
   GuidesN8nHealthCheckRoute: typeof GuidesN8nHealthCheckRoute
@@ -2180,6 +2193,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemosSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/ai-quickstart': {
+      id: '/guides/ai-quickstart'
+      path: '/guides/ai-quickstart'
+      fullPath: '/guides/ai-quickstart'
+      preLoaderRoute: typeof GuidesAiQuickstartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guides/api-fallbacks': {
       id: '/guides/api-fallbacks'
       path: '/guides/api-fallbacks'
@@ -2707,6 +2727,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArticlesSlugRoute: ArticlesSlugRoute,
   CaseStudiesNovaRoute: CaseStudiesNovaRoute,
   DemosSlugRoute: DemosSlugRoute,
+  GuidesAiQuickstartRoute: GuidesAiQuickstartRoute,
   GuidesApiFallbacksRoute: GuidesApiFallbacksRoute,
   GuidesHealthReceiptsRoute: GuidesHealthReceiptsRoute,
   GuidesN8nHealthCheckRoute: GuidesN8nHealthCheckRoute,
