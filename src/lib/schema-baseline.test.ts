@@ -140,3 +140,29 @@ describe("last_transition", () => {
     expect(f.distinct_shapes_24h).toBe(1);
   });
 });
+
+describe("transition_history", () => {
+  const A = { t: { name: "t" } } as any, B = { t: { name: "t" }, u: { name: "u" } } as any, C = { t: { name: "t" }, u: { name: "u" }, v: { name: "v" } } as any;
+  it("keeps every confirmed transition auditable after the 24h window", () => {
+    const t = Date.parse("2026-11-10T00:00:00Z");
+    let s = adv(null, null, "v1", A, t).state;
+    s = adv(s, null, "v1", B, t + 3600_000).state;
+    s = adv(s, null, "v1", B, t + 7200_000).state; // first confirmed drift A -> B
+    s = adv(s, null, "v1", C, t + 3 * 3600_000).state;
+    s = adv(s, null, "v1", C, t + 4 * 3600_000).state; // second confirmed drift B -> C
+    const f = fv(s, "v1", t + 40 * 3600_000); // long after the 24h window
+    expect(f.transition_history).toHaveLength(2);
+    expect(f.transition_history[0].transitioned_at).toBe("2026-11-10T02:00:00.000Z");
+    expect(f.transition_history[1].transitioned_at).toBe("2026-11-10T04:00:00.000Z");
+    expect(f.transition_history[0].to_hash).toBe(f.transition_history[1].from_hash);
+    expect(f.last_transition).toEqual(f.transition_history[1]);
+  });
+  it("is empty when no drift was ever confirmed and does not record pending shapes", () => {
+    const t = Date.parse("2026-11-10T00:00:00Z");
+    let s = adv(null, null, "v1", A, t).state;
+    s = adv(s, null, "v1", B, t + 3600_000).state; // pending only, never confirmed
+    const f = fv(s, "v1", t + 30 * 3600_000);
+    expect(f.transition_history).toEqual([]);
+    expect(f.last_transition).toBeNull();
+  });
+});

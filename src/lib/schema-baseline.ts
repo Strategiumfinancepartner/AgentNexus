@@ -13,6 +13,9 @@ export type SchemaState = {
   seen?: { at: string; version: string; hash: string }[];
   // Last confirmed shape transition per protocol version; kept beyond the 24h window.
   transitions?: Record<string, { from_hash: string; to_hash: string; transitioned_at: string }>;
+  // Append-only audit trail of every confirmed transition per protocol version (oldest first).
+  // Never pruned by the 24h window, so a change stays auditable after it leaves the card window.
+  history?: Record<string, { from_hash: string; to_hash: string; transitioned_at: string }[]>;
   // Non-breaking changes of the last confirmed transition per protocol version.
   additive?: Record<string, { changes: string[]; at: string }>;
 };
@@ -28,7 +31,13 @@ export type FleetView = {
   last_complete_at: string | null;
   verdict: "unobserved_24h" | "single_shape" | "converging" | "split_fleet";
   last_transition: { from_hash: string; to_hash: string; transitioned_at: string } | null;
+  // Every confirmed transition for this subject, oldest first; survives the 24h window.
+  transition_history: { from_hash: string; to_hash: string; transitioned_at: string }[];
 };
+
+// Cap per-version history so a flapping subject cannot grow state without bound;
+// 50 confirmed transitions is far beyond any real deploy cadence.
+export const TRANSITION_HISTORY_MAX = 50;
 
 // No complete samples = unobserved, not stable. Several shapes alternating for 6h+ (an older shape
 // reappears after a newer one) = split fleet behind one endpoint, not drift.
@@ -53,7 +62,7 @@ export function fleetView(state: SchemaState, version: string | null, nowMs: num
     const span = first && last ? Date.parse(last.at) - Date.parse(first.at) : 0;
     if (alternated && span >= FLEET_MIN_SPAN_MS) verdict = "split_fleet";
   }
-  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, complete_observations_24h: obs.length, last_complete_at: lastComplete?.at ?? null, verdict, last_transition: state.transitions?.[v] ?? null };
+  return { window_hours: 24, distinct_shapes_24h: distinct, observations_24h: obs.length, complete_observations_24h: obs.length, last_complete_at: lastComplete?.at ?? null, verdict, last_transition: state.transitions?.[v] ?? null, transition_history: state.history?.[v] ?? [] };
 }
 
 // Recompute at read time: failed/partial probes do not refresh the stored subject.
@@ -67,7 +76,7 @@ export function comparisonSubjectView(stored: string | null, state: SchemaState 
       ...subject,
       fleet: state && Array.isArray(state.seen)
         ? fleetView(state, subject.protocol_version ?? null, nowMs)
-        : subject.fleet ? { ...subject.fleet, complete_observations_24h: null, last_complete_at: null, last_transition: null } : null,
+        : subject.fleet ? { ...subject.fleet, complete_observations_24h: null, last_complete_at: null, last_transition: null, transition_history: [] } : null,
     };
   } catch { return null; }
 }
@@ -103,7 +112,7 @@ export function advanceSchemaBaseline(
   const seen = [...(prevState?.seen ?? []), { at: new Date(nowMs).toISOString(), version: v, hash: fnv(stable(schemas)) }]
     .filter((o) => nowMs - Date.parse(o.at) <= FLEET_WINDOW_MS)
     .slice(-200);
-  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen, ...(prevState?.transitions ? { transitions: { ...prevState.transitions } } : {}), ...(prevState?.additive ? { additive: { ...prevState.additive } } : {}) };
+  const state: SchemaState = { baselines: { ...(prevState?.baselines ?? {}) }, pending: prevState?.pending ?? null, seen, ...(prevState?.transitions ? { transitions: { ...prevState.transitions } } : {}), ...(prevState?.history ? { history: { ...prevState.history } } : {}), ...(prevState?.additive ? { additive: { ...prevState.additive } } : {}) };
   if (!prevState && legacySchemas && Object.keys(legacySchemas).length > 0) state.baselines[v] = legacySchemas;
   const base = state.baselines[v];
   if (!base) { state.baselines[v] = schemas; state.pending = null; return { state, changes: [], status: "baseline" }; }
@@ -111,7 +120,9 @@ export function advanceSchemaBaseline(
   if (state.pending && state.pending.version === v && stable(state.pending.schemas) === stable(schemas)) {
     const changes = diffToolSchemas(base, schemas);
     state.baselines[v] = schemas; state.pending = null;
-    state.transitions = { ...(state.transitions ?? {}), [v]: { from_hash: fnv(stable(base)), to_hash: fnv(stable(schemas)), transitioned_at: new Date(nowMs).toISOString() } };
+    const transition = { from_hash: fnv(stable(base)), to_hash: fnv(stable(schemas)), transitioned_at: new Date(nowMs).toISOString() };
+    state.transitions = { ...(state.transitions ?? {}), [v]: transition };
+    state.history = { ...(state.history ?? {}), [v]: [...(state.history?.[v] ?? []), transition].slice(-TRANSITION_HISTORY_MAX) };
     state.additive = { ...(state.additive ?? {}), [v]: { changes: diffAdditiveToolSchemas(base, schemas), at: new Date(nowMs).toISOString() } };
     return { state, changes, status: "confirmed_drift" };
   }
