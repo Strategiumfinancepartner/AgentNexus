@@ -47,4 +47,3 @@
 - Declared tool-schema drift compares only within the same (endpoint, negotiated protocol version) subject and needs 2 consecutive matching probes (src/lib/schema-baseline.ts). Why: rolling deploys behind load balancers must not produce phantom drift.
 - Schema state keeps 24h of complete shape observations; a subject whose shapes keep alternating for 6h+ is reported as split_fleet, not drift; health cards recompute fleet counts at read time and expose complete_observations_24h plus last_complete_at, preserving observations_24h as an alias; a known empty window yields unobserved_24h while missing legacy history remains unknown. Why: incomplete probes, empty windows and aging cached subjects must not masquerade as fresh fleet evidence.
 
-- Discovery ranking never uses the featured flag and plans never grant it. Why: paid placement breaks neutrality and blocked directory listings (Copilot).
