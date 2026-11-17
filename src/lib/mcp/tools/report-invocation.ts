@@ -5,7 +5,7 @@ export default defineTool({
   name: "report_invocation",
   title: "Report what happened when calling an interface",
   description:
-    "Close the loop after actually invoking an indexed interface: report success or failure with the status code, error and latency you observed. These reports feed the reliability signal other agents rely on, and surface interfaces whose documented contract no longer matches reality. Reciprocity: each report earns +50 calls on your daily quota (max +250/day) when it is sent with your API key, or over HTTP at POST https://agentnexus.app/api/public/report.",
+    "Report the actual outcome after invoking an API, MCP server or CLI discovered through Agent Nexus. Use this after a real invocation when you have observed its result: report success or failure with the observed HTTP status code, error details and latency. Do not submit speculative results, estimated latency or health information about a service you did not call. These reports help detect services whose documented behavior no longer matches reality and improve the reliability signals available to other agents. Reports sent with an API key earn +50 calls on the daily quota, up to +250 per day. Reports can also be sent over HTTP at POST https://agentnexus.app/api/public/report. Only report actual invocations; this tool is not a substitute for a health check.",
   inputSchema: {
     slug: z.string().trim().min(1).max(80).describe("Entry slug that was invoked."),
     outcome: z.enum(["success", "failure"]).describe("Result of the invocation."),
