@@ -3,12 +3,11 @@
  *
  * The Publisher plan promises four things on the pricing page: a verified
  * badge earned by a real call test, continuous monitoring, downtime alerts and
- * higher placement. Nothing here is granted by hand — this module runs on every
+ * a listing report. Ranking is never sold. Nothing here is granted by hand — this module runs on every
  * scheduled probe pass (hourly) and reconciles the registry with the
  * live subscription state:
  *
- *  - featured  → true while the submitter has an active Publisher subscription,
- *                false again once it lapses.
+ *  - featured  → never granted by a plan; any plan-granted flag is cleared.
  *  - verified  → set once the entry actually passes its capability probe (or,
  *                when it is not capability-probeable, a successful health
  *                probe). Paying does not buy the badge; it buys the test.
@@ -86,13 +85,8 @@ export async function syncPublisherEntitlements(admin: Admin): Promise<Entitleme
     const isPublisher = owned && publishers.has(row.submitted_by!);
     const update: Record<string, unknown> = {};
 
-    if (isPublisher && !row.featured) {
-      update['featured'] = true;
-      featuredGranted++;
-    }
-    // Only ever revoke placement on entries that belong to a member: curated
-    // rows with no submitter were featured by a reviewer, not by a plan.
-    if (owned && !isPublisher && row.featured) {
+    // Placement is not sold: clear any flag on member-owned entries.
+    if (owned && row.featured) {
       update['featured'] = false;
       featuredRevoked++;
     }

@@ -21,7 +21,7 @@ export const Route = createFileRoute("/pricing")({
       {
         property: "og:description",
         content:
-          "Discovery stays free for agents. Publishers pay for verification, uptime monitoring and placement.",
+          "Discovery stays free for agents. Publishers pay for verification, uptime monitoring and alerts. Ranking is never for sale.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -78,7 +78,7 @@ const plans = [
       "Stale-data alerts per source, with your own age and volume thresholds",
       "Per-source volume alerts: a source dropping to zero, or losing a share you choose",
       "Email and signed webhook, retried until delivered, with a test button and alert history",
-      "Ranked higher in what agents get served",
+      "No paid ranking: results are ordered by relevance and live health only",
       "A distribution channel, not an ad",
     ],
     cta: { label: "Submit an interface", to: "/submit" as const },
@@ -191,7 +191,7 @@ function PricingPage() {
             <p>
               <span className="text-foreground">Being found.</span> Publishers get a
               verified badge earned by a real call test, daily monitoring,
-              downtime alerts, and higher placement in what agents get served. Agents
+              downtime alerts and a listing report. Paying never changes ranking. Agents
               do not read marketing pages; they read this registry.
             </p>
             <p>
