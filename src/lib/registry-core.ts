@@ -419,7 +419,10 @@ export function matchScore(entry: MatchSource, tokens: string[]): number {
   // Verified badge (earned by a real call test): a solid boost on top of
   // relevance, worth roughly half a capability hit.
   if (entry.verified) bonus += 3;
-  // No paid placement: a Publisher subscription never changes ranking.
+  // Publisher placement: a clear lead among interfaces that already match the
+  // need. It outranks an equally relevant non-publisher entry, but never a
+  // more relevant one (a full capability match is +6 per token).
+  if (entry.featured) bonus += 4;
   score += bonus * coverage;
   if (entry.health_ok === false) score -= 2;
   return Math.round(score * 100) / 100;
@@ -681,6 +684,7 @@ export function buildDiscovery(
     .sort(
       (a, b) =>
         (b.rel.score ?? -1) - (a.rel.score ?? -1) ||
+        Number(Boolean(b.entry.featured)) - Number(Boolean(a.entry.featured)) ||
         Number(Boolean(b.entry.verified)) - Number(Boolean(a.entry.verified)),
     )
     .slice(0, Math.min(limit, 3))
