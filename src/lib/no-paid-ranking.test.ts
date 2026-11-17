@@ -11,6 +11,7 @@ describe("no paid ranking", () => {
   it("a featured (Publisher) entry gets the same score as an identical non-featured one", () => {
     const r = discover([entry("a-api", false), entry("b-api", true)]);
     const [x, y] = r.matches as Array<{ match_score: number }>;
-    expect(x.match_score).toBe(y.match_score);
+    expect(r.matches).toHaveLength(2);
+    expect(x?.match_score).toBe(y?.match_score);
   });
 });
