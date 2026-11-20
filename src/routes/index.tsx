@@ -161,6 +161,12 @@ function Index() {
               >
                 Browse the registry
               </Link>
+              <Link
+                to="/free-key"
+                className="inline-flex h-10 items-center rounded-full border border-primary/60 px-5 text-sm font-medium text-primary transition-colors hover:bg-accent"
+              >
+                Free key: 1,000 calls/day
+              </Link>
             </div>
             <div className="mt-8 overflow-x-auto rounded-xl border border-border/60 bg-card/40 p-4 backdrop-blur-sm">
               <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-muted-foreground">
