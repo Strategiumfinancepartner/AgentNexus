@@ -24,6 +24,16 @@ export const Route = createFileRoute("/explore")({
     ],
     links: [{ rel: "canonical", href: "https://agentnexus.app/explore" }],
   }),
+  validateSearch: (search: Record<string, unknown>): { q?: string; from?: string; cat?: string; ref?: string } => {
+    const str = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim().slice(0, 100) : undefined);
+    const out: { q?: string; from?: string; cat?: string; ref?: string } = {};
+    const q = str(search["q"]), from = str(search["from"]), cat = str(search["cat"]), ref = str(search["ref"]);
+    if (q) out.q = q;
+    if (from) out.from = from;
+    if (cat) out.cat = cat;
+    if (ref) out.ref = ref;
+    return out;
+  },
   loader: () => getPublicCatalog(),
   errorComponent: () => (
     <main className="mx-auto max-w-3xl px-6 py-24 text-muted-foreground">
@@ -77,17 +87,26 @@ function Health({ entry }: { entry: PublicEntry }) {
 function Explore() {
   const { entries, counts, health } = Route.useLoaderData();
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("all");
-  const [query, setQuery] = useState("");
+  const search = Route.useSearch();
+  const [query, setQuery] = useState(search.q ?? "");
+  const alt = search.ref === "entry_cta_alt" && !!search.from;
+  const sourceName = alt ? entries.find((e) => e.slug === search.from)?.name : undefined;
 
-  const items = useMemo(() => {
+  const { items, widened } = useMemo(() => {
     const term = query.trim().toLowerCase();
-    return entries.filter(
+    const pool = entries.filter((e) => !alt || e.slug !== search.from);
+    const matched = pool.filter(
       (e) =>
         (filter === "all" || e.category === filter) &&
         (!term ||
           `${e.name} ${e.summary} ${e.endpoint} ${e.tags.join(" ")}`.toLowerCase().includes(term)),
     );
-  }, [entries, filter, query]);
+    // Alternatives must never land on an empty page: widen to the same kind of interface.
+    if (alt && matched.length === 0 && term === (search.q ?? "").toLowerCase()) {
+      return { items: pool.filter((e) => !search.cat || e.category === search.cat), widened: true };
+    }
+    return { items: matched, widened: false };
+  }, [entries, filter, query, alt, search.from, search.q, search.cat]);
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
@@ -130,6 +149,15 @@ function Explore() {
           </p>
 
           <KeyCallout />
+
+          {alt && (
+            <p className="mt-8 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+              {widened
+                ? `No other listing shares "${search.q}". Showing every other ${search.cat ?? "interface"} instead`
+                : `${items.length} alternative${items.length === 1 ? "" : "s"} to ${sourceName ?? search.from} matching "${search.q}"`}
+              . Compare their recorded health before choosing; always call the provider directly.
+            </p>
+          )}
 
           <div className="mt-10 flex flex-wrap items-center gap-2">
             {FILTERS.map((f) => (

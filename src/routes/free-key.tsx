@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CopyExample } from "@/components/copy-example";
+import { keyPurpose } from "@/lib/entry-cta";
 
 /**
  * Public, account-free key minting. The pricing page promises "1,000 calls a
@@ -14,6 +15,8 @@ const CURL = `curl -s -X POST https://agentnexus.app/api/public/keys \\
   -d '{"agent":"my-agent","purpose":"tool discovery"}'`;
 
 export const Route = createFileRoute("/free-key")({
+  validateSearch: (search: Record<string, unknown>): { ref?: string } =>
+    typeof search["ref"] === "string" && search["ref"] ? { ref: search["ref"].slice(0, 40) } : {},
   component: FreeKeyPage,
   head: () => ({
     meta: [
@@ -36,6 +39,7 @@ export const Route = createFileRoute("/free-key")({
 });
 
 function FreeKeyPage() {
+  const { ref } = Route.useSearch();
   const [key, setKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -47,7 +51,7 @@ function FreeKeyPage() {
     try {
       const body: { agent: string; purpose: string; email?: string } = {
         agent: "web-visitor",
-        purpose: "evaluating the registry",
+        purpose: keyPurpose(ref),
       };
       if (email.trim()) body.email = email.trim();
       const res = await fetch("/api/public/keys", {

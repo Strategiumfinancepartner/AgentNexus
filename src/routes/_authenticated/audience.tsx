@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyAccess } from "@/lib/registry.functions";
 import { getAudience, getSegments } from "@/lib/audience.functions";
 import { AppShell } from "@/components/app-shell";
+import { ctaKeyFunnel } from "@/lib/entry-cta";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/audience")({
@@ -249,6 +250,7 @@ function AudiencePage() {
               </TabsContent>
 
               <TabsContent value="keys">
+            <CtaConversionPanel keys={data.keys} />
             <Section
               title="API keys"
               hint="Every key ever issued. No key = 100 calls/day (anonymous). Free key = 1 000/day. Agent Pro key = 50 000/day."
@@ -610,6 +612,31 @@ function SegmentsPanel() {
               <td className="px-3 py-2">{w.createdAt.slice(0, 10)}</td>
               <td className="px-3 py-2">{w.lastState ?? "—"}</td>
               <td className="px-3 py-2">{w.lastNotifiedAt ? w.lastNotifiedAt.slice(0, 16).replace("T", " ") : "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Section>
+  );
+}
+
+function CtaConversionPanel({ keys }: { keys: { label: string; calls: number; activeDays: number }[] }) {
+  const f = ctaKeyFunnel(keys);
+  const rows: [string, string, string][] = [
+    ["Clicks / landing visits", "not logged here", "Pages are not in the access log. Read page views of /explore?ref=entry_cta_alt, /connect?ref=entry_cta_mcp, /free-key?ref=entry_cta_key in web analytics."],
+    ["Keys created from listing CTA", String(f.keysCreated), "Keys whose label carries [ref:entry_cta_key]. A creation is not adoption."],
+    ["First authenticated call", String(f.firstAuthenticatedCall), "CTA keys with at least one keyed call in 30 days."],
+    ["Recurring use", String(f.recurring), "CTA keys used on 2+ distinct days in 30 days."],
+  ];
+  return (
+    <Section title="Listing CTA conversions (since launch)" hint="Separate from historical references A, B and C, which stay frozen.">
+      <table className="w-full text-left font-mono text-xs">
+        <tbody>
+          {rows.map(([k, v, d]) => (
+            <tr key={k} className="border-t border-border/40">
+              <td className="px-3 py-2">{k}</td>
+              <td className="px-3 py-2 text-right">{v}</td>
+              <td className="px-3 py-2 text-muted-foreground">{d}</td>
             </tr>
           ))}
         </tbody>

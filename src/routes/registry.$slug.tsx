@@ -3,6 +3,7 @@ import { getPublicEntry, type PublicEntryDetail } from "@/lib/public-registry.fu
 import { CopyExample } from "@/components/copy-example";
 import { KeyCallout } from "@/components/key-callout";
 import { FollowTool } from "@/components/follow-tool";
+import { alternativeTerm } from "@/lib/entry-cta";
 
 const ORIGIN = "https://agentnexus.app";
 
@@ -206,6 +207,8 @@ function EntryPage() {
 
           <FollowTool slug={entry.slug} name={entry.name} />
 
+          <EntryCtas entry={entry} />
+
           <KeyCallout compact />
 
           <section className="mt-6 rounded-2xl border border-border/60 bg-card/40 p-5 sm:p-6">
@@ -242,5 +245,36 @@ function EntryPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+function EntryCtas({ entry }: { entry: PublicEntryDetail }) {
+  const term = alternativeTerm(entry);
+  const card = "flex flex-col rounded-2xl border border-border/60 bg-card/40 p-5 transition-colors hover:border-primary/40";
+  return (
+    <section className="mt-6 grid gap-3 sm:grid-cols-3" aria-label="Next steps">
+      <Link
+        to="/explore"
+        search={{ q: term, from: entry.slug, cat: entry.category, ref: "entry_cta_alt" }}
+        className={card}
+      >
+        <span className="text-sm font-medium">Find alternatives with Agent Nexus</span>
+        <span className="mt-2 text-xs text-muted-foreground">
+          Discover similar APIs and MCP servers{term ? ` for "${term}"` : ""}, compare their capabilities and check their recorded health status.
+        </span>
+      </Link>
+      <a href="/connect?ref=entry_cta_mcp" className={card}>
+        <span className="text-sm font-medium">Connect your AI agent</span>
+        <span className="mt-2 text-xs text-muted-foreground">
+          Give your AI agent access to the Agent Nexus registry to discover APIs, MCP servers and CLI tools.
+        </span>
+      </a>
+      <Link to="/free-key" search={{ ref: "entry_cta_key" }} className={card}>
+        <span className="text-sm font-medium">Get your free API key</span>
+        <span className="mt-2 text-xs text-muted-foreground">
+          Get up to 1,000 calls per day and integrate Agent Nexus programmatically. No human signup required.
+        </span>
+      </Link>
+    </section>
   );
 }

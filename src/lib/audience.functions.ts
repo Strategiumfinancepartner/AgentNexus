@@ -32,6 +32,8 @@ export type KeyRow = {
   lastCallAt: string | null;
   userAgent: string;
   country: string;
+  /** Distinct UTC days with at least one call on this key (30 days, quota counter). */
+  activeDays: number;
 };
 
 export type CallerRow = {
@@ -306,14 +308,20 @@ export const getAudience = createServerFn({ method: "POST" })
     // The quota counter (api_usage) sees every keyed call, including ones the
     // access log files under the caller's address (e.g. some MCP handshakes).
     const quotaCalls = new Map<string, number>();
+    const keyDays = new Map<string, Set<string>>();
     {
       const { data: usageRows } = await client
         .from("api_usage")
-        .select("actor, calls")
+        .select("actor, calls, day")
         .like("actor", "key:%")
         .gte("day", since.slice(0, 10));
-      for (const r of (usageRows ?? []) as { actor: string; calls: number }[]) {
+      for (const r of (usageRows ?? []) as { actor: string; calls: number; day: string }[]) {
         quotaCalls.set(r.actor, (quotaCalls.get(r.actor) ?? 0) + Number(r.calls ?? 0));
+        if (Number(r.calls ?? 0) > 0) {
+          const d = keyDays.get(r.actor) ?? new Set<string>();
+          d.add(r.day);
+          keyDays.set(r.actor, d);
+        }
       }
     }
     const keyRows: KeyRow[] = keys
@@ -333,6 +341,7 @@ export const getAudience = createServerFn({ method: "POST" })
           lastCallAt: usage?.lastSeen ?? null,
           userAgent: usage?.userAgent ?? "",
           country: usage?.country ?? "",
+          activeDays: keyDays.get(`key:${k.id}`)?.size ?? 0,
         };
       })
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
