@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CopyExample } from "@/components/copy-example";
 import { keyPurpose } from "@/lib/entry-cta";
+import { useCtaArrival } from "@/lib/cta-arrival";
 
 /**
  * Public, account-free key minting. The pricing page promises "1,000 calls a
@@ -15,8 +16,12 @@ const CURL = `curl -s -X POST https://agentnexus.app/api/public/keys \\
   -d '{"agent":"my-agent","purpose":"tool discovery"}'`;
 
 export const Route = createFileRoute("/free-key")({
-  validateSearch: (search: Record<string, unknown>): { ref?: string } =>
-    typeof search["ref"] === "string" && search["ref"] ? { ref: search["ref"].slice(0, 40) } : {},
+  validateSearch: (search: Record<string, unknown>): { ref?: string; from?: string } => {
+    const out: { ref?: string; from?: string } = {};
+    if (typeof search["ref"] === "string" && search["ref"]) out.ref = search["ref"].slice(0, 40);
+    if (typeof search["from"] === "string" && search["from"]) out.from = search["from"].slice(0, 120);
+    return out;
+  },
   component: FreeKeyPage,
   head: () => ({
     meta: [
@@ -39,7 +44,8 @@ export const Route = createFileRoute("/free-key")({
 });
 
 function FreeKeyPage() {
-  const { ref } = Route.useSearch();
+  const { ref, from } = Route.useSearch();
+  useCtaArrival(ref, from);
   const [key, setKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);

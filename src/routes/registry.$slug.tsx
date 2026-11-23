@@ -263,13 +263,13 @@ function EntryCtas({ entry }: { entry: PublicEntryDetail }) {
           Discover similar APIs and MCP servers{term ? ` for "${term}"` : ""}, compare their capabilities and check their recorded health status.
         </span>
       </Link>
-      <a href="/connect?ref=entry_cta_mcp" className={card}>
+      <a href={`/connect?ref=entry_cta_mcp&from=${encodeURIComponent(entry.slug)}`} className={card}>
         <span className="text-sm font-medium">Connect your AI agent</span>
         <span className="mt-2 text-xs text-muted-foreground">
           Give your AI agent access to the Agent Nexus registry to discover APIs, MCP servers and CLI tools.
         </span>
       </a>
-      <Link to="/free-key" search={{ ref: "entry_cta_key" }} className={card}>
+      <Link to="/free-key" search={{ ref: "entry_cta_key", from: entry.slug }} className={card}>
         <span className="text-sm font-medium">Get your free API key</span>
         <span className="mt-2 text-xs text-muted-foreground">
           Get up to 1,000 calls per day and integrate Agent Nexus programmatically. No human signup required.

@@ -8,8 +8,15 @@ import {
   useOrigin,
   type Snippet,
 } from "@/lib/site";
+import { useCtaArrival } from "@/lib/cta-arrival";
 
 export const Route = createFileRoute("/connect")({
+  validateSearch: (search: Record<string, unknown>): { ref?: string; from?: string } => {
+    const out: { ref?: string; from?: string } = {};
+    if (typeof search["ref"] === "string" && search["ref"]) out.ref = search["ref"].slice(0, 40);
+    if (typeof search["from"] === "string" && search["from"]) out.from = search["from"].slice(0, 120);
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Connect an agent — Agent Nexus (agentnexus.app)" },
@@ -72,6 +79,8 @@ function CodeBlock({ snippet, origin }: { snippet: Snippet; origin: string }) {
 
 function Connect() {
   const origin = useOrigin();
+  const { ref, from } = Route.useSearch();
+  useCtaArrival(ref, from);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
