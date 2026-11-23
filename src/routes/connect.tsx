@@ -8,7 +8,6 @@ import {
   useOrigin,
   type Snippet,
 } from "@/lib/site";
-import { useCtaArrival } from "@/lib/cta-arrival";
 
 export const Route = createFileRoute("/connect")({
   validateSearch: (search: Record<string, unknown>): { ref?: string; from?: string } => {
@@ -79,8 +78,6 @@ function CodeBlock({ snippet, origin }: { snippet: Snippet; origin: string }) {
 
 function Connect() {
   const origin = useOrigin();
-  const { ref, from } = Route.useSearch();
-  useCtaArrival(ref, from);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">

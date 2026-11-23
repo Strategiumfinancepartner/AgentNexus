@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { getPublicCatalog, type PublicEntry } from "@/lib/public-registry.functions";
 import { KeyCallout } from "@/components/key-callout";
-import { useCtaArrival } from "@/lib/cta-arrival";
 
 export const Route = createFileRoute("/explore")({
   head: () => ({
@@ -108,13 +107,6 @@ function Explore() {
     }
     return { items: matched, widened: false };
   }, [entries, filter, query, alt, search.from, search.q, search.cat]);
-  // Alternatives search runs automatically from the URL term at load; record its initial outcome.
-  useCtaArrival(search.ref, search.from, {
-    search_auto_executed: alt && !!search.q,
-    results_shown: items.length,
-    widened,
-  });
-
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-3xl px-6">

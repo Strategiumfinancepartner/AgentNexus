@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CopyExample } from "@/components/copy-example";
 import { keyPurpose } from "@/lib/entry-cta";
-import { useCtaArrival } from "@/lib/cta-arrival";
 
 /**
  * Public, account-free key minting. The pricing page promises "1,000 calls a
@@ -44,8 +43,7 @@ export const Route = createFileRoute("/free-key")({
 });
 
 function FreeKeyPage() {
-  const { ref, from } = Route.useSearch();
-  useCtaArrival(ref, from);
+  const { ref } = Route.useSearch();
   const [key, setKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
