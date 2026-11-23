@@ -78,6 +78,13 @@
       "when": 1794777787672,
       "tag": "0010_health_receipt_nonce_ledger",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795424013724,
+      "tag": "0011_health_checks_checked_at_index",
+      "breakpoints": true
     }
   ]
 }

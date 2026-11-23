@@ -48,9 +48,44 @@ type CheckRow = {
  * Public, unauthenticated reliability history: no account, no key.
  * RLS runs as `anon`, which only ever sees approved entries.
  */
+/**
+ * 60-second in-memory cache of the status payload (per server instance).
+ * Freshness: every call reads the newest health check time (one indexed row);
+ * a new probe result invalidates the cache immediately, otherwise it expires
+ * after 60 s. On any lookup error the cache is bypassed.
+ */
+export const STATUS_CACHE_TTL_MS = 60_000;
+let statusCache: { at: number; latestCheck: string | null; payload: StatusPayload } | null = null;
+
+export function statusCacheValid(
+  cache: { at: number; latestCheck: string | null } | null,
+  latestCheck: string | null | undefined,
+  now: number,
+): boolean {
+  return !!cache && latestCheck !== undefined && cache.latestCheck === latestCheck && now - cache.at < STATUS_CACHE_TTL_MS;
+}
+
 export async function buildStatusPayload(): Promise<StatusPayload> {
   const { supabaseAnon } = await import("@/lib/mcp/supabase");
   const client = supabaseAnon();
+  let latestCheck: string | null | undefined;
+  try {
+    const { data, error } = await (client as any)
+      .from("health_checks")
+      .select("checked_at")
+      .order("checked_at", { ascending: false })
+      .limit(1);
+    latestCheck = error ? undefined : ((data?.[0]?.checked_at as string | undefined) ?? null);
+  } catch {
+    latestCheck = undefined;
+  }
+  if (statusCacheValid(statusCache, latestCheck, Date.now())) return statusCache!.payload;
+  const payload = await computeStatusPayload(client);
+  if (latestCheck !== undefined) statusCache = { at: Date.now(), latestCheck, payload };
+  return payload;
+}
+
+async function computeStatusPayload(client: any): Promise<StatusPayload> {
 
   const [entryRows, checkRows, incidents] = await Promise.all([
     fetchAllApproved(client),
